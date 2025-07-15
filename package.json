@@ -1,0 +1,108 @@
+{
+  "name": "casino-masters-ca",
+  "version": "1.0.0",
+  "description": "Superior casino affiliate platform with advanced SEO and AI-powered content generation",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest",
+    "test:performance": "lighthouse --chrome-flags=\"--headless\" --output=json --output-path=./lighthouse-report.json",
+    "test:seo": "next-seo-analyzer",
+    "audit:accessibility": "pa11y-ci",
+    "test:content-quality": "node scripts/content-quality-check.js",
+    "validate:schema": "node scripts/schema-validator.js",
+    "test:security": "npm audit && snyk test",
+    "audit:security": "securecodewarrior scan",
+    "test:links": "node scripts/link-checker.js",
+    "validate:internal-links": "node scripts/internal-link-validator.js",
+    "test:mobile": "lighthouse --chrome-flags=\"--headless\" --emulated-form-factor=mobile",
+    "validate:responsive": "node scripts/responsive-validator.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "elasticsearch:setup": "node scripts/setup-elasticsearch.js",
+    "content:generate": "node scripts/ai-content-generator.js",
+    "seo:analyze": "node scripts/seo-analyzer.js"
+  },
+  "keywords": [
+    "casino",
+    "affiliate",
+    "SEO",
+    "gambling",
+    "canada",
+    "next.js",
+    "AI"
+  ],
+  "author": "Casino Masters Team",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
+    "@prisma/client": "^5.7.1",
+    "@types/node": "^20.10.5",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vercel/analytics": "^1.1.1",
+    "@vercel/speed-insights": "^1.0.2",
+    "autoprefixer": "^10.4.16",
+    "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
+    "clsx": "^2.1.1",
+    "date-fns": "^2.30.0",
+    "elasticsearch": "^16.7.3",
+    "framer-motion": "^10.16.16",
+    "lodash": "^4.17.21",
+    "next": "^14.0.4",
+    "next-seo": "^6.4.0",
+    "next-sitemap": "^4.2.3",
+    "openai": "^4.20.1",
+    "postcss": "^8.4.32",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.48.2",
+    "sharp": "^0.33.1",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5.3.3",
+    "zod": "^3.22.4",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.6",
+    "@testing-library/react": "^14.1.2",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.0.4",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "lighthouse": "^11.4.0",
+    "lint-staged": "^15.2.0",
+    "pa11y-ci": "^3.0.1",
+    "prettier": "^3.1.1",
+    "prisma": "^5.7.1",
+    "snyk": "^1.1278.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{md,json}": [
+      "prettier --write"
+    ]
+  }
+}
