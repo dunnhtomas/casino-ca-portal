@@ -1,0 +1,545 @@
+<?php
+namespace App\Controllers;
+
+use App\Services\CasinoGridService;
+use App\Services\AuthorService;
+
+class CasinoGridController {
+    private CasinoGridService $casinoGridService;
+    private AuthorService $authorService;
+    
+    public function __construct() {
+        $this->casinoGridService = new CasinoGridService();
+        $this->authorService = new AuthorService();
+    }
+    
+    /**
+     * Display the main casino grid page
+     */
+    public function index(): void {
+        $author = $this->authorService->getRandomAuthor();
+        $categories = $this->casinoGridService->getCategories();
+        $allCasinos = $this->casinoGridService->getAllCasinos();
+        
+        // Get query parameters
+        $category = $_GET['category'] ?? 'all';
+        $search = $_GET['search'] ?? '';
+        $sortBy = $_GET['sort'] ?? 'rating';
+        $page = (int)($_GET['page'] ?? 1);
+        $perPage = 20;
+        
+        // Filter and search
+        $filteredCasinos = $this->casinoGridService->filterByCategory($allCasinos, $category);
+        $searchedCasinos = $this->casinoGridService->searchCasinos($filteredCasinos, $search);
+        
+        // Sort
+        $sortedCasinos = $this->casinoGridService->sortCasinos($searchedCasinos, $sortBy);
+        
+        // Paginate
+        $paginatedResults = $this->casinoGridService->paginateCasinos($sortedCasinos, $page, $perPage);
+        
+        // Generate page content
+        $this->renderGrid($paginatedResults, $categories, $category, $search, $sortBy, $author);
+    }
+    
+    /**
+     * Get casino data via AJAX
+     */
+    public function ajax(): void {
+        header('Content-Type: application/json');
+        
+        $allCasinos = $this->casinoGridService->getAllCasinos();
+        
+        // Get query parameters
+        $category = $_GET['category'] ?? 'all';
+        $search = $_GET['search'] ?? '';
+        $sortBy = $_GET['sort'] ?? 'rating';
+        $page = (int)($_GET['page'] ?? 1);
+        $perPage = 20;
+        
+        // Filter and search
+        $filteredCasinos = $this->casinoGridService->filterByCategory($allCasinos, $category);
+        $searchedCasinos = $this->casinoGridService->searchCasinos($filteredCasinos, $search);
+        
+        // Sort
+        $sortedCasinos = $this->casinoGridService->sortCasinos($searchedCasinos, $sortBy);
+        
+        // Paginate
+        $paginatedResults = $this->casinoGridService->paginateCasinos($sortedCasinos, $page, $perPage);
+        
+        echo json_encode($paginatedResults);
+        exit;
+    }
+    
+    /**
+     * Render the casino grid HTML
+     */
+    private function renderGrid($paginatedResults, $categories, $currentCategory, $search, $sortBy, $author): void {
+        $casinos = $paginatedResults['items'];
+        $pagination = [
+            'page' => $paginatedResults['page'],
+            'totalPages' => $paginatedResults['totalPages'],
+            'total' => $paginatedResults['total'],
+            'hasMore' => $paginatedResults['hasMore']
+        ];
+        
+        ?>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Casino Comparison Grid - Compare 90+ Online Casinos | Best Casino Portal</title>
+            <meta name="description" content="Compare 90+ online casinos side by side. Filter by bonuses, games, ratings, and more. Find your perfect casino with our comprehensive comparison tool.">
+            <meta name="keywords" content="casino comparison, online casinos, casino reviews, best casinos, casino bonuses">
+            <link rel="stylesheet" href="/assets/css/style.css">
+            <style>
+                .casino-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 20px;
+                    margin: 20px 0;
+                }
+                
+                .casino-card {
+                    background: white;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 8px;
+                    padding: 20px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    transition: transform 0.2s;
+                }
+                
+                .casino-card:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+                }
+                
+                .casino-header {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 15px;
+                }
+                
+                .casino-logo {
+                    width: 50px;
+                    height: 50px;
+                    background: #2196F3;
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: bold;
+                    margin-right: 15px;
+                }
+                
+                .casino-name {
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #333;
+                    margin: 0;
+                }
+                
+                .casino-rating {
+                    color: #ff6b35;
+                    font-weight: bold;
+                    margin: 5px 0;
+                }
+                
+                .casino-details {
+                    margin: 15px 0;
+                }
+                
+                .detail-row {
+                    display: flex;
+                    justify-content: space-between;
+                    margin: 8px 0;
+                    font-size: 14px;
+                }
+                
+                .detail-label {
+                    color: #666;
+                }
+                
+                .detail-value {
+                    font-weight: 500;
+                    color: #333;
+                }
+                
+                .casino-bonus {
+                    background: #f8f9fa;
+                    padding: 12px;
+                    border-radius: 6px;
+                    margin: 15px 0;
+                    text-align: center;
+                    font-weight: bold;
+                    color: #2196F3;
+                }
+                
+                .casino-actions {
+                    display: flex;
+                    gap: 10px;
+                    margin-top: 15px;
+                }
+                
+                .btn {
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 5px;
+                    font-weight: bold;
+                    text-decoration: none;
+                    text-align: center;
+                    cursor: pointer;
+                    flex: 1;
+                }
+                
+                .btn-primary {
+                    background: #2196F3;
+                    color: white;
+                }
+                
+                .btn-secondary {
+                    background: #f8f9fa;
+                    color: #333;
+                    border: 1px solid #ddd;
+                }
+                
+                .filters-section {
+                    background: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    margin: 20px 0;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                
+                .filters-row {
+                    display: flex;
+                    gap: 15px;
+                    flex-wrap: wrap;
+                    align-items: center;
+                }
+                
+                .filter-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 5px;
+                }
+                
+                .filter-group label {
+                    font-weight: 500;
+                    color: #333;
+                    font-size: 14px;
+                }
+                
+                .filter-input, .filter-select {
+                    padding: 8px 12px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 14px;
+                }
+                
+                .results-info {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin: 20px 0;
+                    color: #666;
+                }
+                
+                .pagination {
+                    display: flex;
+                    justify-content: center;
+                    gap: 10px;
+                    margin: 30px 0;
+                }
+                
+                .pagination a, .pagination span {
+                    padding: 8px 12px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    text-decoration: none;
+                    color: #333;
+                }
+                
+                .pagination .current {
+                    background: #2196F3;
+                    color: white;
+                    border-color: #2196F3;
+                }
+                
+                .featured-badge {
+                    background: #ff6b35;
+                    color: white;
+                    padding: 2px 8px;
+                    border-radius: 12px;
+                    font-size: 11px;
+                    font-weight: bold;
+                    margin-left: 10px;
+                }
+                
+                .category-tags {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 5px;
+                    margin: 10px 0;
+                }
+                
+                .category-tag {
+                    background: #e3f2fd;
+                    color: #1976d2;
+                    padding: 2px 8px;
+                    border-radius: 12px;
+                    font-size: 11px;
+                }
+                
+                @media (max-width: 768px) {
+                    .casino-grid {
+                        grid-template-columns: 1fr;
+                    }
+                    
+                    .filters-row {
+                        flex-direction: column;
+                        align-items: stretch;
+                    }
+                    
+                    .filter-group {
+                        width: 100%;
+                    }
+                    
+                    .results-info {
+                        flex-direction: column;
+                        gap: 10px;
+                        text-align: center;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <header class="site-header">
+                <div class="container">
+                    <nav class="main-nav">
+                        <a href="/" class="logo">Best Casino Portal</a>
+                        <div class="nav-links">
+                            <a href="/reviews">Reviews</a>
+                            <a href="/casinos" class="active">All Casinos</a>
+                            <a href="/bonuses">Bonuses</a>
+                            <a href="/games">Games</a>
+                        </div>
+                    </nav>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div class="container">
+                    <div class="page-header">
+                        <h1>Casino Comparison Grid</h1>
+                        <p class="page-description">Compare 90+ online casinos side by side. Use our advanced filters to find the perfect casino for your gaming preferences.</p>
+                        
+                        <div class="author-info">
+                            <small>Expert analysis by <strong><?= htmlspecialchars($author['name']) ?></strong>, <?= htmlspecialchars($author['title']) ?></small>
+                        </div>
+                    </div>
+
+                    <!-- Filters Section -->
+                    <div class="filters-section">
+                        <h3>Filter & Search Casinos</h3>
+                        <form method="GET" class="filters-form" id="filtersForm">
+                            <div class="filters-row">
+                                <div class="filter-group">
+                                    <label for="category">Category</label>
+                                    <select name="category" id="category" class="filter-select">
+                                        <?php foreach ($categories as $key => $label): ?>
+                                            <option value="<?= htmlspecialchars($key) ?>" <?= $currentCategory === $key ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($label) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-group">
+                                    <label for="search">Search</label>
+                                    <input type="text" name="search" id="search" class="filter-input" 
+                                           placeholder="Search casino name..." value="<?= htmlspecialchars($search) ?>">
+                                </div>
+                                
+                                <div class="filter-group">
+                                    <label for="sort">Sort By</label>
+                                    <select name="sort" id="sort" class="filter-select">
+                                        <option value="rating" <?= $sortBy === 'rating' ? 'selected' : '' ?>>Rating</option>
+                                        <option value="established" <?= $sortBy === 'established' ? 'selected' : '' ?>>Established</option>
+                                        <option value="name" <?= $sortBy === 'name' ? 'selected' : '' ?>>Name</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-group">
+                                    <label>&nbsp;</label>
+                                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Results Info -->
+                    <div class="results-info">
+                        <div>
+                            Showing <?= count($casinos) ?> of <?= $pagination['total'] ?> casinos
+                            <?php if ($search): ?>
+                                for "<?= htmlspecialchars($search) ?>"
+                            <?php endif; ?>
+                            <?php if ($currentCategory !== 'all'): ?>
+                                in <?= htmlspecialchars($categories[$currentCategory]) ?>
+                            <?php endif; ?>
+                        </div>
+                        <div>
+                            Page <?= $pagination['page'] ?> of <?= $pagination['totalPages'] ?>
+                        </div>
+                    </div>
+
+                    <!-- Casino Grid -->
+                    <div class="casino-grid" id="casinoGrid">
+                        <?php foreach ($casinos as $casino): ?>
+                            <div class="casino-card">
+                                <div class="casino-header">
+                                    <div class="casino-logo"><?= htmlspecialchars($casino['logo']) ?></div>
+                                    <div>
+                                        <h3 class="casino-name">
+                                            <?= htmlspecialchars($casino['name']) ?>
+                                            <?php if ($casino['featured']): ?>
+                                                <span class="featured-badge">FEATURED</span>
+                                            <?php endif; ?>
+                                        </h3>
+                                        <div class="casino-rating">
+                                            ⭐ <?= number_format($casino['rating'], 1) ?>/5.0
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="casino-details">
+                                    <div class="detail-row">
+                                        <span class="detail-label">Established:</span>
+                                        <span class="detail-value"><?= $casino['established'] ?></span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Games:</span>
+                                        <span class="detail-value"><?= htmlspecialchars($casino['games']) ?></span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">RTP:</span>
+                                        <span class="detail-value"><?= htmlspecialchars($casino['rtp']) ?></span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Payout:</span>
+                                        <span class="detail-value"><?= htmlspecialchars($casino['payout']) ?></span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">License:</span>
+                                        <span class="detail-value"><?= htmlspecialchars($casino['license']) ?></span>
+                                    </div>
+                                </div>
+
+                                <div class="casino-bonus">
+                                    <?= htmlspecialchars($casino['bonus']) ?>
+                                </div>
+
+                                <div class="category-tags">
+                                    <?php foreach (array_slice($casino['categories'], 0, 3) as $category): ?>
+                                        <span class="category-tag"><?= htmlspecialchars($category) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+
+                                <div class="casino-actions">
+                                    <a href="/casino/<?= htmlspecialchars($casino['slug']) ?>" class="btn btn-secondary">View Details</a>
+                                    <a href="/casino/<?= htmlspecialchars($casino['slug']) ?>/play" class="btn btn-primary">Play Now</a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <!-- Pagination -->
+                    <?php if ($pagination['totalPages'] > 1): ?>
+                        <div class="pagination">
+                            <?php if ($pagination['page'] > 1): ?>
+                                <a href="?<?= http_build_query(array_merge($_GET, ['page' => $pagination['page'] - 1])) ?>">← Previous</a>
+                            <?php endif; ?>
+                            
+                            <?php for ($i = max(1, $pagination['page'] - 2); $i <= min($pagination['totalPages'], $pagination['page'] + 2); $i++): ?>
+                                <?php if ($i === $pagination['page']): ?>
+                                    <span class="current"><?= $i ?></span>
+                                <?php else: ?>
+                                    <a href="?<?= http_build_query(array_merge($_GET, ['page' => $i])) ?>"><?= $i ?></a>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+                            
+                            <?php if ($pagination['page'] < $pagination['totalPages']): ?>
+                                <a href="?<?= http_build_query(array_merge($_GET, ['page' => $pagination['page'] + 1])) ?>">Next →</a>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <!-- Expert Analysis Section -->
+                    <div class="expert-section" style="margin-top: 40px; padding: 30px; background: #f8f9fa; border-radius: 8px;">
+                        <h2>Expert Casino Comparison Analysis</h2>
+                        <div class="author-bio">
+                            <p><strong><?= htmlspecialchars($author['name']) ?></strong> has been analyzing Canadian online casinos for <?= htmlspecialchars($author['experience']) ?>. <?= htmlspecialchars($author['bio']) ?></p>
+                        </div>
+                        
+                        <div class="analysis-content">
+                            <h3>How to Use Our Casino Comparison Grid</h3>
+                            <p>Our comprehensive casino comparison tool allows you to evaluate over 90 online casinos side by side. Here's how to make the most of it:</p>
+                            
+                            <ul>
+                                <li><strong>Filter by Category:</strong> Use our category filters to narrow down casinos by your preferences - whether you're looking for the best live dealer games, mobile casinos, or crypto-friendly sites.</li>
+                                <li><strong>Compare Key Metrics:</strong> Each casino card displays essential information including ratings, RTP percentages, game counts, and payout times.</li>
+                                <li><strong>Bonus Comparison:</strong> Easily compare welcome bonuses and promotional offers across different casinos.</li>
+                                <li><strong>Expert Ratings:</strong> Our ratings are based on <?= htmlspecialchars($author['expertise']) ?> and real player experiences.</li>
+                            </ul>
+                            
+                            <h3>What Makes a Great Online Casino?</h3>
+                            <p>When comparing casinos, <?= htmlspecialchars($author['name']) ?> recommends focusing on these key factors:</p>
+                            
+                            <ul>
+                                <li><strong>Licensing & Safety:</strong> Look for casinos licensed by reputable authorities like MGA, UKGC, or Curacao.</li>
+                                <li><strong>Game Variety:</strong> The best casinos offer 1,000+ games from top providers.</li>
+                                <li><strong>Payout Speed:</strong> Fast payouts (1-3 days) indicate a well-managed casino.</li>
+                                <li><strong>Return to Player (RTP):</strong> Higher RTPs mean better value for players.</li>
+                                <li><strong>Customer Support:</strong> 24/7 support with multiple contact methods is essential.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <script>
+                // Auto-submit form on filter changes
+                document.addEventListener('DOMContentLoaded', function() {
+                    const form = document.getElementById('filtersForm');
+                    const selects = form.querySelectorAll('select');
+                    const searchInput = document.getElementById('search');
+                    
+                    selects.forEach(select => {
+                        select.addEventListener('change', () => {
+                            // Reset to page 1 when filters change
+                            const pageInput = form.querySelector('input[name="page"]');
+                            if (pageInput) pageInput.value = '1';
+                            form.submit();
+                        });
+                    });
+                    
+                    // Debounced search
+                    let searchTimeout;
+                    searchInput.addEventListener('input', function() {
+                        clearTimeout(searchTimeout);
+                        searchTimeout = setTimeout(() => {
+                            const pageInput = form.querySelector('input[name="page"]');
+                            if (pageInput) pageInput.value = '1';
+                            form.submit();
+                        }, 500);
+                    });
+                });
+            </script>
+        </body>
+        </html>
+        <?php
+    }
+}

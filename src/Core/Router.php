@@ -103,7 +103,9 @@ class Router {
         // Default routes
         $this->get('/', [$this, 'handleHome']);
         $this->get('/home', [$this, 'handleHome']);
-        $this->get('/casinos', [$this, 'handleCasinos']);
+        $this->get('/casinos', [$this, 'handleCasinoGrid']);
+        $this->get('/casinos/grid', [$this, 'handleCasinoGrid']);
+        $this->get('/casinos/ajax', [$this, 'handleCasinoGridAjax']);
         $this->get('/casino/{id}', [$this, 'handleCasinoDetail']);
         $this->get('/reviews', [$this, 'handleReviews']);
         $this->get('/authors', [$this, 'handleAuthors']);
@@ -123,6 +125,20 @@ class Router {
         require_once __DIR__ . '/../Controllers/CasinoController.php';
         $controller = new \App\Controllers\CasinoController();
         $controller->list();
+        exit;
+    }
+    
+    public function handleCasinoGrid(): void {
+        require_once __DIR__ . '/../Controllers/CasinoGridController.php';
+        $controller = new \App\Controllers\CasinoGridController();
+        $controller->index();
+        exit;
+    }
+    
+    public function handleCasinoGridAjax(): void {
+        require_once __DIR__ . '/../Controllers/CasinoGridController.php';
+        $controller = new \App\Controllers\CasinoGridController();
+        $controller->ajax();
         exit;
     }
     
