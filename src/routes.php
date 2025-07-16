@@ -12,6 +12,18 @@ $router->get('/home', 'HomeController@index');
 $router->get('/casinos', 'CasinoController@list');
 $router->get('/casino/{slug}', 'CasinoController@detail');
 
+// Casino Categories routes (PRD #04)
+$router->get('/categories', 'CasinoCategoriesController@index');
+$router->get('/categories/{categoryId}', 'CasinoCategoriesController@showCategory');
+$router->get('/categories/multiple', 'CasinoCategoriesController@showMultipleCategories');
+$router->get('/api/categories/{categoryId}/filter', 'CasinoCategoriesController@filterCategory');
+$router->get('/api/categories/{categoryId}/filters', 'CasinoCategoriesController@getCategoryFilters');
+
+// Interactive Casino Grid routes (PRD #02)
+$router->get('/casino-grid', 'CasinoGridController@index');
+$router->get('/compare-all-casinos', 'CasinoGridController@index');
+$router->get('/api/casino-grid', 'CasinoGridController@api');
+
 // Review routes
 $router->get('/reviews', 'ReviewController@list');
 $router->get('/review/{slug}', 'ReviewController@detail');

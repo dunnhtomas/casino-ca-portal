@@ -2,19 +2,25 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Services\FeaturedCasinoService;
+use App\Services\CasinoCategoriesService;
 
 class HomeController extends Controller {
     public function index(): void {
-        // Get comprehensive data matching casino.ca exactly
+        // Get casino data
         $topCasinos = $this->getTopCasinos();
-        $categories = $this->getCasinoCategories();
+        
+        // Get comprehensive casino categories for navigation
+        $categoriesService = new CasinoCategoriesService();
+        $categories = $categoriesService->getAllCategories();
+        
         $featuredGames = $this->getFeaturedGames();
         $bonusCategories = $this->getBonusCategories();
-        $topCasinosDetailed = $this->getTopCasinosDetailed();
-        $popularGames = $this->getPopularGames();
-        $experts = $this->getExperts();
-        $mobileApps = $this->getMobileApps();
-        $paymentMethods = $this->getPaymentMethods();
+        
+        // Get featured casinos for spotlight carousel
+        $featuredCasinoService = new FeaturedCasinoService();
+        $featuredCasinos = $featuredCasinoService->getFeaturedCasinos();
+        $carouselConfig = $featuredCasinoService->getCarouselConfig();
         
         echo '<!DOCTYPE html>
 <html lang="en">
@@ -23,6 +29,7 @@ class HomeController extends Controller {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compare the best Canadian online casinos in 2025</title>
     <meta name="description" content="Casino.ca is your go-to for finding the best online casino in Canada. With 10 years online, we\'ve reviewed over 120 popular CA casinos. Expert reviews, exclusive bonuses, and trusted recommendations.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -115,13 +122,6 @@ class HomeController extends Controller {
             margin-bottom: 2rem;
             color: #333;
             font-weight: 700;
-        }
-        
-        .section-subtitle {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 2rem;
-            line-height: 1.6;
         }
         
         .casinos-list {
@@ -288,183 +288,129 @@ class HomeController extends Controller {
             background: #5a6268;
         }
         
-        .casino-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-        
-        .casino-grid-item {
-            background: #f8f9fa;
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-            transition: transform 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .casino-grid-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        .casino-grid-logo {
-            width: 60px;
-            height: 60px;
-            background: #fff;
-            border-radius: 6px;
-            margin: 0 auto 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #666;
-            font-size: 0.8rem;
-        }
-        
-        .casino-grid-name {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #333;
-        }
-        
         .categories-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 1.5rem;
             margin: 2rem 0;
         }
         
-        .category-card {
-            background: #f8f9fa;
+        .casino-categories-nav {
+            background: #ffffff;
+            border-radius: 12px;
             border: 1px solid #e5e5e5;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .categories-intro {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .categories-stats {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .stat-item strong {
+            color: #333;
+            display: block;
+            font-size: 1.2rem;
+        }
+        
+        .view-all-categories-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
             border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .view-all-categories-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102,126,234,0.3);
+        }
+        
+        .category-card {
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
             padding: 1.5rem;
-            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-color: transparent;
+        }
+        
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
         }
         
         .category-icon {
             font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-        
-        .category-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-        
-        .category-casino {
-            color: #d63384;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .category-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .detailed-casino {
-            background: #ffffff;
-            border: 1px solid #e5e5e5;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .detailed-casino-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .detailed-casino-logo {
-            width: 80px;
-            height: 80px;
-            background: #f8f9fa;
-            border-radius: 8px;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: #666;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
         }
         
-        .detailed-casino-info h3 {
-            font-size: 1.5rem;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-        
-        .detailed-casino-rating {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .detailed-casino-bonus {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .pros-cons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin: 1.5rem 0;
-        }
-        
-        .pros, .cons {
+        .category-count {
             background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
+            color: #666;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
         
-        .pros h4, .cons h4 {
+        .category-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        
+        .category-description {
+            color: #7f8c8d;
+            line-height: 1.5;
             margin-bottom: 1rem;
-            color: #333;
+            font-size: 0.9rem;
         }
         
-        .pros ul {
-            list-style: none;
+        .category-link {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
         }
         
-        .pros li {
-            padding: 0.25rem 0;
-            color: #28a745;
-        }
-        
-        .pros li:before {
-            content: "✓ ";
-            font-weight: bold;
-        }
-        
-        .cons ul {
-            list-style: none;
-        }
-        
-        .cons li {
-            padding: 0.25rem 0;
-            color: #dc3545;
-        }
-        
-        .cons li:before {
-            content: "✗ ";
-            font-weight: bold;
+        .category-link:hover {
+            color: #2980b9;
         }
         
         .games-grid {
@@ -522,857 +468,502 @@ class HomeController extends Controller {
             display: inline-block;
         }
         
-        .trust-section {
+        .footer {
             background: #f8f9fa;
-            padding: 3rem 0;
-            margin: 4rem 0;
+            border-top: 1px solid #e5e5e5;
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
         }
         
-        .expert-grid {
+        .footer-content {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .footer-section a {
+            color: #666;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-section a:hover {
+            color: #d63384;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e5e5;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Interactive Casino Grid Styles (PRD #02) */
+        .casino-grid-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
             margin: 2rem 0;
         }
         
-        .expert-card {
-            background: #ffffff;
-            border: 1px solid #e5e5e5;
-            border-radius: 12px;
+        .casino-grid-preview {
+            background: white;
+            border-radius: 8px;
             padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .grid-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .grid-stats {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .stat-item {
             text-align: center;
         }
         
-        .expert-photo {
-            width: 80px;
-            height: 80px;
-            background: #d63384;
-            border-radius: 50%;
-            margin: 0 auto 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
+        .stat-number {
+            display: block;
             font-size: 1.5rem;
+            font-weight: bold;
+            color: #d63384;
         }
         
-        .expert-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-        
-        .expert-title {
+        .stat-label {
             font-size: 0.9rem;
             color: #666;
-            margin-bottom: 1rem;
         }
         
-        .expert-picks {
+        .btn-large {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .casino-grid-mini {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .footer {
-            background: #f8f9fa;
-            border-top: 1px solid #e5e5e5;
-            padding: 3rem 0 1rem;
-            margin-top: 4rem;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
             margin-bottom: 2rem;
         }
         
-        .footer-section h3 {
-            color: #333;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-        
-        .footer-section a {
-            color: #666;
-            text-decoration: none;
-            display: block;
-            margin-bottom: 0.5rem;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-section a:hover {
-            color: #d63384;
-        }
-        
-        .footer-bottom {
+        .grid-casino-item {
             text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid #e5e5e5;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .casino-card {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .casino-info {
-                width: 100%;
-            }
-            
-            .casino-bonus,
-            .casino-stats {
-                margin: 0;
-                width: 100%;
-            }
-            
-            .casino-stats {
-                justify-content: space-around;
-            }
-            
-            .casino-actions {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .pros-cons {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header class="header">
-        <nav class="nav">
-            <a href="/" class="logo">Casino.ca</a>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/reviews">Casino reviews</a></li>
-                <li><a href="/bonus">Bonus offers</a></li>
-                <li><a href="/free-games">Free games</a></li>
-                <li><a href="/real-money">Real money casinos</a></li>
-                <li><a href="/authors">Our Experts</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <section class="hero">
-        <div class="container">
-            <h1>Compare the best Canadian online casinos in 2025</h1>
-            <p>Casino.ca is your go-to for finding the best online casino in Canada. With 10 years online, we\'ve reviewed over 120 popular CA casinos. Tap one of our experts\' top recommendations to get playing.</p>
-        </div>
-    </section>
-
-    <main class="container">
-        <section class="section">
-            <h2 class="section-title">Top online casinos for Canadian players</h2>
-            <div class="casinos-list">';
-        
-        foreach ($topCasinos as $index => $casino) {
-            echo '<div class="casino-card">
-                <div class="casino-info">
-                    <div class="casino-rank">' . ($index + 1) . '</div>
-                    <div class="casino-logo">' . substr($casino['name'], 0, 3) . '</div>
-                    <div class="casino-details">
-                        <div class="casino-name">' . htmlspecialchars($casino['name']) . '</div>
-                        <div class="casino-meta">Established in ' . $casino['established'] . '</div>
-                        <div class="casino-rating">
-                            <span class="stars">★★★★★</span>
-                            <span class="rating-text">' . $casino['rating'] . '/5 ' . $casino['rating_text'] . '</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="casino-bonus">
-                    ' . htmlspecialchars($casino['bonus']) . '
-                </div>
-                
-                <div class="casino-stats">
-                    <div class="stat">
-                        <div class="stat-label">RTP</div>
-                        <div class="stat-value">' . $casino['rtp'] . '</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Payout</div>
-                        <div class="stat-value">' . $casino['payout'] . '</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Games</div>
-                        <div class="stat-value">' . $casino['games'] . '</div>
-                    </div>
-                </div>
-                
-                <div class="casino-actions">
-                    <a href="/casino/' . $casino['slug'] . '" class="btn btn-primary">Get bonus</a>
-                    <a href="/casino/' . $casino['slug'] . '" class="btn btn-secondary">More info</a>
-                </div>
-            </div>';
-        }
-        
-        echo '</div>
-            <div class="view-all">
-                <a href="/reviews" class="view-all-btn">View 90+ casino reviews</a>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2 class="section-title">Compare every recommended Canadian online casino</h2>
-            <p class="section-subtitle">Choose an online casino from the following list and find all the important information around this casino brand at a glance. You can compare how our experts rated the Canadian online casinos in full detail, but also the bonuses, promotions and games each one offers or dive deep into the statistics for each operator.</p>
-            <div class="casino-grid">';
-        
-        foreach ($topCasinos as $casino) {
-            echo '<div class="casino-grid-item">
-                <div class="casino-grid-logo">' . substr($casino['name'], 0, 3) . '</div>
-                <div class="casino-grid-name">' . htmlspecialchars($casino['name']) . '</div>
-            </div>';
-        }
-        
-        echo '</div>
-        </section>
-
-        <section class="section">
-            <h2 class="section-title">The best online casinos in Canada by category</h2>
-            <p class="section-subtitle">To help narrow down your choice of casinos online, our experts have recommended Canada\'s top casino sites by key feature. These brands lead in their field, from real money online casinos with high payout games at 97%+ to valuable bonuses with reasonable wagering requirements below 30x.</p>
-            <div class="categories-grid">';
-        
-        foreach ($categories as $category) {
-            echo '<div class="category-card">
-                <div class="category-icon">' . $category['icon'] . '</div>
-                <div class="category-title">' . $category['title'] . '</div>
-                <div class="category-casino">' . $category['casino'] . '</div>
-                <div class="category-stats">
-                    <span>' . $category['rtp'] . '</span>
-                    <span>' . $category['games'] . '</span>
-                    <span>' . $category['rating'] . '</span>
-                </div>
-            </div>';
-        }
-        
-        echo '</div>
-        </section>
-
-        <section class="section">
-            <h2 class="section-title">Our top 3 recommended online casinos in detail</h2>
-            <p class="section-subtitle">With so many options, choosing the best online casino for your gaming style can be daunting. That\'s why we\'ve filtered out the noise. These are our top three Canadian online casinos, each packed with an impressive selection of games, generous bonuses, and unbeatable customer service. You\'re just a click away from enjoying the best casino gameplay online.</p>';
-        
-        foreach ($topCasinosDetailed as $casino) {
-            echo '<div class="detailed-casino">
-                <div class="detailed-casino-header">
-                    <div class="detailed-casino-logo">' . substr($casino['name'], 0, 3) . '</div>
-                    <div class="detailed-casino-info">
-                        <h3>' . htmlspecialchars($casino['name']) . '</h3>
-                        <div class="detailed-casino-rating">
-                            <span class="stars">★★★★★</span>
-                            <span class="rating-text">' . $casino['rating'] . '/5 ' . $casino['rating_text'] . '</span>
-                            <span style="margin-left: 1rem; color: #666;">' . $casino['rtp'] . ' Win rate</span>
-                        </div>
-                        <a href="/casino/' . $casino['slug'] . '" class="detailed-casino-bonus">' . htmlspecialchars($casino['bonus']) . '</a>
-                    </div>
-                </div>
-                
-                <p>' . $casino['description'] . '</p>
-                
-                <div class="pros-cons">
-                    <div class="pros">
-                        <h4>Pros</h4>
-                        <ul>';
-            
-            foreach ($casino['pros'] as $pro) {
-                echo '<li>' . htmlspecialchars($pro) . '</li>';
-            }
-            
-            echo '</ul>
-                    </div>
-                    <div class="cons">
-                        <h4>Cons</h4>
-                        <ul>';
-            
-            foreach ($casino['cons'] as $con) {
-                echo '<li>' . htmlspecialchars($con) . '</li>';
-            }
-            
-            echo '</ul>
-                    </div>
-                </div>
-                
-                <div class="view-all">
-                    <a href="/casino/' . $casino['slug'] . '" class="view-all-btn">Read ' . htmlspecialchars($casino['name']) . ' review</a>
-                </div>
-            </div>';
-        }
-        
-        echo '</section>
-
-        <section class="section">
-            <h2 class="section-title">Play online casino games for free - no download required</h2>
-            <p class="section-subtitle">Looking to join the world of casinos online and play games without any software downloads? We offer a huge library of over 20,000 free casino games you can play right on Casino.ca with no sign up required. Try out new titles and hone your skills without having to wager at a real money casino. Jump right in and experience the excitement firsthand.</p>
-            <div class="games-grid">';
-        
-        foreach ($featuredGames as $game) {
-            echo '<div class="game-card">
-                <div class="game-image">' . $game['icon'] . '</div>
-                <div class="game-info">
-                    <div class="game-name">' . $game['name'] . '</div>
-                    <div class="game-provider">' . $game['provider'] . '</div>
-                    <div class="game-rtp">' . $game['rtp'] . ' RTP</div>
-                </div>
-            </div>';
-        }
-        
-        echo '</div>
-            <div class="view-all">
-                <a href="/free-games" class="view-all-btn">Play 21,500+ casino games free</a>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2 class="section-title">Most popular online slots with Canadian players</h2>
-            <p class="section-subtitle">Certain online slots have captured the hearts of players who enjoy gambling online in Canada. From the immersive adventures of Gates of Olympus to the high-octane thrills of Da Vinci Diamond, these popular slots offer captivating gameplay, enticing bonuses, and the potential for big wins. Get ready to spin and win!</p>
-            <div class="games-grid">';
-        
-        foreach ($popularGames as $game) {
-            echo '<div class="game-card">
-                <div class="game-image">' . $game['icon'] . '</div>
-                <div class="game-info">
-                    <div class="game-name">' . $game['name'] . ' – ' . $game['provider'] . '</div>
-                    <div class="game-description">' . $game['description'] . '</div>
-                    <div class="game-rtp">' . $game['rtp'] . ' RTP</div>
-                </div>
-            </div>';
-        }
-        
-        echo '</div>
-        </section>
-
-        <section class="section">
-            <h2 class="section-title">Claim the best online casino bonuses</h2>
-            <p class="section-subtitle">Bonuses are one of the best perks of playing casino games online. You could choose a free spins bonus, ideal for checking out new and exclusive slot games, or pick a rarer no deposit bonus and claim free casino cash with no upfront risk. There\'s plenty of variety to suit any budget and play style. You can even choose a casino online with bonuses for low deposits. Explore all the bonuses below and tap the right one for you.</p>
-            <div class="categories-grid">';
-        
-        foreach ($bonusCategories as $bonus) {
-            echo '<div class="category-card">
-                <div class="category-icon">' . $bonus['icon'] . '</div>
-                <div class="category-title">' . $bonus['title'] . '</div>
-                <div class="category-casino">' . $bonus['description'] . '</div>
-            </div>';
-        }
-        
-        echo '</div>
-            <div class="view-all">
-                <a href="/bonus" class="view-all-btn">Find all bonuses</a>
-            </div>
-        </section>
-    </main>
-
-    <section class="trust-section">
-        <div class="container">
-            <h2 class="section-title">Why trust Casino.ca?</h2>
-            <p class="section-subtitle">We guide thousands of Canadians to better casino and online gaming experiences every month. As a trusted authority, our expertise has been quoted in the Toronto Sun, National Post, and The Montreal Gazette. Our expert team is based in Canada and globally, and has over 25 years in iGaming. They\'ve written hundreds of gambling guides and reviewed scores of new games and casinos. You always have the latest advice and information to hand before you join your next game.</p>
-            
-            <div class="expert-grid">';
-        
-        foreach ($experts as $expert) {
-            echo '<div class="expert-card">
-                <div class="expert-photo">' . substr($expert['name'], 0, 2) . '</div>
-                <div class="expert-name">' . htmlspecialchars($expert['name']) . '</div>
-                <div class="expert-title">' . htmlspecialchars($expert['title']) . '</div>
-                <p>' . $expert['bio'] . '</p>
-                <div class="expert-picks">
-                    <h4>Top picks:</h4>';
-            
-            foreach ($expert['picks'] as $pick) {
-                echo '<div class="casino-grid-item">
-                    <div class="casino-grid-logo">' . substr($pick['name'], 0, 3) . '</div>
-                    <div class="casino-grid-name">' . htmlspecialchars($pick['name']) . '</div>
-                </div>';
-            }
-            
-            echo '</div>
-            </div>';
-        }
-        
-        echo '</div>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Casino Reviews</h3>
-                    <a href="/reviews">All Casino Reviews</a>
-                    <a href="/reviews/jackpot-city">Jackpot City Review</a>
-                    <a href="/reviews/spin-palace">Spin Palace Review</a>
-                    <a href="/reviews/lucky-ones">Lucky Ones Review</a>
-                    <a href="/reviews/pistolo">Pistolo Review</a>
-                </div>
-                <div class="footer-section">
-                    <h3>Casino Games</h3>
-                    <a href="/slots">Online Slots</a>
-                    <a href="/blackjack">Blackjack</a>
-                    <a href="/roulette">Roulette</a>
-                    <a href="/poker">Poker</a>
-                    <a href="/baccarat">Baccarat</a>
-                </div>
-                <div class="footer-section">
-                    <h3>Bonuses</h3>
-                    <a href="/bonus">All Bonuses</a>
-                    <a href="/no-deposit">No Deposit Bonuses</a>
-                    <a href="/minimum-deposit/1-dollar-deposit-casinos">$1 Deposit Casinos</a>
-                    <a href="/minimum-deposit/5-dollar-deposit-casinos">$5 Deposit Casinos</a>
-                    <a href="/minimum-deposit/10-dollar-deposit-casinos">$10 Deposit Casinos</a>
-                </div>
-                <div class="footer-section">
-                    <h3>Our Experts</h3>
-                    <a href="/authors">Meet Our Team</a>
-                    <a href="/authors/sarah-mitchell">Sarah Mitchell</a>
-                    <a href="/authors/david-thompson">David Thompson</a>
-                    <a href="/authors/jennifer-carter">Jennifer Carter</a>
-                    <a href="/about">About Us</a>
-                </div>
-                <div class="footer-section">
-                    <h3>Canadian Provinces</h3>
-                    <a href="/regions/ontario">Ontario</a>
-                    <a href="/regions/british-columbia">British Columbia</a>
-                    <a href="/regions/alberta">Alberta</a>
-                    <a href="/regions/quebec">Quebec</a>
-                    <a href="/regions">View all regions</a>
-                </div>
-                <div class="footer-section">
-                    <h3>Legal & Help</h3>
-                    <a href="/privacy-policy">Privacy Policy</a>
-                    <a href="/terms-and-conditions">Terms & Conditions</a>
-                    <a href="/problem-gambling">Problem Gambling</a>
-                    <a href="/sitemap">Sitemap</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>Casino.ca</p>
-                <p>1918 St. Regis Blvd, Montreal, Dorval, QC H9P 1H6, Canada</p>
-                <p>Copyright © 2012 - 2025 Casino.ca | All rights reserved</p>
-                <p>Gambling can be addictive, please play responsibly. 19+</p>
-            </div>
-        </div>
-    </footer>
-</body>
-</html>';
-    }
-        
-        echo '<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compare the best Canadian online casinos in 2025</title>
-    <meta name="description" content="Casino.ca is your go-to for finding the best online casino in Canada. With 10 years online, we\'ve reviewed over 120 popular CA casinos. Expert reviews, exclusive bonuses, and trusted recommendations.">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #ffffff;
-        }
-        
-        .header {
-            background: #ffffff;
-            border-bottom: 1px solid #e5e5e5;
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        
-        .nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #d63384;
-            text-decoration: none;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-        
-        .nav-links a {
-            color: #333;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        
-        .nav-links a:hover {
-            color: #d63384;
-        }
-        
-        .hero {
-            background: #ffffff;
-            padding: 3rem 0;
-            text-align: center;
-            border-bottom: 1px solid #e5e5e5;
-        }
-        
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #333;
-            font-weight: 700;
-        }
-        
-        .hero p {
-            font-size: 1.1rem;
-            color: #666;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .section {
-            margin: 4rem 0;
-        }
-        
-        .section-title {
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            color: #333;
-            font-weight: 700;
-        }
-        
-        .casinos-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .casino-card {
-            background: #ffffff;
-            border: 1px solid #e5e5e5;
+            padding: 1rem;
+            border: 1px solid #e9ecef;
             border-radius: 8px;
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: box-shadow 0.3s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
         
-        .casino-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        .grid-casino-item:hover {
+            border-color: #d63384;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         
-        .casino-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex: 1;
-        }
-        
-        .casino-rank {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #d63384;
-            min-width: 30px;
-        }
-        
-        .casino-logo {
-            width: 60px;
-            height: 60px;
-            background: #f8f9fa;
-            border-radius: 8px;
+        .casino-mini-logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #d63384, #e91e63);
+            color: white;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            color: #666;
-        }
-        
-        .casino-details {
-            flex: 1;
-        }
-        
-        .casino-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.25rem;
-        }
-        
-        .casino-meta {
+            margin: 0 auto 0.5rem;
             font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 0.5rem;
         }
         
-        .casino-rating {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .stars {
-            color: #ffc107;
-        }
-        
-        .rating-text {
-            font-size: 0.9rem;
-            color: #28a745;
-            font-weight: 600;
-        }
-        
-        .casino-bonus {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            font-weight: 600;
-            text-align: center;
-            margin: 0 1rem;
-            min-width: 200px;
-        }
-        
-        .casino-stats {
-            display: flex;
-            gap: 1rem;
-            margin: 0 1rem;
-        }
-        
-        .stat {
-            text-align: center;
-        }
-        
-        .stat-label {
+        .casino-mini-name {
             font-size: 0.8rem;
-            color: #666;
-            margin-bottom: 0.25rem;
-        }
-        
-        .stat-value {
-            font-weight: 600;
+            font-weight: 500;
             color: #333;
         }
         
-        .casino-actions {
-            display: flex;
-            gap: 0.5rem;
+        .grid-casino-item:last-child .casino-mini-logo {
+            background: linear-gradient(135deg, #28a745, #20c997);
         }
         
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-        
-        .btn-primary {
-            background: #d63384;
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            color: #d63384;
-            border: 1px solid #d63384;
-        }
-        
-        .btn:hover {
-            transform: translateY(-1px);
-        }
-        
-        .view-all {
-            text-align: center;
+        .grid-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
             margin-top: 2rem;
         }
         
-        .view-all-btn {
-            background: #6c757d;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-block;
-            transition: background 0.3s ease;
-        }
-        
-        .view-all-btn:hover {
-            background: #5a6268;
-        }
-        
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-        
-        .category-card {
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
             background: #f8f9fa;
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
+            border-radius: 6px;
         }
         
-        .category-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
+        .feature-icon {
+            font-size: 1.2rem;
         }
         
-        .category-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+        .feature-text {
+            font-weight: 500;
             color: #333;
         }
         
-        .category-casino {
-            color: #d63384;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .category-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
+        /* Featured Casino Spotlight Carousel Styles (PRD #03) */
+        .featured-casino-spotlight {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 3rem 0;
             margin: 2rem 0;
-        }
-        
-        .game-card {
-            background: #ffffff;
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
+            position: relative;
             overflow: hidden;
-            transition: transform 0.3s ease;
         }
         
-        .game-card:hover {
-            transform: translateY(-2px);
+        .featured-casino-spotlight::before {
+            content: \'\';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(214, 51, 132, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+            pointer-events: none;
         }
         
-        .game-image {
-            width: 100%;
-            height: 150px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .spotlight-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .spotlight-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .spotlight-subtitle {
+            font-size: 1.1rem;
+            color: #e9ecef;
+            margin: 0;
+        }
+        
+        .carousel-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .carousel-wrapper {
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .carousel-slide {
+            min-width: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .carousel-slide.active {
+            opacity: 1;
+        }
+        
+        .featured-casino-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            color: #333;
+            border-radius: 12px;
+            padding: 2.5rem;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .casino-featured-badge {
+            position: absolute;
+            top: -10px;
+            right: 2rem;
+            background: linear-gradient(45deg, #d63384, #e91e63);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(214, 51, 132, 0.3);
+        }
+        
+        .badge-reason {
+            display: block;
+            font-size: 0.7rem;
+            opacity: 0.9;
+            margin-top: 0.2rem;
+        }
+        
+        .featured-casino-header {
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        
-        .game-info {
-            padding: 1rem;
-        }
-        
-        .game-name {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .game-provider {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 0.5rem;
-        }
-        
-        .game-rtp {
-            background: #28a745;
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            display: inline-block;
-        }
-        
-        .footer {
-            background: #f8f9fa;
-            border-top: 1px solid #e5e5e5;
-            padding: 3rem 0 1rem;
-            margin-top: 4rem;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
             margin-bottom: 2rem;
         }
         
-        .footer-section h3 {
-            color: #333;
-            margin-bottom: 1rem;
-            font-weight: 600;
+        .featured-casino-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #d63384, #e91e63);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(214, 51, 132, 0.3);
         }
         
-        .footer-section a {
-            color: #666;
-            text-decoration: none;
-            display: block;
+        .featured-casino-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0 0 0.5rem 0;
+            color: #1a1a2e;
+        }
+        
+        .featured-casino-meta {
+            display: flex;
+            gap: 1rem;
             margin-bottom: 0.5rem;
-            transition: color 0.3s ease;
+            font-size: 0.9rem;
+            color: #666;
         }
         
-        .footer-section a:hover {
+        .featured-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .featured-rating .stars {
+            color: #ffd700;
+            font-size: 1.1rem;
+        }
+        
+        .rating-value {
+            font-weight: bold;
             color: #d63384;
         }
         
-        .footer-bottom {
+        .featured-casino-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .featured-description p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+            margin: 0;
+        }
+        
+        .featured-bonus-highlight {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
             text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid #e5e5e5;
-            color: #666;
+            border: 2px solid #d63384;
+        }
+        
+        .bonus-label {
             font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        .bonus-amount {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #d63384;
+            margin-bottom: 0.5rem;
+        }
+        
+        .bonus-code {
+            font-size: 0.9rem;
+            color: #666;
+            font-family: monospace;
+            background: #fff;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .featured-stats {
+            display: flex;
+            justify-content: space-around;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .featured-stats .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .featured-stats .stat-label {
+            display: block;
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+        
+        .featured-stats .stat-value {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #d63384;
+        }
+        
+        .featured-highlights h4 {
+            font-size: 1rem;
+            margin: 0 0 0.8rem 0;
+            color: #333;
+        }
+        
+        .highlight-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .highlight-list li {
+            padding: 0.3rem 0;
+            position: relative;
+            padding-left: 1.2rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .highlight-list li::before {
+            content: \'✓\';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .featured-casino-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+        }
+        
+        .carousel-controls {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 1rem;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+        
+        .carousel-btn {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .carousel-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+        
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .indicator.active,
+        .indicator:hover {
+            background: #ffd700;
+            transform: scale(1.2);
+        }
+        
+        .spotlight-footer {
+            text-align: center;
+            margin-top: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .spotlight-disclaimer {
+            font-size: 0.9rem;
+            color: #adb5bd;
+            margin: 0;
+            font-style: italic;
         }
         
         @media (max-width: 768px) {
@@ -1408,6 +999,99 @@ class HomeController extends Controller {
                 width: 100%;
                 justify-content: center;
             }
+            
+            /* Casino Grid Mobile Styles */
+            .grid-preview-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .grid-stats {
+                justify-content: center;
+                gap: 1rem;
+            }
+            
+            .casino-grid-mini {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+            }
+            
+            .grid-casino-item {
+                padding: 0.5rem;
+            }
+            
+            .casino-mini-logo {
+                width: 40px;
+                height: 40px;
+                font-size: 0.8rem;
+            }
+            
+            .casino-mini-name {
+                font-size: 0.7rem;
+            }
+            
+            .grid-features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            /* Featured Casino Spotlight Mobile Styles */
+            .spotlight-title {
+                font-size: 1.8rem;
+            }
+            
+            .carousel-container {
+                padding: 0 1rem;
+            }
+            
+            .featured-casino-card {
+                padding: 1.5rem;
+            }
+            
+            .featured-casino-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .featured-casino-logo {
+                width: 60px;
+                height: 60px;
+                font-size: 1.2rem;
+            }
+            
+            .featured-casino-name {
+                font-size: 1.4rem;
+            }
+            
+            .featured-casino-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .featured-bonus-highlight {
+                order: -1;
+            }
+            
+            .featured-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .featured-stats .stat-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.5rem;
+                background: #f8f9fa;
+                border-radius: 4px;
+            }
+            
+            .featured-casino-actions {
+                flex-direction: column;
+            }
+            
+            .carousel-controls {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -1430,6 +1114,117 @@ class HomeController extends Controller {
         <div class="container">
             <h1>Compare the best Canadian online casinos in 2025</h1>
             <p>Casino.ca is your go-to for finding the best online casino in Canada. With 10 years online, we\'ve reviewed over 120 popular CA casinos. Tap one of our experts\' top recommendations to get playing.</p>
+        </div>
+    </section>
+
+    <!-- Featured Casino Spotlight Carousel (PRD #03) -->
+    <section class="featured-casino-spotlight">
+        <div class="container">
+            <div class="spotlight-header">
+                <h2 class="spotlight-title">🌟 Featured Casino Spotlight</h2>
+                <p class="spotlight-subtitle">Our expert-selected premium casinos with the best bonuses and highest ratings</p>
+            </div>
+            
+            <div class="carousel-container">
+                <div class="carousel-wrapper">
+                    <div class="carousel-track" id="featuredCarousel">';
+                    
+        foreach ($featuredCasinos as $index => $casino) {
+            $activeClass = $index === 0 ? ' active' : '';
+            echo '<div class="carousel-slide' . $activeClass . '" data-casino-id="' . $casino['id'] . '">
+                        <div class="featured-casino-card">
+                            <div class="casino-featured-badge">
+                                <span class="badge-text">Featured</span>
+                                <span class="badge-reason">' . htmlspecialchars($casino['featured_reason']) . '</span>
+                            </div>
+                            
+                            <div class="featured-casino-header">
+                                <div class="featured-casino-logo">' . $casino['logo'] . '</div>
+                                <div class="featured-casino-info">
+                                    <h3 class="featured-casino-name">' . htmlspecialchars($casino['name']) . '</h3>
+                                    <div class="featured-casino-meta">
+                                        <span class="established">Est. ' . $casino['established'] . '</span>
+                                        <span class="license">' . $casino['license'] . '</span>
+                                    </div>
+                                    <div class="featured-rating">
+                                        <span class="stars">★★★★★</span>
+                                        <span class="rating-value">' . $casino['rating'] . '/5</span>
+                                        <span class="rating-text">' . $casino['rating_text'] . '</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="featured-casino-content">
+                                <div class="featured-description">
+                                    <p>' . htmlspecialchars($casino['featured_description']) . '</p>
+                                </div>
+                                
+                                <div class="featured-bonus-highlight">
+                                    <div class="bonus-label">Welcome Bonus</div>
+                                    <div class="bonus-amount">' . htmlspecialchars($casino['bonus']) . '</div>
+                                    <div class="bonus-code">Code: ' . $casino['bonus_code'] . '</div>
+                                </div>
+                                
+                                <div class="featured-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-label">RTP</span>
+                                        <span class="stat-value">' . $casino['rtp'] . '</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Games</span>
+                                        <span class="stat-value">' . $casino['games'] . '</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Payout</span>
+                                        <span class="stat-value">' . $casino['payout'] . '</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="featured-highlights">
+                                    <h4>Why It\'s Featured:</h4>
+                                    <ul class="highlight-list">';
+            
+            foreach (array_slice($casino['key_features'], 0, 3) as $feature) {
+                echo '<li>' . htmlspecialchars($feature) . '</li>';
+            }
+            
+            echo '</ul>
+                                </div>
+                            </div>
+                            
+                            <div class="featured-casino-actions">
+                                <a href="/casino/' . $casino['slug'] . '" class="btn btn-primary btn-large">
+                                    🎁 Claim ' . $casino['bonus_code'] . ' Bonus
+                                </a>
+                                <a href="/casino/' . $casino['slug'] . '" class="btn btn-secondary">
+                                    📖 Read Full Review
+                                </a>
+                            </div>
+                        </div>
+                    </div>';
+        }
+        
+        echo '</div>
+                </div>
+                
+                <div class="carousel-controls">
+                    <button class="carousel-btn carousel-prev" onclick="moveCarousel(-1)">‹</button>
+                    <button class="carousel-btn carousel-next" onclick="moveCarousel(1)">›</button>
+                </div>
+                
+                <div class="carousel-indicators">';
+                
+        foreach ($featuredCasinos as $index => $casino) {
+            $activeClass = $index === 0 ? ' active' : '';
+            echo '<button class="indicator' . $activeClass . '" onclick="goToSlide(' . $index . ')" data-slide="' . $index . '"></button>';
+        }
+        
+        echo '</div>
+            </div>
+            
+            <div class="spotlight-footer">
+                <p class="spotlight-disclaimer">* Featured casinos are selected based on player ratings, bonus value, game variety, and payout reliability.</p>
+            </div>
         </div>
     </section>
 
@@ -1485,25 +1280,95 @@ class HomeController extends Controller {
             </div>
         </section>
 
-        <section class="section">
-            <h2 class="section-title">The best online casinos in Canada by category</h2>
-            <p>To help narrow down your choice of casinos online, our experts have recommended Canada\'s top casino sites by key feature. These brands lead in their field, from real money online casinos with high payout games at 97%+ to valuable bonuses with reasonable wagering requirements below 30x.</p>
-            <div class="categories-grid">';
-        
-        foreach ($categories as $category) {
-            echo '<div class="category-card">
-                <div class="category-icon">' . $category['icon'] . '</div>
-                <div class="category-title">' . $category['title'] . '</div>
-                <div class="category-casino">' . $category['casino'] . '</div>
-                <div class="category-stats">
-                    <span>' . $category['rtp'] . '</span>
-                    <span>' . $category['games'] . '</span>
-                    <span>' . $category['rating'] . '</span>
+        <!-- Interactive Casino Grid Section (PRD #02) -->
+        <section class="section casino-grid-section">
+            <h2 class="section-title">Compare All Casinos - Interactive Grid</h2>
+            <p>Explore our complete database of 90+ Canadian-friendly online casinos. Use our interactive grid to compare bonuses, ratings, game selections, and find your perfect casino match.</p>
+            
+            <div class="casino-grid-preview">
+                <div class="grid-preview-header">
+                    <div class="grid-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">90+</span>
+                            <span class="stat-label">Casinos</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Categories</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">Real-time</span>
+                            <span class="stat-label">Filtering</span>
+                        </div>
+                    </div>
+                    <a href="/compare-all-casinos" class="btn btn-primary btn-large">Explore All Casinos →</a>
                 </div>
+                
+                <div class="casino-grid-mini">
+                    <div class="grid-casino-item"><div class="casino-mini-logo">JC</div><div class="casino-mini-name">Jackpot City</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">SP</div><div class="casino-mini-name">Spin Palace</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">LO</div><div class="casino-mini-name">Lucky Ones</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">RV</div><div class="casino-mini-name">Royal Vegas</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">PK</div><div class="casino-mini-name">PokerStars</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">RF</div><div class="casino-mini-name">Ruby Fortune</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">CC</div><div class="casino-mini-name">Captain Cooks</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">PS</div><div class="casino-mini-name">Pistolo</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">+82</div><div class="casino-mini-name">More Casinos</div></div>
+                </div>
+                
+                <div class="grid-features">
+                    <div class="feature">
+                        <div class="feature-icon">🔍</div>
+                        <div class="feature-text">Search & Filter</div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-text">Real-time Results</div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-text">Compare Side-by-Side</div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">🎯</div>
+                        <div class="feature-text">Detailed Info</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Discover Canada\'s Best Online Casinos by Category</h2>
+            <p>Find your perfect casino experience with our comprehensive category system. Whether you\'re interested in live dealer action, mobile gaming, cryptocurrency payments, or massive bonuses, we\'ve organized Canada\'s top casinos to match your exact preferences.</p>
+            <div class="casino-categories-nav">
+                <div class="categories-intro">
+                    <div class="categories-stats">
+                        <span class="stat-item"><strong>' . count($categories) . '+</strong> Categories</span>
+                        <span class="stat-item"><strong>200+</strong> Reviewed Casinos</span>
+                        <span class="stat-item"><strong>24/7</strong> Expert Analysis</span>
+                    </div>
+                    <a href="/categories" class="view-all-categories-btn">View All Categories</a>
+                </div>
+                <div class="categories-grid">';
+        
+        // Show top 6 categories on homepage
+        $topCategories = array_slice($categories, 0, 6, true);
+        foreach ($topCategories as $categoryId => $category) {
+            echo '<div class="category-card" style="border-left: 4px solid ' . $category['color'] . ';">
+                <div class="category-header">
+                    <div class="category-icon" style="color: ' . $category['color'] . ';">
+                        <i class="' . $category['icon'] . '"></i>
+                    </div>
+                    <div class="category-count">' . $category['casino_count'] . ' casinos</div>
+                </div>
+                <div class="category-title">' . htmlspecialchars($category['name']) . '</div>
+                <div class="category-description">' . htmlspecialchars($category['description']) . '</div>
+                <a href="/categories/' . $categoryId . '" class="category-link">Explore Category →</a>
             </div>';
         }
         
         echo '</div>
+            </div>
         </section>
 
         <section class="section">
@@ -1607,6 +1472,172 @@ class HomeController extends Controller {
             </div>
         </div>
     </footer>
+
+    <script>
+        // Featured Casino Spotlight Carousel JavaScript (PRD #03)
+        let currentSlide = 0;
+        let autoRotateTimer = null;
+        const slides = document.querySelectorAll(\'.carousel-slide\');
+        const indicators = document.querySelectorAll(\'.indicator\');
+        const totalSlides = slides.length;
+        
+        // Configuration from PHP
+        const carouselConfig = {
+            autoRotate: ' . ($carouselConfig['auto_rotate'] ? 'true' : 'false') . ',
+            rotationSpeed: ' . $carouselConfig['rotation_speed'] . ',
+            transitionDuration: ' . $carouselConfig['transition_duration'] . ',
+            pauseOnHover: ' . ($carouselConfig['pause_on_hover'] ? 'true' : 'false') . '
+        };
+        
+        function showSlide(index) {
+            // Hide all slides
+            slides.forEach(slide => slide.classList.remove(\'active\'));
+            indicators.forEach(indicator => indicator.classList.remove(\'active\'));
+            
+            // Show current slide
+            if (slides[index]) {
+                slides[index].classList.add(\'active\');
+                indicators[index].classList.add(\'active\');
+            }
+            
+            currentSlide = index;
+        }
+        
+        function moveCarousel(direction) {
+            const newIndex = currentSlide + direction;
+            
+            if (newIndex >= totalSlides) {
+                showSlide(0);
+            } else if (newIndex < 0) {
+                showSlide(totalSlides - 1);
+            } else {
+                showSlide(newIndex);
+            }
+            
+            resetAutoRotate();
+        }
+        
+        function goToSlide(index) {
+            showSlide(index);
+            resetAutoRotate();
+        }
+        
+        function nextSlide() {
+            moveCarousel(1);
+        }
+        
+        function startAutoRotate() {
+            if (carouselConfig.autoRotate) {
+                autoRotateTimer = setInterval(nextSlide, carouselConfig.rotationSpeed);
+            }
+        }
+        
+        function stopAutoRotate() {
+            if (autoRotateTimer) {
+                clearInterval(autoRotateTimer);
+                autoRotateTimer = null;
+            }
+        }
+        
+        function resetAutoRotate() {
+            stopAutoRotate();
+            startAutoRotate();
+        }
+        
+        // Initialize carousel
+        document.addEventListener(\'DOMContentLoaded\', function() {
+            // Show first slide
+            showSlide(0);
+            
+            // Start auto-rotation
+            startAutoRotate();
+            
+            // Pause on hover if enabled
+            if (carouselConfig.pauseOnHover) {
+                const carousel = document.querySelector(\'.carousel-container\');
+                if (carousel) {
+                    carousel.addEventListener(\'mouseenter\', stopAutoRotate);
+                    carousel.addEventListener(\'mouseleave\', startAutoRotate);
+                }
+            }
+            
+            // Touch/swipe support for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            const carouselWrapper = document.querySelector(\'.carousel-wrapper\');
+            if (carouselWrapper) {
+                carouselWrapper.addEventListener(\'touchstart\', function(e) {
+                    touchStartX = e.changedTouches[0].screenX;
+                });
+                
+                carouselWrapper.addEventListener(\'touchend\', function(e) {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                });
+            }
+            
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                const swipeDistance = touchEndX - touchStartX;
+                
+                if (Math.abs(swipeDistance) > swipeThreshold) {
+                    if (swipeDistance > 0) {
+                        moveCarousel(-1); // Swipe right, go to previous
+                    } else {
+                        moveCarousel(1); // Swipe left, go to next
+                    }
+                }
+            }
+        });
+        
+        // Analytics tracking for featured casino interactions
+        function trackFeaturedCasinoClick(casinoId, action) {
+            // Track featured casino interactions
+            if (typeof gtag !== \'undefined\') {
+                gtag(\'event\', \'featured_casino_click\', {
+                    \'casino_id\': casinoId,
+                    \'action\': action,
+                    \'slide_position\': currentSlide
+                });
+            }
+            
+            // Console log for debugging
+            console.log(\'Featured Casino Interaction:\', {
+                casinoId: casinoId,
+                action: action,
+                slidePosition: currentSlide
+            });
+        }
+        
+        // Add click tracking to featured casino elements
+        document.addEventListener(\'DOMContentLoaded\', function() {
+            document.querySelectorAll(\'.featured-casino-card\').forEach(function(card) {
+                const casinoId = card.closest(\'.carousel-slide\').dataset.casinoId;
+                
+                // Track clicks on casino cards
+                card.addEventListener(\'click\', function(e) {
+                    if (!e.target.closest(\'.btn\')) {
+                        trackFeaturedCasinoClick(casinoId, \'card_click\');
+                    }
+                });
+                
+                // Track bonus button clicks
+                card.querySelectorAll(\'.btn-primary\').forEach(function(btn) {
+                    btn.addEventListener(\'click\', function() {
+                        trackFeaturedCasinoClick(casinoId, \'bonus_click\');
+                    });
+                });
+                
+                // Track review button clicks
+                card.querySelectorAll(\'.btn-secondary\').forEach(function(btn) {
+                    btn.addEventListener(\'click\', function() {
+                        trackFeaturedCasinoClick(casinoId, \'review_click\');
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>';
     }
@@ -1616,12 +1647,12 @@ class HomeController extends Controller {
             [
                 'name' => 'Jackpot City Casino',
                 'established' => 1998,
-                'rating' => 4.8,
+                'rating' => 4.7,
                 'rating_text' => 'Excellent',
                 'bonus' => '100% up to $4,000 + 210 Free Spins',
                 'rtp' => '97.39%',
                 'payout' => '1-3 days',
-                'games' => '1,350+',
+                'games' => '700+',
                 'slug' => 'jackpot-city'
             ],
             [
@@ -1629,7 +1660,7 @@ class HomeController extends Controller {
                 'established' => 2001,
                 'rating' => 4.7,
                 'rating_text' => 'Excellent',
-                'bonus' => '100% up to $1,000 + 345 Free Spins',
+                'bonus' => '100% up to $1,000 + 345 Bonus Spins',
                 'rtp' => '97.45%',
                 'payout' => '1-3 days',
                 'games' => '1,000+',
@@ -1638,35 +1669,68 @@ class HomeController extends Controller {
             [
                 'name' => 'Lucky Ones',
                 'established' => 2023,
-                'rating' => 4.4,
-                'rating_text' => 'Great',
+                'rating' => 4.7,
+                'rating_text' => 'Excellent',
                 'bonus' => '100% up to $20,000 + 500 Free Spins',
                 'rtp' => '98.27%',
                 'payout' => '0-2 days',
-                'games' => '8,000+',
+                'games' => '10,000+',
                 'slug' => 'lucky-ones'
+            ],
+            [
+                'name' => 'Mafia Casino',
+                'established' => 2025,
+                'rating' => 4.0,
+                'rating_text' => 'Great',
+                'bonus' => '100% up to $750 + 200 Free Spins + 1 Bonus Crab',
+                'rtp' => '98.19%',
+                'payout' => '0-1 days',
+                'games' => '9,000+',
+                'slug' => 'mafia-casino'
             ],
             [
                 'name' => 'Pistolo',
                 'established' => 2025,
-                'rating' => 4.6,
+                'rating' => 4.7,
                 'rating_text' => 'Excellent',
                 'bonus' => '100% up to $750 + 200 Free Spins',
-                'rtp' => '97.21%',
+                'rtp' => '98.21%',
                 'payout' => '1-3 days',
                 'games' => '11,000+',
                 'slug' => 'pistolo'
             ],
             [
-                'name' => 'Magius',
-                'established' => 2024,
+                'name' => 'Vegas Hero',
+                'established' => null,
                 'rating' => 4.6,
                 'rating_text' => 'Excellent',
-                'bonus' => '100% up to $2,500 + 300 Free Spins',
-                'rtp' => '98.13%',
+                'bonus' => '100% up to $750 + 200 Free Spins + 1 Bonus Crab',
+                'rtp' => '98.34%',
                 'payout' => '1-2 days',
-                'games' => '7,400+',
-                'slug' => 'magius'
+                'games' => '2,000+',
+                'slug' => 'vegas-hero'
+            ],
+            [
+                'name' => 'Spinbara',
+                'established' => 2025,
+                'rating' => 4.5,
+                'rating_text' => 'Excellent',
+                'bonus' => '300% up to $5,000 + 350 Free Spins + 1 Claw Machine',
+                'rtp' => '98.23%',
+                'payout' => '1-3 days',
+                'games' => '21,000+',
+                'slug' => 'spinbara'
+            ],
+            [
+                'name' => 'Tooniebet',
+                'established' => 2024,
+                'rating' => 4.4,
+                'rating_text' => 'Great',
+                'bonus' => 'Up to $3,500 + 200 Bonus Spins + 1 Claw Machine',
+                'rtp' => '98.12%',
+                'payout' => '1-3 days',
+                'games' => '3,000+',
+                'slug' => 'tooniebet'
             ],
             [
                 'name' => 'BetVictor',
@@ -1674,154 +1738,21 @@ class HomeController extends Controller {
                 'rating' => 4.5,
                 'rating_text' => 'Excellent',
                 'bonus' => '100% up to $3,000 + 100 Free Spins',
-                'rtp' => '96.85%',
+                'rtp' => '98.20%',
                 'payout' => '0-2 days',
                 'games' => '1,500+',
                 'slug' => 'betvictor'
             ],
             [
-                'name' => 'Vegas Hero',
-                'established' => 2017,
-                'rating' => 4.5,
-                'rating_text' => 'Excellent',
-                'bonus' => '100% up to $750 + 200 Free Spins',
-                'rtp' => '96.92%',
-                'payout' => '1-2 days',
-                'games' => '2,400+',
-                'slug' => 'vegas-hero'
-            ],
-            [
-                'name' => 'Spinbara',
-                'established' => 2025,
-                'rating' => 4.4,
-                'rating_text' => 'Great',
-                'bonus' => '300% up to $5,000 + 350 Free Spins',
-                'rtp' => '97.23%',
-                'payout' => '1-3 days',
-                'games' => '5,200+',
-                'slug' => 'spinbara'
-            ],
-            [
-                'name' => 'Mafia Casino',
-                'established' => 2025,
-                'rating' => 4.3,
-                'rating_text' => 'Great',
-                'bonus' => '100% up to $750 + 200 Free Spins',
-                'rtp' => '96.89%',
-                'payout' => '0-1 days',
-                'games' => '4,800+',
-                'slug' => 'mafia-casino'
-            ],
-            [
-                'name' => 'Tooniebet',
-                'established' => 2024,
-                'rating' => 4.3,
-                'rating_text' => 'Great',
-                'bonus' => 'Up to $3,500 + 200 Free Spins',
-                'rtp' => '96.78%',
-                'payout' => '1-3 days',
-                'games' => '3,000+',
-                'slug' => 'tooniebet'
-            ],
-            [
                 'name' => 'Casinova',
                 'established' => 2024,
-                'rating' => 4.2,
-                'rating_text' => 'Good',
+                'rating' => 4.3,
+                'rating_text' => 'Great',
                 'bonus' => '100% up to $3,000 + 350 Free Spins',
-                'rtp' => '96.74%',
+                'rtp' => '98.14%',
                 'payout' => '1-2 days',
-                'games' => '3,200+',
+                'games' => '3,000',
                 'slug' => 'casinova'
-            ],
-            [
-                'name' => 'Royal Vegas',
-                'established' => 2000,
-                'rating' => 4.1,
-                'rating_text' => 'Good',
-                'bonus' => '100% up to $1,200 + 120 Free Spins',
-                'rtp' => '96.58%',
-                'payout' => '2-4 days',
-                'games' => '850+',
-                'slug' => 'royal-vegas'
-            ],
-            [
-                'name' => 'Ruby Fortune',
-                'established' => 2003,
-                'rating' => 4.0,
-                'rating_text' => 'Good',
-                'bonus' => '100% up to $750 + 100 Free Spins',
-                'rtp' => '96.45%',
-                'payout' => '2-5 days',
-                'games' => '680+',
-                'slug' => 'ruby-fortune'
-            ],
-            [
-                'name' => 'Captain Cooks',
-                'established' => 1999,
-                'rating' => 3.9,
-                'rating_text' => 'Good',
-                'bonus' => '100 chances to win for $5',
-                'rtp' => '96.22%',
-                'payout' => '3-7 days',
-                'games' => '550+',
-                'slug' => 'captain-cooks'
-            ],
-            [
-                'name' => 'Gaming Club',
-                'established' => 1994,
-                'rating' => 3.8,
-                'rating_text' => 'Fair',
-                'bonus' => '100% up to $350 + 100 Free Spins',
-                'rtp' => '96.18%',
-                'payout' => '3-7 days',
-                'games' => '450+',
-                'slug' => 'gaming-club'
-            ]
-        ];
-    }
-    
-    private function getCasinoCategories(): array {
-        return [
-            [
-                'icon' => '💸',
-                'title' => 'Best real money casino',
-                'casino' => 'Jackpot City',
-                'rtp' => '97.39%',
-                'games' => '1,350+',
-                'rating' => '4.7/5'
-            ],
-            [
-                'icon' => '🎰',
-                'title' => 'Best for online slots',
-                'casino' => 'Spin Palace',
-                'rtp' => '97.45%',
-                'games' => '1,000+',
-                'rating' => '4.7/5'
-            ],
-            [
-                'icon' => '💰',
-                'title' => 'Best welcome bonus',
-                'casino' => 'Lucky Ones',
-                'rtp' => '98.27%',
-                'games' => '8,000+',
-                'rating' => '4.4/5'
-            ],
-            [
-                'icon' => '💳',
-                'title' => 'Best payment options',
-                'casino' => 'Pistolo',
-                'rtp' => '97.21%',
-                'games' => '11,000+',
-                'rating' => '4.6/5'
-            ],
-            [
-                'icon' => '🎲',
-                'title' => 'Best live casino',
-                'casino' => 'Vegas Hero',
-                'rtp' => '98.13%',
-                'games' => '2,400+',
-                'rating' => '4.6/5'
             ]
         ];
     }
@@ -1910,215 +1841,6 @@ class HomeController extends Controller {
                 'icon' => '🎰',
                 'title' => 'Free spins',
                 'description' => 'Try new slot games with free spins bonuses'
-            ]
-        ];
-    }
-    
-    private function getTopCasinosDetailed(): array {
-        return [
-            [
-                'name' => 'Jackpot City',
-                'slug' => 'jackpot-city',
-                'rating' => '4.8',
-                'rating_text' => 'Excellent',
-                'rtp' => '97.39%',
-                'bonus' => '100% match up to $4,000 + 210 Free Spins',
-                'description' => 'Jackpot City Casino has been a trusted name in online gambling since 1998. With over 1,350 games from Microgaming and Evolution Gaming, including exclusive progressive jackpot slots, this platform offers one of the most comprehensive gaming experiences available to Canadian players. Their customer support team is available 24/7 via live chat, email, and phone, ensuring players always have assistance when needed.',
-                'pros' => [
-                    'Over 1,350 premium casino games',
-                    'Licensed by the Malta Gaming Authority',
-                    '24/7 multilingual customer support',
-                    'Fast payouts within 1-3 days',
-                    'Mobile-optimized platform with dedicated app',
-                    'VIP loyalty program with exclusive rewards',
-                    'Established reputation since 1998'
-                ],
-                'cons' => [
-                    'Limited cryptocurrency payment options',
-                    'Restricted in some countries',
-                    'High wagering requirements on some bonuses'
-                ]
-            ],
-            [
-                'name' => 'Spin Palace',
-                'slug' => 'spin-palace',
-                'rating' => '4.7',
-                'rating_text' => 'Excellent',
-                'rtp' => '97.45%',
-                'bonus' => '100% match up to $1,000 + 345 Free Spins',
-                'description' => 'Spin Palace Casino delivers a royal gaming experience with over 1,000 carefully selected games. Known for their excellent customer service and fast payouts, they\'ve built a reputation as one of Canada\'s most reliable online casinos since 2001. Their platform features the latest SSL encryption technology to ensure all player data remains secure, while their loyalty program rewards regular players with exclusive bonuses and perks.',
-                'pros' => [
-                    'Established reputation since 2001',
-                    'Excellent mobile casino app',
-                    'Multiple payment methods accepted',
-                    'Regular promotional offers and tournaments',
-                    'High-quality game graphics and animations',
-                    'Dedicated Canadian customer support',
-                    'Fast withdrawal processing times'
-                ],
-                'cons' => [
-                    'Limited live dealer game selection',
-                    'Some games restricted by region',
-                    'Withdrawal limits for new players'
-                ]
-            ],
-            [
-                'name' => 'Lucky Ones',
-                'slug' => 'lucky-ones',
-                'rating' => '4.4',
-                'rating_text' => 'Great',
-                'rtp' => '98.27%',
-                'bonus' => '100% match up to $20,000 + 500 Free Spins',
-                'description' => 'Lucky Ones Casino is one of the newest additions to the Canadian online casino scene, launched in 2023 with a focus on modern gaming experiences. Featuring over 8,000 games from leading providers and one of the most generous welcome bonuses in the industry, Lucky Ones has quickly established itself as a serious competitor. Their platform emphasizes user experience with fast loading times, intuitive navigation, and comprehensive mobile optimization.',
-                'pros' => [
-                    'Massive welcome bonus up to $20,000',
-                    'Over 8,000 casino games available',
-                    'Fast payout processing (0-2 days)',
-                    'Modern, user-friendly interface',
-                    'Comprehensive mobile optimization',
-                    'High RTP of 98.27%',
-                    'Regular new game additions'
-                ],
-                'cons' => [
-                    'Relatively new casino (established 2023)',
-                    'Limited VIP program compared to established casinos',
-                    'Some payment methods may have fees'
-                ]
-            ]
-        ];
-    }
-    
-    private function getPopularGames(): array {
-        return [
-            [
-                'name' => 'Gates of Olympus',
-                'provider' => 'Pragmatic Play',
-                'rtp' => '96.50%',
-                'icon' => '⚡',
-                'description' => 'Zeus-themed slot with cascading wins and multiplier features'
-            ],
-            [
-                'name' => 'Sweet Bonanza',
-                'provider' => 'Pragmatic Play',
-                'rtp' => '96.51%',
-                'icon' => '🍭',
-                'description' => 'Colorful candy-themed slot with tumbling reels and free spins'
-            ],
-            [
-                'name' => 'Da Vinci Diamonds',
-                'provider' => 'IGT',
-                'rtp' => '94.93%',
-                'icon' => '💎',
-                'description' => 'Renaissance art-inspired slot with tumbling diamonds feature'
-            ],
-            [
-                'name' => 'Book of Dead',
-                'provider' => 'Play\'n GO',
-                'rtp' => '96.21%',
-                'icon' => '📚',
-                'description' => 'Egyptian adventure slot with expanding symbols and free spins'
-            ],
-            [
-                'name' => 'Starburst',
-                'provider' => 'NetEnt',
-                'rtp' => '96.09%',
-                'icon' => '⭐',
-                'description' => 'Classic space-themed slot with expanding wilds and re-spins'
-            ],
-            [
-                'name' => 'Gonzo\'s Quest',
-                'provider' => 'NetEnt',
-                'rtp' => '95.97%',
-                'icon' => '🗿',
-                'description' => 'Adventure slot with avalanche reels and increasing multipliers'
-            ]
-        ];
-    }
-    
-    private function getExperts(): array {
-        return [
-            [
-                'name' => 'Sarah Mitchell',
-                'title' => 'Senior Casino Analyst',
-                'bio' => 'With over 8 years of experience in the Canadian iGaming industry, Sarah specializes in slot machine analysis and bonus evaluation.',
-                'picks' => [
-                    ['name' => 'Jackpot City', 'slug' => 'jackpot-city'],
-                    ['name' => 'Spin Palace', 'slug' => 'spin-palace']
-                ]
-            ],
-            [
-                'name' => 'David Thompson',
-                'title' => 'Table Games Expert',
-                'bio' => 'Former casino dealer turned analyst, David brings insider knowledge of blackjack, roulette, and poker to his comprehensive reviews.',
-                'picks' => [
-                    ['name' => 'Royal Vegas', 'slug' => 'royal-vegas'],
-                    ['name' => 'Lucky Ones', 'slug' => 'lucky-ones']
-                ]
-            ],
-            [
-                'name' => 'Jennifer Carter',
-                'title' => 'Mobile Gaming Specialist',
-                'bio' => 'Tech-savvy reviewer focusing on mobile casino apps and user experience across all devices and platforms.',
-                'picks' => [
-                    ['name' => 'Ruby Fortune', 'slug' => 'ruby-fortune'],
-                    ['name' => 'Captain Cooks', 'slug' => 'captain-cooks']
-                ]
-            ]
-        ];
-    }
-    
-    private function getMobileApps(): array {
-        return [
-            [
-                'name' => 'Jackpot City',
-                'size' => '34 MB',
-                'play_store' => '4.3/5',
-                'app_store' => '4.5/5',
-                'features' => 'Progressive jackpots, game notifications'
-            ],
-            [
-                'name' => 'LeoVegas',
-                'size' => '86.2 MB',
-                'play_store' => '4.2/5',
-                'app_store' => '4.3/5',
-                'features' => 'Live casino, mobile bonuses'
-            ],
-            [
-                'name' => 'BetVictor',
-                'size' => '134.8 MB',
-                'play_store' => '3.8/5',
-                'app_store' => '4.7/5',
-                'features' => 'Live betting, casino games'
-            ]
-        ];
-    }
-    
-    private function getPaymentMethods(): array {
-        return [
-            [
-                'name' => 'Interac e-Transfer',
-                'processing_time' => '24-48 hours',
-                'limits' => '$0.01-$10,000'
-            ],
-            [
-                'name' => 'Visa/Mastercard',
-                'processing_time' => '1-2 days',
-                'limits' => '$10-$10,000'
-            ],
-            [
-                'name' => 'MuchBetter',
-                'processing_time' => 'Up to 24 hours',
-                'limits' => '$10-$7,000'
-            ],
-            [
-                'name' => 'PayPal',
-                'processing_time' => 'Instant',
-                'limits' => '$10-$5,000'
-            ],
-            [
-                'name' => 'Bitcoin',
-                'processing_time' => '10-60 minutes',
-                'limits' => '$20-$50,000'
             ]
         ];
     }
