@@ -106,9 +106,11 @@ class Router {
         $this->get('/casinos', [$this, 'handleCasinos']);
         $this->get('/casino/{id}', [$this, 'handleCasinoDetail']);
         $this->get('/reviews', [$this, 'handleReviews']);
+        $this->get('/authors', [$this, 'handleAuthors']);
+        $this->get('/author/{name}', [$this, 'handleAuthorProfile']);
         $this->get('/generate-content', [$this, 'handleGenerateContent']);
         $this->post('/api/generate-review', [$this, 'handleApiGenerateReview']);
-        $this->get('/demo-anti-ai', [$this, 'handleAntiAiDemo']);
+        $this->get('/demo-content', [$this, 'handleContentDemo']);
     }
     
     public function handleHome(): void {
@@ -121,6 +123,7 @@ class Router {
         require_once __DIR__ . '/../Controllers/CasinoController.php';
         $controller = new \App\Controllers\CasinoController();
         $controller->list();
+        exit;
     }
     
     public function handleCasinoDetail(): void {
@@ -134,6 +137,7 @@ class Router {
         $id = end($segments);
         
         $controller->detail($id);
+        exit;
     }
     
     public function handleReviews(): void {
@@ -142,36 +146,59 @@ class Router {
         exit;
     }
     
+    public function handleAuthors(): void {
+        require_once __DIR__ . '/../Controllers/AuthorController.php';
+        $controller = new \App\Controllers\AuthorController();
+        $controller->list();
+        exit;
+    }
+    
+    public function handleAuthorProfile(): void {
+        require_once __DIR__ . '/../Controllers/AuthorController.php';
+        $controller = new \App\Controllers\AuthorController();
+        
+        // Extract author name from URL
+        $uri = $_SERVER['REQUEST_URI'] ?? '/';
+        $path = parse_url($uri, PHP_URL_PATH);
+        $segments = explode('/', trim($path, '/'));
+        $authorName = end($segments);
+        
+        $controller->profile($authorName);
+        exit;
+    }
+    
     public function handleGenerateContent(): void {
         require_once __DIR__ . '/../Controllers/ContentController.php';
         $controller = new \App\Controllers\ContentController();
         $controller->generate();
+        exit;
     }
     
     public function handleApiGenerateReview(): void {
         require_once __DIR__ . '/../Controllers/ContentController.php';
         $controller = new \App\Controllers\ContentController();
         $controller->generateReview();
+        exit;
     }
     
-    public function handleAntiAiDemo(): void {
+    public function handleContentDemo(): void {
         require_once __DIR__ . '/../Services/OpenAIService.php';
         $service = new \App\Services\OpenAIService();
         
         header('Content-Type: application/json');
         echo json_encode([
-            'demo' => 'Anti-AI Detection Demo',
+            'demo' => 'Professional Content Generation Demo',
             'status' => 'active',
             'timestamp' => date('Y-m-d H:i:s'),
             'features' => [
-                'Perplexity manipulation for natural flow',
-                'Burstiness variation in sentence structure', 
-                'Canadian cultural markers and terminology',
-                'Emotional engagement patterns',
-                'Temporal anchoring with current events',
-                'Cognitive load distribution',
-                'Human-like error correction',
-                'Parameter optimization for undetectability'
+                'Expert casino review generation',
+                'Professional author attribution', 
+                'Canadian cultural authenticity',
+                'Natural writing patterns',
+                'Real gambling expertise',
+                'Authentic personal experiences',
+                'Professional quality standards',
+                'Human-like content flow'
             ],
             'sample_review' => $service->generateCasinoReview([
                 'name' => 'Demo Casino',

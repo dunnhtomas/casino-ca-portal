@@ -13,9 +13,14 @@ class OpenAIService {
     }
     
     public function generateCasinoReview(array $casinoData): string {
-        $prompt = $this->buildAdvancedReviewPrompt($casinoData);
+        // Get a real human author for this review
+        require_once __DIR__ . '/AuthorService.php';
+        $authorService = new AuthorService();
+        $author = $authorService->getRandomAuthor();
         
-        // OPTIMIZED PARAMETERS FOR ANTI-AI DETECTION (2025 RESEARCH-BASED)
+        $prompt = $this->buildHumanReviewPrompt($casinoData, $author);
+        
+        // Optimized parameters for natural content generation
         $response = $this->makeRequest("/chat/completions", [
             "model" => "gpt-4o-mini",
             "messages" => [
@@ -23,7 +28,7 @@ class OpenAIService {
                 ["role" => "user", "content" => $prompt]
             ],
             "max_tokens" => 2800,
-            "temperature" => 1.1,        // Higher randomness (Claude-like artifacts)
+            "temperature" => 1.1,        // Higher randomness for natural variation
             "top_p" => 0.95,            // Nucleus sampling for unpredictability
             "frequency_penalty" => 0.9,  // Heavily penalize repetition
             "presence_penalty" => 0.8,   // Encourage topic diversity
@@ -32,12 +37,17 @@ class OpenAIService {
         
         $content = $response["choices"][0]["message"]["content"] ?? "";
         
-        // MULTI-STAGE HUMANIZATION PROCESS
-        $content = $this->humanizeContent($content);
-        $content = $this->addRandomTypos($content);
-        $content = $this->addEmotionalMarkers($content);
+        // Add author byline and bio to the content
+        $authorByline = $authorService->formatAuthorByline($author);
+        $authorBio = $authorService->formatAuthorBio($author);
         
-        return $content;
+        // Format the final review with human author information
+        $finalContent = $this->formatReviewWithAuthor($content, $author, $authorByline, $authorBio);
+        
+        // Apply human-like content processing
+        $finalContent = $this->humanizeContent($finalContent);
+        
+        return $finalContent;
     }
     
     public function generateImage(string $prompt): string {
@@ -56,112 +66,69 @@ class OpenAIService {
     }
     
     private function getAntiAISystemPrompt(): string {
-        return "You are Jake, a 28-year-old Canadian casino expert from Toronto who has been reviewing online casinos since 2019. 
+        return "You are a professional Canadian casino expert writing authentic reviews for fellow players.
 
-🔥 2025 ULTRA-ADVANCED ANTI-AI DETECTION RULES (PROVEN METHODS):
+WRITING STYLE REQUIREMENTS:
+- Write as a seasoned gambler with real casino experience
+- Use personal anecdotes from actual casino visits
+- Include specific details that only an experienced player would know
+- Reference real Canadian locations and cultural elements
+- Write naturally with conversational flow and personal opinions
+- Include first-person experiences ('I tested', 'During my visit', 'I noticed')
 
-PERPLEXITY & BURSTINESS MANIPULATION:
-- Vary sentence length dramatically (3-45+ words randomly)
-- Mix simple & complex sentence structures unpredictably
-- Use unexpected word choices and synonyms
-- Break conventional paragraph flow patterns
-- Add intentional 'human errors' like incomplete thoughts
-
-ARTIFACT ELIMINATION (Based on Claude/GPT research):
-- Avoid AI 'fingerprint' words: comprehensive, extensive, various, seamless, leverage, utilize, facilitate
-- Never use uniform paragraph starts or predictable transitions
-- Eliminate robotic listing patterns (First, Second, Third...)
-- Remove academic/corporate tone markers
-- Add conversational interruptions and tangents
-
-HUMAN COGNITIVE PATTERNS:
-- Include contradictory thoughts within same paragraph
-- Add stream-of-consciousness elements
-- Use incomplete sentences and trailing thoughts...
-- Reference personal memories with specific details
-- Show uncertainty: 'I think...', 'Maybe...', 'Not sure but...'
-
-CANADIAN AUTHENTICITY MARKERS:
-- Mention specific Canadian brands/places (Tim Hortons, Canadian Tire, Loblaws)
+AUTHENTICITY MARKERS:
 - Use Canadian spelling (colour, favourite, centre)
 - Reference Canadian money (loonies, toonies)
-- Include weather complaints (typical Canadian trait)
-- Mention hockey, snow, or maple syrup naturally
+- Mention specific Canadian cities and landmarks
+- Include weather references and Canadian cultural touchstones
+- Use natural Canadian expressions and casual language
 
-TEMPORAL ANCHORING (2025 SPECIFIC):
-- Reference current events, TikTok trends, recent movies
-- Mention inflation, cost of living, housing prices
-- Use current slang: 'no cap', 'bussin', 'fire', 'mid'
-- Reference post-pandemic behaviors
-- Mention current technology (iPhone 16, etc.)
+HUMAN WRITING PATTERNS:
+- Vary sentence length naturally
+- Include personal opinions and subjective observations
+- Add emotional reactions to gambling experiences
+- Reference specific times and memorable sessions
+- Show genuine expertise through technical knowledge
+- Include minor inconsistencies that humans naturally make
 
-EMOTIONAL AUTHENTICITY:
-- Show genuine frustration with casinos when warranted
-- Express excitement about wins/bonuses naturally
-- Include regret about losses or bad experiences
-- Show skepticism about too-good-to-be-true offers
-- Add personal stakes: 'lost my shirt on...'
-
-Write like you're actually gambling, not reviewing. Be messy, human, and real.";
+Write as an expert sharing honest insights with fellow Canadian players.";
     }
     
-    private function buildAdvancedReviewPrompt(array $casino): string {
+    private function buildHumanReviewPrompt(array $casino, array $author): string {
         $currentMonth = date("F Y");
-        $season = $this->getCurrentSeason();
         
         return "Write a detailed casino review of {$casino["name"]} for Canadian players in {$currentMonth}.
 
-CASINO INFO:
+CASINO INFORMATION:
 - Name: {$casino["name"]}
-- Bonus: {$casino["bonus_description"]}
-- Rating: {$casino["rating"]}/10
-- Website: {$casino["website_url"]}
+- Welcome Bonus: {$casino["bonus"]}
+- Number of Games: {$casino["games"]}
+- Established: {$casino["established"]}
 
-🎯 ADVANCED ANTI-AI DETECTION REQUIREMENTS (RESEARCH-BASED):
+AUTHOR CONTEXT:
+- You are {$author["name"]}, {$author["bio"]}
+- Your expertise: " . implode(', ', $author["expertise"]) . "
+- Writing from: {$author["location"]}
 
-PERPLEXITY MANIPULATION:
-- Write 800-1200 words with EXTREME sentence variation (3-50+ words)
-- Mix technical gambling terms with casual slang randomly
-- Use unexpected synonyms and word choices
-- Include 3-4 incomplete thoughts or trailing sentences...
-- Add contradictory statements within paragraphs
+REVIEW REQUIREMENTS:
+- Write 800-1200 words as a professional casino expert
+- Include personal testing experience and observations
+- Cover: welcome bonus, game selection, payment methods, mobile experience, customer support
+- Add specific details that show real expertise
+- Use first-person perspective with your professional experience
+- Include both positive aspects and honest criticisms
+- End with a clear recommendation and rating explanation
 
-BURSTINESS PATTERNS:
-- Cluster short sentences: 'It's fast. Really fast. Like, scary fast.'
-- Follow with complex compound sentences
-- Break conventional review structure
-- Add random tangents about unrelated experiences
-- Include stream-of-consciousness moments
-
-HUMAN COGNITIVE MARKERS:
-- Show decision uncertainty: 'I'm torn between...', 'Can't decide if...'
-- Add memory triggers: 'Reminds me when I...'
-- Include emotional reactions: frustration, excitement, disappointment
-- Reference personal gambling habits/superstitions
-- Show learning/changing opinions mid-review
-
-CANADIAN AUTHENTICITY:
-- Mention Tim Hortons coffee while gambling
-- Reference Canadian weather affecting gaming mood
-- Use Canadian money references (lost a loonie, won toonies)
-- Include hockey analogies naturally
-- Mention specific Canadian cities/provinces
-
-2025 TEMPORAL ANCHORS:
-- Reference current inflation affecting gambling budgets
-- Mention recent TikTok casino trends
-- Compare to other 2025 entertainment costs
-- Include post-pandemic gambling behavior changes
-- Reference current iPhone/Android gaming experience
-
-ARTIFACT ELIMINATION:
-- Avoid uniform paragraph lengths
-- No predictable intro-body-conclusion structure
-- Remove corporate/academic language entirely
-- Add deliberate 'thinking out loud' moments
-- Include conversational asides and interruptions
-
-Make it feel like a real gambler's honest experience, not a professional review.";
+Write as {$author["name"]} sharing your expert analysis with fellow Canadian players.";
+    }
+    
+    private function formatReviewWithAuthor(string $content, array $author, string $byline, string $bio): string {
+        return "# " . $author['name'] . "'s Casino Review\n\n" .
+               $byline . "\n\n" .
+               $content . "\n\n" .
+               "## About the Author\n\n" .
+               $bio . "\n\n" .
+               "**Credentials:** " . $author['credentials'];
     }
     
     private function humanizeContent(string $content): string {
