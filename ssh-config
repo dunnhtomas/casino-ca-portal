@@ -1,0 +1,30 @@
+# SSH Configuration for Casino Portal VPS
+# Place this in ~/.ssh/config for automatic key usage
+
+Host bestcasinoportal
+    HostName 193.233.161.161
+    User root
+    Port 22
+    IdentityFile ~/.ssh/bestcasinoportal_auto
+    IdentitiesOnly yes
+    PasswordAuthentication no
+    PubkeyAuthentication yes
+    StrictHostKeyChecking no
+    PreferredAuthentications publickey
+    ConnectTimeout 30
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+
+# Alternative hostname-based connection
+Host 193.233.161.161
+    User root
+    Port 22
+    IdentityFile ~/.ssh/bestcasinoportal_auto
+    IdentitiesOnly yes
+    PasswordAuthentication no
+    PubkeyAuthentication yes
+    StrictHostKeyChecking no
+    PreferredAuthentications publickey
+    ConnectTimeout 30
+    ServerAliveInterval 60
+    ServerAliveCountMax 3

@@ -92,6 +92,9 @@ This PRD outlines the development of a comprehensive casino affiliate website th
 - **Framework**: Next.js 14 with App Router
 - **Database**: PostgreSQL with Prisma ORM
 - **CMS**: Strapi Headless CMS for content management
+- **AI Content Engine**: OpenAI GPT-4 API for intelligent content rewriting
+- **AI Image Generation**: DALL-E 3 API for custom feature images
+- **Content Intelligence**: Smart scraping and analysis from casino.ca
 - **Hosting**: Vercel Edge Network for global performance
 - **CDN**: Cloudflare for security and speed
 - **Search**: Elasticsearch for advanced filtering
@@ -113,6 +116,28 @@ This PRD outlines the development of a comprehensive casino affiliate website th
 - A/B testing framework for content optimization
 - Automated internal linking suggestions
 - Content gap analysis and recommendations
+
+### AI Content Intelligence System
+**Smart Content Rewriting Engine:**
+- **Source Analysis**: Intelligent scraping of casino.ca articles and reviews
+- **Content Enhancement**: GPT-4 powered rewriting with improved SEO and readability
+- **Originality Guarantee**: 100% unique content that passes all plagiarism checks
+- **SEO Optimization**: Automatic keyword integration and semantic optimization
+- **Fact Verification**: Cross-reference casino data for accuracy and compliance
+
+**AI Image Generation Pipeline:**
+- **DALL-E 3 Integration**: Custom feature images for every article and review
+- **Brand Consistency**: Cohesive visual style across all generated images
+- **SEO Optimized**: Proper alt tags, file names, and image metadata
+- **Multiple Formats**: Hero images, thumbnails, infographics, and comparison charts
+- **Real-time Generation**: On-demand image creation for new content
+
+**Automated Content Production:**
+- **Bulk Processing**: Process and rewrite 500+ articles from casino.ca
+- **Content Categorization**: Smart tagging and categorization for better organization
+- **Publishing Workflow**: Automated content review and publishing pipeline
+- **Update Monitoring**: Track source content changes and auto-update our versions
+- **Performance Tracking**: Monitor content performance and optimize based on data
 
 ---
 
@@ -312,7 +337,7 @@ This PRD outlines the development of a comprehensive casino affiliate website th
 
 ## 9. Development Phases
 
-### Phase 1: Foundation (Months 1-3)
+### Phase 1: Foundation & AI Content Engine (Months 1-3)
 **Core Infrastructure**
 - Domain acquisition and hosting setup
 - Technical architecture implementation
@@ -320,41 +345,50 @@ This PRD outlines the development of a comprehensive casino affiliate website th
 - Core page templates development
 - SEO foundation implementation
 
-**Content Development**
-- Top 50 casino reviews
-- Core category pages
-- Essential game guides
-- Basic bonus information
-- Regional landing pages
+**AI Content Intelligence Setup**
+- OpenAI GPT-4 API integration and configuration
+- DALL-E 3 API setup for image generation
+- Web scraping infrastructure for casino.ca content analysis
+- Content rewriting pipeline development
+- Image generation and optimization system
+
+**Content Development (AI-Powered)**
+- Intelligent analysis and rewriting of top 50 casino.ca articles
+- AI-generated feature images for every article and page
+- Core category pages with enhanced, original content
+- Essential game guides rewritten with improved SEO
+- Regional landing pages with localized content optimization
 
 **Key Deliverables**:
 - Fully functional website with core features
-- 100+ pages of high-quality content
+- 100+ pages of AI-enhanced, original content
+- Complete image library with custom DALL-E 3 generated visuals
 - Technical SEO implementation
 - Mobile-responsive design
+- AI content generation system operational
 - Basic analytics and tracking
 
-### Phase 2: Content Expansion (Months 4-6)
-**Content Scale-Up**
-- Additional 70 casino reviews
-- Comprehensive game guides
-- Advanced bonus tracking
-- Regional content expansion
-- Industry news section
+### Phase 2: Content Expansion & AI Optimization (Months 4-6)
+**AI Content Scale-Up**
+- Process and rewrite additional 200+ articles from casino.ca
+- Generate 500+ custom feature images with DALL-E 3
+- Implement content update monitoring and auto-refresh system
+- Advanced SEO optimization using AI content analysis
+- Multi-format content generation (articles, reviews, comparisons)
 
 **Feature Enhancement**
-- Advanced filtering and search
-- User account system
-- Personalization features
-- Enhanced comparison tools
-- Mobile app development
+- Advanced filtering and search with AI-powered recommendations
+- User account system with personalized content
+- AI-driven content personalization features
+- Enhanced comparison tools with dynamic data
+- Mobile app development with AI content sync
 
 **SEO Optimization**
-- Advanced internal linking
-- Schema markup enhancement
-- Site speed optimization
-- Link building campaign launch
-- Content optimization based on performance
+- AI-powered internal linking optimization
+- Schema markup enhancement with dynamic content
+- Site speed optimization with image AI optimization
+- Link building campaign launch with content intelligence
+- Content performance optimization based on AI analysis
 
 ### Phase 3: Authority Building (Months 7-12)
 **Content Authority**
