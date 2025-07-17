@@ -4,6 +4,18 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Services\FeaturedCasinoService;
 use App\Services\CasinoCategoriesService;
+use App\Services\BonusComparisonService;
+use App\Services\ExpertTeamService;
+use App\Services\DetailedCasinoReviewsService;
+use App\Services\BonusDatabaseService;
+use App\Services\FreeGamesLibraryService;
+use App\Services\LiveDealerGamesService;
+use App\Services\PaymentMethodsService;
+use App\Services\MobileAppService;
+use App\Services\NewsService;
+use App\Services\ProvinceService;
+use App\Services\SoftwareProviderService;
+use App\Controllers\BonusDatabaseController;
 
 class HomeController extends Controller {
     public function index(): void {
@@ -13,6 +25,69 @@ class HomeController extends Controller {
         // Get comprehensive casino categories for navigation
         $categoriesService = new CasinoCategoriesService();
         $categories = $categoriesService->getAllCategories();
+        
+        // Get bonus comparison data
+        $bonusService = new BonusComparisonService();
+        $topBonuses = $bonusService->getTopBonuses(4, 'overall_value');
+        
+        // Get expert team data
+        $expertTeamService = new ExpertTeamService();
+        $expertTeamData = $expertTeamService->getExpertTeamSection();
+        
+        // Get detailed casino reviews data
+        $reviewsService = new DetailedCasinoReviewsService();
+        $top3Reviews = $reviewsService->getTop3DetailedReviews();
+        
+        // Get bonus database data
+        $bonusDatabaseController = new BonusDatabaseController();
+        $bonusDatabaseSection = $bonusDatabaseController->renderBonusDatabase();
+        
+        // Get free games library data
+        $freeGamesService = new FreeGamesLibraryService();
+        $freeGamesData = [
+            'games' => $freeGamesService->getPopularGames(12),
+            'statistics' => $freeGamesService->getLibraryStatistics(),
+            'total_available' => $freeGamesService->getLibraryStatistics()['total_games']
+        ];
+        
+        // Get live dealer games data
+        $liveDealerService = new LiveDealerGamesService();
+        $paymentMethodsService = new PaymentMethodsService();
+        $liveDealerData = $liveDealerService->getHomepageLiveDealerData(8);
+        $paymentMethodsData = $paymentMethodsService->getPaymentMethods();
+        
+        // Get mobile app data
+        $mobileAppService = new MobileAppService();
+        $mobileAppData = [
+            'featured_apps' => $mobileAppService->getFeaturedMobileApps(),
+            'advantages' => $mobileAppService->getMobileAdvantages(),
+            'statistics' => $mobileAppService->getMobileStats()
+        ];
+        
+        // Get news and updates data
+        $newsService = new NewsService();
+        $newsData = [
+            'featured_articles' => $newsService->getFeaturedNews(),
+            'latest_updates' => array_slice($newsService->getLatestUpdates(), 0, 6),
+            'news_statistics' => $newsService->getNewsStatistics()
+        ];
+        
+        // Get Canadian provinces data
+        $provinceService = new ProvinceService();
+        $provincesData = [
+            'featured_provinces' => array_slice($provinceService->getAllProvinces(), 0, 4),
+            'total_provinces' => count($provinceService->getAllProvinces()),
+            'regions' => $provinceService->getProvincesByRegion()
+        ];
+        
+        // Get software providers data
+        $softwareProviderService = new \App\Services\SoftwareProviderService();
+        $softwareProvidersData = [
+            'featured_providers' => array_slice($softwareProviderService->getAllProviders(), 0, 6),
+            'total_providers' => count($softwareProviderService->getAllProviders()),
+            'categories' => $softwareProviderService->getProviderCategories(),
+            'statistics' => $softwareProviderService->getProviderStatistics()
+        ];
         
         $featuredGames = $this->getFeaturedGames();
         $bonusCategories = $this->getBonusCategories();
@@ -30,6 +105,15 @@ class HomeController extends Controller {
     <title>Compare the best Canadian online casinos in 2025</title>
     <meta name="description" content="Casino.ca is your go-to for finding the best online casino in Canada. With 10 years online, we\'ve reviewed over 120 popular CA casinos. Expert reviews, exclusive bonuses, and trusted recommendations.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/detailed-reviews.css">
+    <link rel="stylesheet" href="/css/bonus-database.css">
+    <link rel="stylesheet" href="/css/free-games-library.css">
+    <link rel="stylesheet" href="/css/live-dealer-games.css">
+    <link rel="stylesheet" href="/css/payment-methods.css">
+    <link rel="stylesheet" href="/css/mobile-app.css">
+    <link rel="stylesheet" href="/css/news-updates.css">
+    <link rel="stylesheet" href="/css/provinces-section.css">
+    <link rel="stylesheet" href="/css/software-providers.css">
     <style>
         * {
             margin: 0;
@@ -411,6 +495,418 @@ class HomeController extends Controller {
         
         .category-link:hover {
             color: #2980b9;
+        }
+        
+        /* Bonus Comparison Section Styles */
+        .bonus-comparison-section {
+            background: #ffffff;
+            border-radius: 15px;
+            border: 1px solid #e5e5e5;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .bonus-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .bonus-stats .stat-item {
+            padding: 1rem;
+        }
+        
+        .bonus-stats .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #27ae60;
+            display: block;
+        }
+        
+        .bonus-stats .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .bonus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .bonus-card {
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .bonus-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-color: #3498db;
+        }
+        
+        .bonus-rank {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .bonus-casino {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .bonus-offer {
+            color: #27ae60;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .bonus-details {
+            margin-bottom: 1rem;
+        }
+        
+        .bonus-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .detail-label {
+            color: #7f8c8d;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .bonus-score {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .score-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin: 0 auto 5px;
+        }
+        
+        .score-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+        
+        .bonus-cta {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: block;
+        }
+        
+        .bonus-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(231,76,60,0.3);
+        }
+        
+        .bonus-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .view-all-btn.primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+        
+        .view-all-btn.secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+        
+        /* Expert Team Section Styles */
+        .expert-team-section {
+            background: #f8f9fa;
+            padding: 4rem 0;
+        }
+        
+        .expert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .expert-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+        
+        .expert-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .expert-photo-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .expert-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto;
+            border: 4px solid #3498db;
+        }
+        
+        .expert-photo-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0 auto;
+        }
+        
+        .expert-experience {
+            position: absolute;
+            bottom: 0;
+            right: 50%;
+            transform: translateX(50%);
+            background: #27ae60;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .expert-name {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .expert-title {
+            color: #3498db;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .expert-bio {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .expert-specializations {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .spec-tag {
+            background: #e8f5e8;
+            color: #27ae60;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+        
+        .expert-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 1.5rem;
+        }
+        
+        .expert-stats .stat {
+            text-align: center;
+        }
+        
+        .expert-stats .stat-number {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            display: block;
+        }
+        
+        .expert-stats .stat-label {
+            color: #7f8c8d;
+            font-size: 0.8rem;
+        }
+        
+        .expert-link {
+            background: #3498db;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+            display: inline-block;
+        }
+        
+        .expert-link:hover {
+            background: #2980b9;
+        }
+        
+        .trust-signals {
+            margin: 4rem 0;
+            text-align: center;
+        }
+        
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .trust-icon {
+            width: 50px;
+            height: 50px;
+            background: #27ae60;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .trust-content h4 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .trust-content p {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        .expert-recommendations {
+            margin: 4rem 0;
+            text-align: center;
+        }
+        
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .recommendation-card {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: left;
+        }
+        
+        .rec-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .rec-header .casino-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .rec-header .rating {
+            color: #f39c12;
+            font-weight: bold;
+        }
+        
+        .expert-rec {
+            margin-bottom: 1rem;
+        }
+        
+        .expert-rec .expert-name {
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .expert-rec .expert-title {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .rec-reason {
+            color: #555;
+            margin-bottom: 1rem;
+        }
+        
+        .rec-highlight {
+            background: #e8f5e8;
+            color: #27ae60;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-style: italic;
+            font-size: 0.9rem;
         }
         
         .games-grid {
@@ -1393,24 +1889,1199 @@ class HomeController extends Controller {
             </div>
         </section>
 
-        <section class="section">
-            <h2 class="section-title">Claim the best online casino bonuses</h2>
-            <p>Bonuses are one of the best perks of playing casino games online. You could choose a free spins bonus, ideal for checking out new and exclusive slot games, or pick a rarer no deposit bonus and claim free casino cash with no upfront risk.</p>
-            <div class="categories-grid">';
-        
-        foreach ($bonusCategories as $bonus) {
-            echo '<div class="category-card">
-                <div class="category-icon">' . $bonus['icon'] . '</div>
-                <div class="category-title">' . $bonus['title'] . '</div>
-                <div class="category-casino">' . $bonus['description'] . '</div>
-            </div>';
-        }
-        
-        echo '</div>
-            <div class="view-all">
-                <a href="/bonus" class="view-all-btn">Find all bonuses</a>
+        <?php echo $this->renderPopularSlotsSection(); ?>
+
+        <!-- Expert Team Section -->
+        <section class="section expert-team-section">
+            <div class="container">
+                <h2>Our Casino Experts</h2>
+                <p class="section-subtitle">Meet the professional team evaluating Canada&apos;s best online casinos</p>
+                
+                <div class="expert-grid">
+                    <div class="expert-card">
+                        <div class="expert-photo-container">
+                            <div class="expert-photo-placeholder">E</div>
+                            <div class="expert-experience">12+ Years</div>
+                        </div>
+                        <div class="expert-info">
+                            <h3 class="expert-name">Dr. Emily Rodriguez</h3>
+                            <div class="expert-title">Senior Casino Analyst</div>
+                            <p class="expert-bio">PhD in Statistics with 12+ years analyzing casino algorithms and RTP rates.</p>
+                            <div class="expert-specializations">
+                                <span class="spec-tag">Slot Machine Analysis</span>
+                                <span class="spec-tag">RTP Calculations</span>
+                            </div>
+                            <div class="expert-stats">
+                                <div class="stat">
+                                    <span class="stat-number">127</span>
+                                    <span class="stat-label">Articles</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-number">89</span>
+                                    <span class="stat-label">Reviews</span>
+                                </div>
+                            </div>
+                            <a href="/experts/dr-emily-rodriguez" class="expert-link">View Profile</a>
+                        </div>
+                    </div>
+                    
+                    <div class="expert-card">
+                        <div class="expert-photo-container">
+                            <div class="expert-photo-placeholder">M</div>
+                            <div class="expert-experience">15+ Years</div>
+                        </div>
+                        <div class="expert-info">
+                            <h3 class="expert-name">Marcus Thompson</h3>
+                            <div class="expert-title">Table Games Specialist</div>
+                            <p class="expert-bio">Former professional blackjack player with 15+ years in casino table game analysis.</p>
+                            <div class="expert-specializations">
+                                <span class="spec-tag">Table Game Strategy</span>
+                                <span class="spec-tag">Live Dealer Analysis</span>
+                            </div>
+                            <div class="expert-stats">
+                                <div class="stat">
+                                    <span class="stat-number">94</span>
+                                    <span class="stat-label">Articles</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-number">67</span>
+                                    <span class="stat-label">Reviews</span>
+                                </div>
+                            </div>
+                            <a href="/experts/marcus-thompson" class="expert-link">View Profile</a>
+                        </div>
+                    </div>
+                    
+                    <div class="expert-card">
+                        <div class="expert-photo-container">
+                            <div class="expert-photo-placeholder">S</div>
+                            <div class="expert-experience">8+ Years</div>
+                        </div>
+                        <div class="expert-info">
+                            <h3 class="expert-name">Sarah Chen</h3>
+                            <div class="expert-title">Mobile Gaming Expert</div>
+                            <p class="expert-bio">Mobile technology specialist focusing on casino app performance and user experience.</p>
+                            <div class="expert-specializations">
+                                <span class="spec-tag">Mobile App Analysis</span>
+                                <span class="spec-tag">User Experience Design</span>
+                            </div>
+                            <div class="expert-stats">
+                                <div class="stat">
+                                    <span class="stat-number">76</span>
+                                    <span class="stat-label">Articles</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-number">52</span>
+                                    <span class="stat-label">Reviews</span>
+                                </div>
+                            </div>
+                            <a href="/experts/sarah-chen" class="expert-link">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="trust-signals">
+                    <h3>Why Trust Our Experts?</h3>
+                    <div class="trust-grid">
+                        <div class="trust-item">
+                            <div class="trust-icon">✓</div>
+                            <div class="trust-content">
+                                <h4>50+ Years Combined Experience</h4>
+                                <p>Our expert team brings decades of casino industry knowledge</p>
+                            </div>
+                        </div>
+                        <div class="trust-item">
+                            <div class="trust-icon">✓</div>
+                            <div class="trust-content">
+                                <h4>Independent Reviews</h4>
+                                <p>Unbiased evaluations with no casino partnerships affecting ratings</p>
+                            </div>
+                        </div>
+                        <div class="trust-item">
+                            <div class="trust-icon">✓</div>
+                            <div class="trust-content">
+                                <h4>Real Canadian Experts</h4>
+                                <p>Local professionals who understand Canadian gaming regulations</p>
+                            </div>
+                        </div>
+                        <div class="trust-item">
+                            <div class="trust-icon">✓</div>
+                            <div class="trust-content">
+                                <h4>1000+ Casinos Reviewed</h4>
+                                <p>Comprehensive analysis of Canada&apos;s entire online casino market</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="expert-recommendations">
+                    <h3>Our Experts&apos; Favourite Casinos</h3>
+                    <div class="recommendations-grid">
+                        <div class="recommendation-card">
+                            <div class="rec-header">
+                                <div class="casino-name">Royal Vegas</div>
+                                <div class="rating">★ 4.8</div>
+                            </div>
+                            <div class="expert-rec">
+                                <span class="expert-name">Dr. Emily Rodriguez</span>
+                                <span class="expert-title">Senior Casino Analyst</span>
+                            </div>
+                            <p class="rec-reason">Exceptional RTP rates and transparent slot mathematics</p>
+                            <div class="rec-highlight">Best for serious slot players who understand the math</div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <div class="rec-header">
+                                <div class="casino-name">FortuneJack</div>
+                                <div class="rating">★ 4.9</div>
+                            </div>
+                            <div class="expert-rec">
+                                <span class="expert-name">Marcus Thompson</span>
+                                <span class="expert-title">Table Games Specialist</span>
+                            </div>
+                            <p class="rec-reason">Superior live dealer tables with professional dealers</p>
+                            <div class="rec-highlight">Best blackjack variants and table limits</div>
+                        </div>
+                        
+                        <div class="recommendation-card">
+                            <div class="rec-header">
+                                <div class="casino-name">LeoVegas</div>
+                                <div class="rating">★ 4.9</div>
+                            </div>
+                            <div class="expert-rec">
+                                <span class="expert-name">Sarah Chen</span>
+                                <span class="expert-title">Mobile Gaming Expert</span>
+                            </div>
+                            <p class="rec-reason">Award-winning mobile app with flawless performance</p>
+                            <div class="rec-highlight">Industry-leading mobile gaming experience</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
+
+        <!-- Detailed Top 3 Casino Reviews Section -->
+        <section class="detailed-reviews-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Expert Reviews: Top 3 Canadian Casinos</h2>
+                    <p>Comprehensive analysis from our casino experts with detailed ratings and honest assessments</p>
+                </div>
+                
+                <div class="reviews-grid">';
+        
+        foreach ($top3Reviews as $review) {
+            echo $this->renderDetailedReviewCard($review);
+        }
+        
+        echo '
+                </div>
+                
+                <div class="reviews-methodology">
+                    <h3>Our Review Process</h3>
+                    <div class="methodology-grid">
+                        <div class="method-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Security & Fairness (20%)</span>
+                        </div>
+                        <div class="method-item">
+                            <i class="fas fa-gamepad"></i>
+                            <span>Games & Software (15%)</span>
+                        </div>
+                        <div class="method-item">
+                            <i class="fas fa-gift"></i>
+                            <span>Bonuses & Promotions (15%)</span>
+                        </div>
+                        <div class="method-item">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>Mobile Experience (10%)</span>
+                        </div>
+                        <div class="method-item">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Banking & Payments (15%)</span>
+                        </div>
+                        <div class="method-item">
+                            <i class="fas fa-headset"></i>
+                            <span>Customer Support (15%)</span>
+                        </div>
+                        <div class="method-item">
+                            <i class="fas fa-user-check"></i>
+                            <span>User Experience (10%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Free Games Library Section -->
+        <section class="free-games-library-section">
+            <div class="container">
+                <div class="free-games-content">
+                    <div class="free-games-header">
+                        <h2>Free Casino Games Library</h2>
+                        <p class="free-games-subtitle">
+                            Play 50+ premium slot games absolutely free! No download, no registration required. 
+                            Experience the thrill of top casino games from industry-leading providers.
+                        </p>
+                        
+                        <div class="library-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">' . $freeGamesData['statistics']['total_games'] . '</span>
+                                <span class="stat-label">Free Games</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">' . $freeGamesData['statistics']['providers'] . '</span>
+                                <span class="stat-label">Providers</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">' . $freeGamesData['statistics']['average_rtp'] . '</span>
+                                <span class="stat-label">Avg RTP</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">' . $freeGamesData['statistics']['mobile_compatible'] . '</span>
+                                <span class="stat-label">Mobile Ready</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="games-grid">';
+
+        foreach (array_slice($freeGamesData['games'], 0, 12) as $game) {
+            echo '
+                        <div class="game-card">
+                            <div class="game-image">
+                                <img src="' . htmlspecialchars($game['image']) . '" alt="' . htmlspecialchars($game['name']) . '" loading="lazy">
+                                <div class="play-demo-overlay">
+                                    <button class="play-demo-btn" onclick="playDemo(\'' . htmlspecialchars($game['id']) . '\')">
+                                        <i class="fas fa-play"></i> Play Demo
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="game-info">
+                                <h3 class="game-title">' . htmlspecialchars($game['name']) . '</h3>
+                                <p class="game-provider">by ' . htmlspecialchars($game['provider']) . '</p>
+                                
+                                <div class="game-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">RTP:</span>
+                                        <span class="detail-value">' . htmlspecialchars($game['rtp']) . '</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Volatility:</span>
+                                        <span class="detail-value">' . htmlspecialchars($game['volatility']) . '</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Max Win:</span>
+                                        <span class="detail-value">' . htmlspecialchars($game['max_win']) . '</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Paylines:</span>
+                                        <span class="detail-value">' . htmlspecialchars($game['paylines']) . '</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="game-features">';
+            
+            foreach (array_slice($game['features'], 0, 3) as $feature) {
+                echo '
+                                    <span class="feature-tag">' . htmlspecialchars($feature) . '</span>';
+            }
+            
+            echo '
+                                </div>
+                            </div>
+                        </div>';
+        }
+
+        echo '
+                    </div>
+
+                    <div class="view-all-section">
+                        <a href="/free-games" class="view-all-btn">
+                            <i class="fas fa-gamepad"></i> View All ' . $freeGamesData['total_available'] . ' Free Games
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Dealer Games Section -->
+        <section class="live-dealer-games-section">
+            <div class="container">
+                <div class="live-dealer-content">
+                    <div class="live-dealer-header">
+                        <h2>🎲 Live Dealer Casino Games</h2>
+                        <p class="live-dealer-subtitle">
+                            Experience the thrill of real casino gaming with professional dealers streaming live in HD quality. 
+                            Play authentic blackjack, roulette, baccarat and more from the comfort of your home.
+                        </p>
+                        
+                        <div class="live-stats">
+                            <div class="live-stat-item">
+                                <span class="live-stat-number">' . $liveDealerData['statistics']['total_games'] . '</span>
+                                <span class="live-stat-label">Live Games</span>
+                            </div>
+                            <div class="live-stat-item">
+                                <span class="live-stat-number">' . $liveDealerData['statistics']['providers'] . '</span>
+                                <span class="live-stat-label">Providers</span>
+                            </div>
+                            <div class="live-stat-item">
+                                <span class="live-stat-number">' . $liveDealerData['statistics']['average_rtp'] . '</span>
+                                <span class="live-stat-label">Avg RTP</span>
+                            </div>
+                            <div class="live-stat-item">
+                                <span class="live-stat-number">' . $liveDealerData['statistics']['studio_locations'] . '</span>
+                                <span class="live-stat-label">Studios</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="live-games-grid">';
+
+        foreach (array_slice($liveDealerData['games'], 0, 8) as $game) {
+            echo '
+                        <div class="live-game-card">
+                            <div class="live-game-image">
+                                <img src="' . htmlspecialchars($game['image']) . '" alt="' . htmlspecialchars($game['name']) . '" loading="lazy">
+                                <div class="live-status-badge">LIVE</div>
+                                <div class="dealer-overlay">
+                                    <i class="fas fa-video"></i> ' . htmlspecialchars($game['dealer_info']['studio_location']) . ' Studio
+                                    • ' . htmlspecialchars($game['dealer_info']['availability']) . '
+                                </div>
+                            </div>
+                            <div class="live-game-info">
+                                <h3 class="live-game-title">' . htmlspecialchars($game['name']) . '</h3>
+                                <p class="live-game-provider">by ' . htmlspecialchars($game['provider']) . '</p>
+                                
+                                <div class="table-limits">
+                                    <div class="limits-label">Table Limits</div>
+                                    <div class="limits-range">$' . number_format($game['table_limits']['min_bet']) . ' - $' . number_format($game['table_limits']['max_bet']) . '</div>
+                                </div>
+                                
+                                <div class="live-game-details">
+                                    <div class="live-detail-item">
+                                        <span class="live-detail-label">RTP:</span>
+                                        <span class="live-detail-value">' . htmlspecialchars($game['rtp']) . '</span>
+                                    </div>
+                                    <div class="live-detail-item">
+                                        <span class="live-detail-label">Quality:</span>
+                                        <span class="live-detail-value">' . htmlspecialchars($game['streaming_quality']['resolution']) . '</span>
+                                    </div>
+                                    <div class="live-detail-item">
+                                        <span class="live-detail-label">Languages:</span>
+                                        <span class="live-detail-value">' . count($game['dealer_info']['languages']) . '</span>
+                                    </div>
+                                    <div class="live-detail-item">
+                                        <span class="live-detail-label">Category:</span>
+                                        <span class="live-detail-value">' . htmlspecialchars($game['category']) . '</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="streaming-quality">
+                                    <i class="fas fa-hd-video quality-icon"></i>
+                                    <span class="quality-text">' . htmlspecialchars($game['streaming_quality']['resolution']) . ' • ' . htmlspecialchars($game['streaming_quality']['technology']) . '</span>
+                                </div>
+                                
+                                <div class="live-game-features">';
+            
+            foreach (array_slice($game['features'], 0, 3) as $feature) {
+                echo '
+                                    <span class="live-feature-tag">' . htmlspecialchars($feature) . '</span>';
+            }
+            
+            echo '
+                                </div>
+                                
+                                <div class="live-game-actions">
+                                    <button class="play-live-btn" onclick="playLive(\'' . htmlspecialchars($game['id']) . '\')">
+                                        <i class="fas fa-play-circle"></i> Play Live
+                                    </button>
+                                    <button class="game-info-btn" onclick="viewGameInfo(\'' . htmlspecialchars($game['id']) . '\')">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>';
+        }
+
+        echo '
+                    </div>
+
+                    <div class="providers-showcase">
+                        <h3>Leading Live Gaming Providers</h3>
+                        <div class="providers-grid">';
+
+        foreach ($liveDealerData['providers'] as $providerSlug => $provider) {
+            echo '
+                            <div class="provider-card">
+                                <div class="provider-logo">' . strtoupper(substr($provider['name'], 0, 2)) . '</div>
+                                <h4 class="provider-name">' . htmlspecialchars($provider['name']) . '</h4>
+                                <p class="provider-specialties">' . implode(' • ', array_slice($provider['specialties'], 0, 2)) . '</p>
+                                <div class="provider-stats">
+                                    <div class="provider-stat">
+                                        <span class="provider-stat-number">' . $provider['languages_supported'] . '</span>
+                                        <span class="provider-stat-label">Languages</span>
+                                    </div>
+                                    <div class="provider-stat">
+                                        <span class="provider-stat-number">' . count($provider['studio_locations']) . '</span>
+                                        <span class="provider-stat-label">Studios</span>
+                                    </div>
+                                    <div class="provider-stat">
+                                        <span class="provider-stat-number">' . $provider['quality_rating'] . '</span>
+                                        <span class="provider-stat-label">Rating</span>
+                                    </div>
+                                </div>
+                            </div>';
+        }
+
+        echo '
+                        </div>
+                    </div>
+
+                    <div class="technology-info">
+                        <h3>Advanced Streaming Technology</h3>
+                        <div class="tech-grid">
+                            <div class="tech-item">
+                                <i class="fas fa-video tech-icon"></i>
+                                <h4 class="tech-title">HD Streaming</h4>
+                                <p class="tech-description">Crystal clear 1080p-4K video quality with 60fps for smooth gameplay</p>
+                            </div>
+                            <div class="tech-item">
+                                <i class="fas fa-mobile-alt tech-icon"></i>
+                                <h4 class="tech-title">Mobile Optimized</h4>
+                                <p class="tech-description">Perfect performance on iOS and Android devices with touch controls</p>
+                            </div>
+                            <div class="tech-item">
+                                <i class="fas fa-globe tech-icon"></i>
+                                <h4 class="tech-title">Multi-Language</h4>
+                                <p class="tech-description">Professional dealers speaking 40+ languages from global studios</p>
+                            </div>
+                            <div class="tech-item">
+                                <i class="fas fa-shield-alt tech-icon"></i>
+                                <h4 class="tech-title">Certified Fair</h4>
+                                <p class="tech-description">All games certified by independent testing labs for fairness</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="view-all-section">
+                        <a href="/live-dealer-games" class="view-all-live-btn">
+                            <i class="fas fa-video"></i> Explore All Live Casino Games
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payment Methods Guide Section -->
+        <section class="payment-methods-section">
+            <div class="container">
+                <div class="payment-methods-content">
+                    <div class="payment-methods-header">
+                        <h2>🏦 Secure Payment Methods</h2>
+                        <p class="payment-subtitle">
+                            Choose from 15+ trusted payment options designed for Canadian players. All methods feature 
+                            bank-level security, competitive processing times, and transparent fee structures.
+                        </p>
+                        
+                        <div class="payment-stats">
+                            <div class="payment-stat-item">
+                                <span class="payment-stat-number">' . $paymentMethodsData['statistics']['total_methods'] . '</span>
+                                <span class="payment-stat-label">Payment Methods</span>
+                            </div>
+                            <div class="payment-stat-item">
+                                <span class="payment-stat-number">' . $paymentMethodsData['statistics']['instant_methods'] . '</span>
+                                <span class="payment-stat-label">Instant Methods</span>
+                            </div>
+                            <div class="payment-stat-item">
+                                <span class="payment-stat-number">' . $paymentMethodsData['statistics']['free_methods'] . '</span>
+                                <span class="payment-stat-label">Free Methods</span>
+                            </div>
+                            <div class="payment-stat-item">
+                                <span class="payment-stat-number">' . $paymentMethodsData['statistics']['canadian_methods'] . '</span>
+                                <span class="payment-stat-label">Canadian Methods</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="category-tabs">
+                        <button class="category-tab active" data-category="all">All Methods</button>
+                        <button class="category-tab" data-category="credit_debit">Credit Cards</button>
+                        <button class="category-tab" data-category="e_wallet">E-Wallets</button>
+                        <button class="category-tab" data-category="bank_transfer">Bank Transfer</button>
+                        <button class="category-tab" data-category="mobile">Mobile Pay</button>
+                        <button class="category-tab" data-category="crypto">Cryptocurrency</button>
+                    </div>
+
+                    <div class="payment-methods-grid">';
+
+        $featuredMethods = ['interac', 'visa', 'mastercard', 'paypal', 'skrill', 'neteller', 'bitcoin', 'apple_pay'];
+        foreach ($featuredMethods as $methodId) {
+            if (isset($paymentMethodsData['methods'][$methodId])) {
+                $method = $paymentMethodsData['methods'][$methodId];
+                echo '
+                        <div class="payment-method-card" data-category="' . $method['category'] . '">
+                            <div class="payment-method-header">
+                                <div class="payment-logo">
+                                    <img src="' . htmlspecialchars($method['logo']) . '" alt="' . htmlspecialchars($method['name']) . '" loading="lazy">
+                                </div>
+                                <div class="payment-name">
+                                    <h3>' . htmlspecialchars($method['name']) . '</h3>';
+                
+                if ($method['canadian_specific']) {
+                    echo '
+                                    <span class="canadian-badge">🍁 Canadian</span>';
+                }
+                
+                echo '
+                                </div>
+                                <div class="trust-rating">
+                                    <span class="rating-score">' . $method['trust_rating'] . '</span>
+                                    <div class="rating-stars">';
+                
+                for ($i = 1; $i <= 5; $i++) {
+                    $activeClass = $i <= floor($method['trust_rating']) ? 'active' : '';
+                    echo '
+                                        <i class="fas fa-star ' . $activeClass . '"></i>';
+                }
+                
+                echo '
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="payment-method-info">
+                                <p class="payment-description">' . htmlspecialchars($method['description']) . '</p>
+                                
+                                <div class="payment-details">
+                                    <div class="detail-row">
+                                        <span class="detail-label">Deposit Time:</span>
+                                        <span class="detail-value processing-time">' . htmlspecialchars($method['processing_time']['deposit']) . '</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Withdrawal Time:</span>
+                                        <span class="detail-value processing-time">' . htmlspecialchars($method['processing_time']['withdrawal']) . '</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Deposit Fee:</span>
+                                        <span class="detail-value fee">' . htmlspecialchars($method['fees']['deposit']) . '</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Withdrawal Fee:</span>
+                                        <span class="detail-value fee">' . htmlspecialchars($method['fees']['withdrawal']) . '</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="payment-limits">
+                                    <h4>Transaction Limits</h4>
+                                    <div class="limits-grid">
+                                        <div class="limit-item">
+                                            <span class="limit-label">Min Deposit:</span>
+                                            <span class="limit-value">$' . number_format($method['limits']['min_deposit']) . '</span>
+                                        </div>
+                                        <div class="limit-item">
+                                            <span class="limit-label">Max Deposit:</span>
+                                            <span class="limit-value">$' . number_format($method['limits']['max_deposit']) . '</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="payment-features">
+                                    <h4>Key Features</h4>
+                                    <ul class="features-list">';
+                
+                foreach (array_slice($method['features'], 0, 3) as $feature) {
+                    echo '
+                                        <li><i class="fas fa-check"></i> ' . htmlspecialchars($feature) . '</li>';
+                }
+                
+                echo '
+                                    </ul>
+                                </div>
+                                
+                                <div class="security-certifications">';
+                
+                foreach ($method['security_certifications'] as $cert) {
+                    echo '
+                                    <span class="security-badge">' . htmlspecialchars($cert) . '</span>';
+                }
+                
+                echo '
+                                </div>
+                                
+                                <div class="payment-actions">
+                                    <button class="learn-more-btn" onclick="viewPaymentMethodDetails(\'' . htmlspecialchars($method['id']) . '\')">
+                                        <i class="fas fa-info-circle"></i> Learn More
+                                    </button>
+                                    <button class="use-method-btn" onclick="usePaymentMethod(\'' . htmlspecialchars($method['id']) . '\')">
+                                        <i class="fas fa-credit-card"></i> Use This Method
+                                    </button>
+                                </div>
+                            </div>
+                        </div>';
+            }
+        }
+
+        echo '
+                    </div>
+
+                    <div class="security-trust-section">
+                        <h3>🔒 Security & Trust Features</h3>
+                        <div class="security-features-grid">
+                            <div class="security-feature-item">
+                                <div class="security-feature-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <h4 class="security-feature-title">SSL 256-bit Encryption</h4>
+                                <p class="security-feature-description">Bank-level encryption protecting all transactions and personal data</p>
+                            </div>
+                            <div class="security-feature-item">
+                                <div class="security-feature-icon">
+                                    <i class="fas fa-certificate"></i>
+                                </div>
+                                <h4 class="security-feature-title">PCI DSS Compliance</h4>
+                                <p class="security-feature-description">Payment Card Industry security standards for safe transactions</p>
+                            </div>
+                            <div class="security-feature-item">
+                                <div class="security-feature-icon">
+                                    <i class="fas fa-key"></i>
+                                </div>
+                                <h4 class="security-feature-title">Two-Factor Authentication</h4>
+                                <p class="security-feature-description">Additional security layer for account protection</p>
+                            </div>
+                            <div class="security-feature-item">
+                                <div class="security-feature-icon">
+                                    <i class="fas fa-maple-leaf"></i>
+                                </div>
+                                <h4 class="security-feature-title">CDIC Protection</h4>
+                                <p class="security-feature-description">Canadian Deposit Insurance Corporation coverage for banking methods</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="canadian-banking-section">
+                        <h3><i class="fas fa-maple-leaf"></i> Canadian Banking Integration</h3>
+                        <p class="canadian-banking-description">
+                            All major Canadian banks and financial institutions are supported. Enjoy seamless integration 
+                            with your existing banking relationships and trusted Canadian payment solutions.
+                        </p>
+                        <div class="canadian-methods-showcase">
+                            <div class="canadian-method-item">
+                                <div class="canadian-method-name">Interac e-Transfer</div>
+                                <div class="canadian-method-description">Direct bank account access with instant deposits</div>
+                            </div>
+                            <div class="canadian-method-item">
+                                <div class="canadian-method-name">Canadian Banks</div>
+                                <div class="canadian-method-description">RBC, TD, BMO, Scotia, CIBC, and all major banks</div>
+                            </div>
+                            <div class="canadian-method-item">
+                                <div class="canadian-method-name">CDIC Protection</div>
+                                <div class="canadian-method-description">Government-backed deposit insurance coverage</div>
+                            </div>
+                            <div class="canadian-method-item">
+                                <div class="canadian-method-name">CAD Currency</div>
+                                <div class="canadian-method-description">No conversion fees, all transactions in Canadian dollars</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="view-all-payment-methods">
+                        <a href="/payment-methods" class="view-all-payment-btn">
+                            <i class="fas fa-credit-card"></i> View All Payment Methods Guide
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>';
+
+        // Mobile App Section (PRD #13)
+        $mobileAppService = new \App\Services\MobileAppService();
+        $mobileApps = $mobileAppService->getFeaturedMobileApps();
+        $mobileAdvantages = $mobileAppService->getMobileAdvantages();
+        $mobileStats = $mobileAppService->getMobileStats();
+        
+        echo '
+        <section class="mobile-app-section">
+            <div class="container">
+                <div class="mobile-app-content">
+                    <div class="mobile-app-header">
+                        <h2>📱 Best Mobile Casino Apps</h2>
+                        <p class="mobile-app-subtitle">
+                            Experience seamless gaming on the go with our top-rated mobile casino apps. 
+                            Optimized for iOS and Android with exclusive mobile bonuses.
+                        </p>
+                        
+                        <div class="mobile-app-stats">';
+        
+        foreach ($mobileStats as $stat) {
+            echo '
+                            <div class="mobile-stat-item">
+                                <span class="mobile-stat-number">' . htmlspecialchars($stat['number']) . '</span>
+                                <span class="mobile-stat-label">' . htmlspecialchars($stat['label']) . '</span>
+                            </div>';
+        }
+        
+        echo '
+                        </div>
+                    </div>
+                    
+                    <div class="platform-tabs">
+                        <button class="platform-tab active" data-platform="all">All Platforms</button>
+                        <button class="platform-tab" data-platform="ios">iOS Apps</button>
+                        <button class="platform-tab" data-platform="android">Android Apps</button>
+                        <button class="platform-tab" data-platform="pwa">Web Apps</button>
+                    </div>
+                    
+                    <div class="mobile-apps-grid">';
+        
+        foreach ($mobileApps as $app) {
+            echo '
+                        <div class="mobile-app-card" data-platform="' . implode(' ', $app['platforms']) . '">
+                            <div class="mobile-app-header">
+                                <div class="app-icon">
+                                    <img src="' . htmlspecialchars($app['icon']) . '" alt="' . htmlspecialchars($app['name']) . ' App Icon">
+                                </div>
+                                <div class="app-title-section">
+                                    <h3 class="app-name">' . htmlspecialchars($app['name']) . '</h3>
+                                    <p class="app-company">' . htmlspecialchars($app['company']) . '</p>
+                                    <div class="app-rating">
+                                        <div class="rating-stars">';
+                                        
+            $rating = $app['ratings']['average'];
+            for ($i = 1; $i <= 5; $i++) {
+                $activeClass = $i <= $rating ? 'active' : '';
+                echo '
+                                            <i class="fas fa-star ' . $activeClass . '"></i>';
+            }
+            
+            echo '
+                                        </div>
+                                        <span class="rating-score">' . $rating . '</span>
+                                        <span class="rating-count">(' . number_format($app['reviews']['total']) . ')</span>
+                                    </div>
+                                </div>
+                                <div class="platform-badges">';
+                                
+            foreach ($app['platforms'] as $platform) {
+                echo '
+                                    <span class="platform-badge platform-' . $platform . '">' . ucfirst($platform) . '</span>';
+            }
+            
+            echo '
+                                </div>
+                            </div>
+                            
+                            <div class="mobile-app-info">
+                                <p class="app-description">' . htmlspecialchars($app['description']) . '</p>
+                                
+                                <div class="app-details">
+                                    <div class="detail-row">
+                                        <span class="detail-label">App Size:</span>
+                                        <span class="detail-value">' . htmlspecialchars($app['file_size']['ios'] ?? 'Varies') . '</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Version:</span>
+                                        <span class="detail-value">' . htmlspecialchars($app['version']['ios'] ?? 'Latest') . '</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Developer:</span>
+                                        <span class="detail-value">' . htmlspecialchars($app['company']) . '</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Last Update:</span>
+                                        <span class="detail-value">' . htmlspecialchars($app['last_updated']) . '</span>
+                                    </div>
+                                </div>';
+                                
+            if (!empty($app['mobile_bonus'])) {
+                echo '
+                                <div class="mobile-bonus-highlight">
+                                    <h4>📱 Mobile Exclusive Bonus</h4>
+                                    <div class="bonus-amount">' . htmlspecialchars($app['mobile_bonus']['amount']) . '</div>
+                                    <div class="bonus-description">' . htmlspecialchars($app['mobile_bonus']['description']) . '</div>';
+                    
+                if (!empty($app['mobile_bonus']['code'])) {
+                    echo '
+                                    <div class="bonus-code">Code: ' . htmlspecialchars($app['mobile_bonus']['code']) . '</div>';
+                }
+                
+                echo '
+                                </div>';
+            }
+            
+            echo '
+                                <div class="app-features">
+                                    <h4>Key Features:</h4>
+                                    <ul class="features-list">';
+                                    
+            foreach ($app['features'] as $feature) {
+                echo '
+                                        <li><i class="fas fa-check"></i> ' . htmlspecialchars($feature) . '</li>';
+            }
+            
+            echo '
+                                    </ul>
+                                </div>
+                                
+                                <div class="download-section">
+                                    <div class="qr-codes">';
+                                    
+            if (in_array('ios', $app['platforms'])) {
+                echo '
+                                        <div class="qr-code">
+                                            <img src="' . htmlspecialchars($app['qr_codes']['ios']) . '" alt="iOS QR Code">
+                                            <span>iOS</span>
+                                        </div>';
+            }
+            
+            if (in_array('android', $app['platforms'])) {
+                echo '
+                                        <div class="qr-code">
+                                            <img src="' . htmlspecialchars($app['qr_codes']['android']) . '" alt="Android QR Code">
+                                            <span>Android</span>
+                                        </div>';
+            }
+            
+            echo '
+                                    </div>
+                                    
+                                    <div class="download-buttons">';
+                                    
+            if (in_array('ios', $app['platforms'])) {
+                echo '
+                                        <a href="' . htmlspecialchars($app['app_store_links']['ios']) . '" class="download-btn platform-ios">
+                                            <i class="fab fa-apple"></i>
+                                            Download for iOS
+                                        </a>';
+            }
+            
+            if (in_array('android', $app['platforms'])) {
+                echo '
+                                        <a href="' . htmlspecialchars($app['app_store_links']['android']) . '" class="download-btn platform-android">
+                                            <i class="fab fa-google-play"></i>
+                                            Download for Android
+                                        </a>';
+            }
+            
+            if (in_array('pwa', $app['platforms'])) {
+                echo '
+                                        <a href="' . htmlspecialchars($app['app_store_links']['pwa']) . '" class="download-btn platform-pwa">
+                                            <i class="fas fa-globe"></i>
+                                            Open Web App
+                                        </a>';
+            }
+            
+            echo '
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+        }
+        
+        echo '
+                    </div>
+                    
+                    <div class="mobile-advantages-section">
+                        <h2>🚀 Why Choose Mobile Casinos?</h2>
+                        <div class="advantages-grid">';
+                        
+        foreach ($mobileAdvantages as $advantage) {
+            echo '
+                            <div class="advantage-item">
+                                <i class="' . htmlspecialchars($advantage['icon']) . ' advantage-icon"></i>
+                                <h3>' . htmlspecialchars($advantage['title']) . '</h3>
+                                <p>' . htmlspecialchars($advantage['description']) . '</p>
+                            </div>';
+        }
+        
+        echo '
+                        </div>
+                    </div>
+                    
+                    <div class="view-all-mobile-apps">
+                        <a href="/mobile-apps" class="view-all-mobile-btn">
+                            <i class="fas fa-mobile-alt"></i>
+                            View All Mobile Apps
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>';
+
+        // News & Updates Section (PRD #14)
+        echo '
+        <section class="news-updates-homepage-section">
+            <div class="container">
+                <div class="news-section-header">
+                    <h2>📰 Latest Casino News & Updates</h2>
+                    <p class="news-section-subtitle">
+                        Stay informed with the latest developments in the Canadian online casino industry. 
+                        From new game releases to regulatory updates, we cover everything that matters.
+                    </p>
+                    
+                    <div class="news-stats-bar">';
+        
+        foreach ($newsData['news_statistics'] as $stat) {
+            echo '
+                        <div class="news-stat-item">
+                            <span class="news-stat-number">' . htmlspecialchars($stat['number']) . '</span>
+                            <span class="news-stat-label">' . htmlspecialchars($stat['label']) . '</span>
+                        </div>';
+        }
+        
+        echo '
+                    </div>
+                </div>
+                
+                <div class="featured-news-row">';
+        
+        foreach (array_slice($newsData['featured_articles'], 0, 3) as $index => $article) {
+            $isMajor = $index === 0;
+            $cardClass = $isMajor ? 'featured-news-card major' : 'featured-news-card';
+            
+            echo '
+                    <article class="' . $cardClass . '">
+                        <div class="news-image">
+                            <img src="' . htmlspecialchars($article['featured_image']) . '" alt="' . htmlspecialchars($article['title']) . '">
+                            <span class="news-category">' . htmlspecialchars(ucwords(str_replace('-', ' ', $article['category']))) . '</span>
+                        </div>
+                        <div class="news-content">
+                            <h3><a href="/news/' . htmlspecialchars($article['slug']) . '">' . htmlspecialchars($article['title']) . '</a></h3>
+                            <p class="news-excerpt">' . htmlspecialchars($article['excerpt']) . '</p>
+                            <div class="news-meta">
+                                <div class="author-info">
+                                    <img src="' . htmlspecialchars($article['author']['avatar']) . '" alt="' . htmlspecialchars($article['author']['name']) . '">
+                                    <span>' . htmlspecialchars($article['author']['name']) . '</span>
+                                </div>
+                                <span class="news-date">' . date('M j, Y', strtotime($article['publication_date'])) . '</span>
+                                <span class="reading-time">' . htmlspecialchars($article['reading_time']) . '</span>
+                            </div>
+                        </div>
+                    </article>';
+        }
+        
+        echo '
+                </div>
+                
+                <div class="latest-updates-row">
+                    <h3>Latest Updates</h3>
+                    <div class="updates-grid">';
+        
+        foreach ($newsData['latest_updates'] as $update) {
+            echo '
+                        <article class="update-card">
+                            <div class="update-meta">
+                                <span class="update-category">' . htmlspecialchars(ucwords(str_replace('-', ' ', $update['category']))) . '</span>
+                                <span class="update-date">' . date('M j', strtotime($update['publication_date'])) . '</span>
+                            </div>
+                            <h4><a href="/news/' . htmlspecialchars($update['slug']) . '">' . htmlspecialchars($update['title']) . '</a></h4>
+                            <p class="update-excerpt">' . htmlspecialchars(substr($update['excerpt'], 0, 100)) . '...</p>
+                            <span class="reading-time">' . htmlspecialchars($update['reading_time']) . '</span>
+                        </article>';
+        }
+        
+        echo '
+                    </div>
+                </div>
+                
+                <div class="view-all-news">
+                    <a href="/news" class="view-all-news-btn">
+                        <i class="fas fa-newspaper"></i>
+                        View All News & Updates
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Canadian Provinces Section (PRD #16) -->
+        <section class="provinces-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Casino Guide by Canadian Province</h2>
+                    <p class="section-subtitle">
+                        Find the best online casinos for your province. Local regulations, age requirements, and top recommendations.
+                    </p>
+                </div>
+                
+                <div class="provinces-preview">
+                    <div class="provinces-grid">';
+        
+        $featuredProvinces = array_slice($provincesData['featured_provinces'], 0, 4);
+        foreach ($featuredProvinces as $code => $province) {
+            echo '
+                        <div class="province-card" data-province="' . $code . '">
+                            <div class="province-header">
+                                <img src="' . htmlspecialchars($province['flag_url']) . '" 
+                                     alt="' . htmlspecialchars($province['name']) . ' flag" 
+                                     class="province-flag"
+                                     onerror="this.src=\'/images/placeholder.svg\'">
+                                <h3>' . htmlspecialchars($province['name']) . '</h3>
+                            </div>
+                            
+                            <div class="province-stats">
+                                <div class="stat">
+                                    <span class="label">Age:</span>
+                                    <span class="value">' . $province['gambling_age'] . '+</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="label">Casinos:</span>
+                                    <span class="value">' . $province['local_casinos'] . '</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="label">Status:</span>
+                                    <span class="value status-' . strtolower($province['legal_status']) . '">
+                                        ' . htmlspecialchars($province['legal_status']) . '
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="province-actions">
+                                <a href="/provinces/' . strtolower($code) . '" class="btn-view-details">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>';
+        }
+        
+        echo '
+                    </div>
+                    
+                    <div class="provinces-overview">
+                        <div class="overview-stats">
+                            <div class="overview-stat">
+                                <span class="number">' . $provincesData['total_provinces'] . '</span>
+                                <span class="label">Provinces & Territories</span>
+                            </div>
+                            <div class="overview-stat">
+                                <span class="number">38M+</span>
+                                <span class="label">Canadian Population</span>
+                            </div>
+                            <div class="overview-stat">
+                                <span class="number">18+</span>
+                                <span class="label">Minimum Age</span>
+                            </div>
+                        </div>
+                        
+                        <div class="view-all-provinces">
+                            <a href="/provinces" class="view-all-provinces-btn">
+                                <i class="fas fa-map"></i>
+                                View All Provinces & Territories
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Software Providers Section (PRD #17) -->
+        <section class="providers-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Top Casino Software Providers</h2>
+                    <p class="section-subtitle">
+                        Discover the world\'s leading casino software providers powering Canada\'s most trusted online casinos. 
+                        From innovative slot games to cutting-edge live dealer experiences, these industry giants deliver 
+                        the highest quality gaming entertainment with unmatched reliability and fairness.
+                    </p>
+                </div>
+
+                <div class="providers-overview">
+                    <div class="overview-stats">
+                        <div class="overview-stat">
+                            <span class="number">' . $softwareProvidersData['total_providers'] . '</span>
+                            <span class="label">Licensed Providers</span>
+                        </div>
+                        <div class="overview-stat">
+                            <span class="number">' . $softwareProvidersData['statistics']['total_games'] . '+</span>
+                            <span class="label">Games Available</span>
+                        </div>
+                        <div class="overview-stat">
+                            <span class="number">' . count($softwareProvidersData['categories']) . '</span>
+                            <span class="label">Game Categories</span>
+                        </div>
+                        <div class="overview-stat">
+                            <span class="number">' . $softwareProvidersData['statistics']['casino_partnerships'] . '+</span>
+                            <span class="label">Casino Partnerships</span>
+                        </div>
+                    </div>
+                    
+                    <div class="provider-categories">
+                        <a href="/providers" class="category-filter active">All Providers</a>';
+                        
+                        foreach ($softwareProvidersData['categories'] as $category) {
+                            echo '<a href="/providers?category=' . urlencode($category) . '" class="category-filter">' . htmlspecialchars($category) . '</a>';
+                        }
+                        
+                        echo '
+                    </div>
+                </div>
+
+                <div class="providers-container">
+                    <div class="providers-grid">';
+                    
+                    foreach ($softwareProvidersData['featured_providers'] as $slug => $provider) {
+                        echo '
+                        <div class="provider-card">
+                            <div class="provider-header">
+                                <img src="/images/providers/' . strtolower(str_replace([' ', '.'], '-', $provider['name'])) . '.svg" 
+                                     alt="' . htmlspecialchars($provider['name']) . ' Logo" 
+                                     class="provider-logo">
+                                <div class="provider-info">
+                                    <h3>' . htmlspecialchars($provider['name']) . '</h3>
+                                    <p class="founded">Founded ' . $provider['founded'] . '</p>
+                                </div>
+                            </div>
+
+                            <div class="provider-stats">
+                                <div class="stat">
+                                    <span class="label">Games</span>
+                                    <span class="value">' . $provider['game_count'] . '+</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="label">Rating</span>
+                                    <span class="value">' . $provider['rating'] . '/5</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="label">Casinos</span>
+                                    <span class="value">' . $provider['casino_count'] . '+</span>
+                                </div>
+                            </div>
+
+                            <div class="provider-specialties">';
+                            
+                            foreach (array_slice($provider['specialties'], 0, 3) as $specialty) {
+                                echo '<span class="specialty-tag">' . htmlspecialchars($specialty) . '</span>';
+                            }
+                            
+                            echo '
+                            </div>
+
+                            <p class="provider-description">
+                                ' . htmlspecialchars(substr($provider['description'], 0, 150)) . '...
+                            </p>
+
+                            <a href="/providers/' . strtolower(str_replace([' ', '.'], '-', $provider['name'])) . '" 
+                               class="btn-view-provider">
+                                View Provider Details
+                            </a>
+                        </div>';
+                    }
+                    
+                    echo '
+                    </div>
+                    
+                    <div class="view-all-providers">
+                        <a href="/providers" class="view-all-providers-btn">
+                            <i class="fas fa-code"></i>
+                            View All Software Providers
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        ' . $bonusDatabaseSection . '
+        
     </main>
 
     <footer class="footer">
@@ -1843,5 +3514,285 @@ class HomeController extends Controller {
                 'description' => 'Try new slot games with free spins bonuses'
             ]
         ];
+    }
+    
+    /**
+     * Get popular slots section data
+     */
+    private function getPopularSlotsSection(): array {
+        $popularSlotsService = new \App\Services\PopularSlotsService();
+        return $popularSlotsService->getPopularSlotsSection();
+    }
+    
+    /**
+     * Render popular slots section HTML
+     */
+    private function renderPopularSlotsSection(): string {
+        $slotsData = $this->getPopularSlotsSection();
+        
+        ob_start();
+        ?>
+        <!-- Popular Slots Detailed Section -->
+        <section class="popular-slots-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Popular Casino Slots</h2>
+                    <p>Discover the most exciting slot games with top RTP rates and massive jackpots</p>
+                </div>
+                
+                <div class="slots-categories">
+                    <div class="category-tabs">
+                        <button class="tab-btn active" data-category="all">All Slots</button>
+                        <button class="tab-btn" data-category="new">New Releases</button>
+                        <button class="tab-btn" data-category="popular">Most Popular</button>
+                        <button class="tab-btn" data-category="jackpot">Progressive Jackpots</button>
+                        <button class="tab-btn" data-category="megaways">Megaways</button>
+                    </div>
+                </div>
+                
+                <div class="slots-grid" id="popular-slots-grid">
+                    <?php foreach (array_slice($slotsData['featured_slots'], 0, 8) as $slot): ?>
+                        <div class="slot-card" data-category="<?php echo htmlspecialchars($slot['category']); ?>">
+                            <div class="slot-image">
+                                <div class="slot-provider"><?php echo htmlspecialchars($slot['provider']['name']); ?></div>
+                                <div class="slot-title"><?php echo htmlspecialchars($slot['name']); ?></div>
+                            </div>
+                            <div class="slot-content">
+                                <div class="slot-stats">
+                                    <div class="stat">
+                                        <span class="stat-label">RTP</span>
+                                        <span class="stat-value"><?php echo $slot['rtp']; ?>%</span>
+                                    </div>
+                                    <div class="stat">
+                                        <span class="stat-label">Max Win</span>
+                                        <span class="stat-value"><?php echo $slot['max_win_formatted']; ?></span>
+                                    </div>
+                                    <div class="stat">
+                                        <span class="stat-label">Volatility</span>
+                                        <span class="stat-value"><?php echo ucfirst($slot['volatility']); ?></span>
+                                    </div>
+                                </div>
+                                <div class="slot-features">
+                                    <?php foreach (array_slice($slot['features'], 0, 3) as $feature): ?>
+                                        <span class="feature-tag"><?php echo htmlspecialchars($feature); ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                                <div class="slot-actions">
+                                    <a href="/slots/<?php echo $slot['slug']; ?>" class="btn btn-secondary">Details</a>
+                                    <a href="/casinos" class="btn btn-primary">Play Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                
+                <div class="slots-features">
+                    <div class="feature-highlights">
+                        <div class="feature-item">
+                            <div class="feature-icon">🎰</div>
+                            <h3>High RTP Games</h3>
+                            <p>Our selection features slots with RTPs above 96% for better winning chances</p>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <div class="feature-icon">💰</div>
+                            <h3>Massive Jackpots</h3>
+                            <p>Progressive slots with jackpots reaching millions of dollars</p>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <div class="feature-icon">⚡</div>
+                            <h3>Instant Play</h3>
+                            <p>No download required - play directly in your browser</p>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <div class="feature-icon">📱</div>
+                            <h3>Mobile Optimized</h3>
+                            <p>Perfect gameplay on all devices - desktop, tablet, and mobile</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="provider-showcase">
+                    <h3>Top Slot Providers</h3>
+                    <div class="provider-grid">
+                        <?php foreach ($slotsData['providers'] as $provider): ?>
+                            <div class="provider-item">
+                                <div class="provider-logo"><?php echo htmlspecialchars($provider['name']); ?></div>
+                                <p><?php echo htmlspecialchars($provider['short_description']); ?></p>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                
+                <div class="view-all-slots">
+                    <a href="/slots" class="btn btn-primary btn-large">View All Slots</a>
+                </div>
+            </div>
+        </section>
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
+     * Render detailed review card for homepage
+     */
+    private function renderDetailedReviewCard($review)
+    {
+        $prosHtml = '';
+        foreach (array_slice($review['pros'], 0, 4) as $pro) {
+            $prosHtml .= '<li><i class="fas fa-check"></i>' . htmlspecialchars($pro) . '</li>';
+        }
+        
+        $consHtml = '';
+        foreach (array_slice($review['cons'], 0, 3) as $con) {
+            $consHtml .= '<li><i class="fas fa-times"></i>' . htmlspecialchars($con) . '</li>';
+        }
+        
+        $specialtiesHtml = '';
+        foreach ($review['specialties'] as $specialty) {
+            $specialtiesHtml .= '<span class="specialty-tag">' . htmlspecialchars($specialty) . '</span>';
+        }
+        
+        return '
+        <div class="review-card">
+            <div class="card-header">
+                <div class="casino-logo">
+                    <img src="' . htmlspecialchars($review['logo']) . '" alt="' . htmlspecialchars($review['name']) . ' Logo" loading="lazy">
+                </div>
+                <div class="casino-basic-info">
+                    <h3>' . htmlspecialchars($review['name']) . '</h3>
+                    <div class="established">Est. ' . htmlspecialchars($review['established']) . '</div>
+                    <div class="overall-rating">
+                        <div class="stars">' . $this->renderStars($review['expert_rating']) . '</div>
+                        <span class="rating-score">' . number_format($review['expert_rating'], 1) . '/5</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-stats">
+                <div class="stat-item">
+                    <span class="stat-label">RTP</span>
+                    <span class="stat-value">' . htmlspecialchars($review['rtp']) . '</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Games</span>
+                    <span class="stat-value">' . htmlspecialchars($review['game_count']) . '</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Payout</span>
+                    <span class="stat-value">' . htmlspecialchars($review['payout_speed']) . '</span>
+                </div>
+            </div>
+            
+            <div class="card-bonus">
+                <div class="bonus-amount">' . htmlspecialchars($review['bonus']['welcome_package']) . '</div>
+                <div class="bonus-details">Welcome Package + ' . htmlspecialchars($review['bonus']['free_spins']) . '</div>
+            </div>
+            
+            <div class="card-specialties">
+                ' . $specialtiesHtml . '
+            </div>
+            
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>Pros</h4>
+                    <ul>' . $prosHtml . '</ul>
+                </div>
+                <div class="cons">
+                    <h4>Cons</h4>
+                    <ul>' . $consHtml . '</ul>
+                </div>
+            </div>
+            
+            <div class="mobile-app-info">
+                <h4>Mobile Experience</h4>';
+        
+        if (isset($review['mobile_app']['play_store_rating'])) {
+            $html = '
+                <div class="app-ratings">
+                    <span><i class="fab fa-google-play"></i> ' . htmlspecialchars($review['mobile_app']['play_store_rating']) . '</span>
+                    <span><i class="fab fa-apple"></i> ' . htmlspecialchars($review['mobile_app']['app_store_rating']) . '</span>
+                    <span><i class="fas fa-download"></i> ' . htmlspecialchars($review['mobile_app']['size']) . '</span>
+                </div>';
+        } else {
+            $html = '
+                <div class="app-info">
+                    <span><i class="fas fa-mobile-alt"></i> ' . htmlspecialchars($review['mobile_app']['type']) . '</span>
+                </div>';
+        }
+        
+        $html .= '
+            </div>
+            
+            <div class="detailed-ratings">
+                <h4>Expert Ratings</h4>
+                <div class="rating-bars">';
+        
+        $ratingCategories = [
+            'security' => 'Security & Fairness',
+            'games' => 'Games & Software', 
+            'bonuses' => 'Bonuses & Promotions',
+            'mobile' => 'Mobile Experience',
+            'payments' => 'Banking & Payments',
+            'support' => 'Customer Support'
+        ];
+        
+        foreach ($review['category_ratings'] as $category => $rating) {
+            $categoryName = $ratingCategories[$category] ?? ucfirst($category);
+            $percentage = ($rating / 5) * 100;
+            
+            $html .= '
+                    <div class="rating-bar">
+                        <span class="category-name">' . htmlspecialchars($categoryName) . '</span>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ' . $percentage . '%"></div>
+                        </div>
+                        <span class="rating-value">' . number_format($rating, 1) . '</span>
+                    </div>';
+        }
+        
+        $html .= '
+                </div>
+            </div>
+            
+            <div class="card-actions">
+                <a href="#" class="btn btn-primary get-bonus-btn" data-casino="' . htmlspecialchars($review['id']) . '">
+                    <i class="fas fa-gift"></i> Get Bonus
+                </a>
+                <a href="/casino/' . htmlspecialchars($review['id']) . '" class="btn btn-secondary">
+                    <i class="fas fa-info-circle"></i> Full Review
+                </a>
+            </div>
+        </div>';
+        
+        return $html;
+    }
+
+    /**
+     * Render stars for rating display
+     */
+    private function renderStars($rating)
+    {
+        $fullStars = floor($rating);
+        $halfStar = ($rating - $fullStars) >= 0.5;
+        $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0);
+        
+        $html = '';
+        
+        for ($i = 0; $i < $fullStars; $i++) {
+            $html .= '<i class="fas fa-star"></i>';
+        }
+        
+        if ($halfStar) {
+            $html .= '<i class="fas fa-star-half-alt"></i>';
+        }
+        
+        for ($i = 0; $i < $emptyStars; $i++) {
+            $html .= '<i class="far fa-star"></i>';
+        }
+        
+        return $html;
     }
 }

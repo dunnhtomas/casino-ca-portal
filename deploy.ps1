@@ -8,7 +8,7 @@ param(
 # Server Configuration
 $ServerHost = "193.233.161.161"
 $ServerUser = "root"
-$ServerPath = "/var/www/bestcasinoportal.com"
+$ServerPath = "/var/www/casino-portal"
 $LocalPath = "."
 
 # Colors

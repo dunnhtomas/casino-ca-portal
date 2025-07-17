@@ -1,7 +1,7 @@
 @echo off
 echo =================================================
 echo  SECURE Casino Portal Deployment (SSH Key Only)
-echo  Server: 193.233.161.161 (alexhost.com)
+echo  Server: 193.233.161.161 (Best Casino Portal VPS)
 echo  Authentication: SSH Key ONLY - NO PASSWORDS
 echo =================================================
 echo.

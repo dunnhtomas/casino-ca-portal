@@ -3,7 +3,7 @@
 
 Write-Host "=================================================" -ForegroundColor Cyan
 Write-Host "  SECURE Casino Portal Deployment (SSH Key Only)" -ForegroundColor Green
-Write-Host "  Server: 193.233.161.161 (alexhost.com)" -ForegroundColor Yellow
+Write-Host "  Server: 193.233.161.161 (Best Casino Portal VPS)" -ForegroundColor Yellow
 Write-Host "  Authentication: SSH Key ONLY - NO PASSWORDS" -ForegroundColor Red
 Write-Host "=================================================" -ForegroundColor Cyan
 Write-Host ""

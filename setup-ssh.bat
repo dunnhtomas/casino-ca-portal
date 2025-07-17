@@ -1,6 +1,6 @@
 @echo off
 echo ================================
-echo SSH Setup for Alexhost.com Ubuntu VPS
+echo SSH Setup for Best Casino Portal VPS
 echo Server: 193.233.161.161 (Fresh Install)
 echo ================================
 echo.

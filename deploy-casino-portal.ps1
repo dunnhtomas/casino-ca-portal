@@ -1,8 +1,8 @@
 # Casino Portal Deployment Script for Ubuntu VPS
-# Alexhost.com - Fresh Ubuntu 24.04 LTS Installation
+# Best Casino Portal - VPS Deployment Script
 
 Write-Host "🚀 Deploying Best Casino Portal to Ubuntu VPS..." -ForegroundColor Green
-Write-Host "Server: 193.233.161.161 (alexhost.com)" -ForegroundColor Cyan
+Write-Host "Server: 193.233.161.161 (Best Casino Portal VPS)" -ForegroundColor Cyan
 Write-Host ""
 
 # Step 1: Update Ubuntu and install LAMP stack

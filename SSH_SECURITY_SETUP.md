@@ -2,7 +2,7 @@
 ## Complete Security Configuration for Casino Portal VPS
 
 ### 🔐 Security Overview
-- **Server**: 193.233.161.161 (alexhost.com)
+- **Server**: 193.233.161.161 (Best Casino Portal VPS)
 - **Authentication**: SSH Keys ONLY
 - **Password Authentication**: COMPLETELY DISABLED
 - **Key Type**: ED25519 (Most Secure)

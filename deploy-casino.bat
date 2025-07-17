@@ -1,7 +1,7 @@
 @echo off
 echo =================================================
 echo  Casino Portal Deployment to Ubuntu VPS
-echo  Server: 193.233.161.161 (alexhost.com)
+echo  Server: 193.233.161.161 (Best Casino Portal VPS)
 echo =================================================
 echo.
 

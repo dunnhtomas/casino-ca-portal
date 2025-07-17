@@ -5,7 +5,7 @@
 # Server Configuration
 SERVER_HOST="193.233.161.161"
 SERVER_USER="root"
-SERVER_PATH="/var/www/bestcasinoportal.com"
+SERVER_PATH="/var/www/casino-portal"
 LOCAL_PATH="."
 
 # Colors for output

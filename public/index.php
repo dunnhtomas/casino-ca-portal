@@ -44,6 +44,9 @@ try {
     // Initialize router with correct namespace
     $router = new \App\Core\Router();
     
+    // Load application routes
+    require_once SRC_PATH . '/routes.php';
+    
     // Handle the request
     $router->dispatch();
     

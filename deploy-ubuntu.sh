@@ -100,7 +100,7 @@ ssh $REMOTE_USER@$REMOTE_HOST << 'EOF'
 cat > /etc/nginx/sites-available/casino-portal << 'NGINX_CONF'
 server {
     listen 80;
-    server_name 193.233.161.161 worldofwins.club www.worldofwins.club;
+    server_name 193.233.161.161 bestcasinoportal.com www.bestcasinoportal.com;
     root /var/www/casino-portal/public;
     index index.php index.html;
 
@@ -167,12 +167,12 @@ EOF
 echo "🔒 Setting up SSL certificate..."
 ssh $REMOTE_USER@$REMOTE_HOST << 'EOF'
 # Only setup SSL if domain is properly configured
-if dig +short worldofwins.club | grep -q "193.233.161.161"; then
-    certbot --nginx -d worldofwins.club -d www.worldofwins.club --non-interactive --agree-tos --email admin@worldofwins.club
+if dig +short bestcasinoportal.com | grep -q "193.233.161.161"; then
+    certbot --nginx -d bestcasinoportal.com -d www.bestcasinoportal.com --non-interactive --agree-tos --email admin@bestcasinoportal.com
     echo "✅ SSL certificate installed"
 else
     echo "⚠️  Domain not pointing to server yet. SSL setup skipped."
-    echo "   Configure DNS first: worldofwins.club -> 193.233.161.161"
+    echo "   Configure DNS first: bestcasinoportal.com -> 193.233.161.161"
 fi
 EOF
 

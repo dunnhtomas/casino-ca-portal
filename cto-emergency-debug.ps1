@@ -9,6 +9,7 @@ Write-Host "🚨 EMERGENCY CTO DEBUG MODE ACTIVATED" -ForegroundColor Red
 Write-Host "====================================" -ForegroundColor Yellow
 
 # Configuration
+# Server Configuration
 $SERVER = "root@193.233.161.161"
 $DOMAIN = "bestcasinoportal.com"
 $LOCAL_PATH = "c:\Users\tamir\Downloads\Casino CA SEO"

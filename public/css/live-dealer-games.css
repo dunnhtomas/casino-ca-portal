@@ -1,0 +1,533 @@
+/* Live Dealer Games Section Styles */
+.live-dealer-games-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 80px 0;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.live-dealer-games-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="livePattern" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="2" fill="rgba(212,175,55,0.1)"/><circle cx="5" cy="5" r="1" fill="rgba(212,175,55,0.05)"/><circle cx="25" cy="25" r="1" fill="rgba(212,175,55,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23livePattern)"/></svg>');
+    animation: liveFloat 25s ease-in-out infinite;
+    z-index: 0;
+}
+
+.live-dealer-content {
+    position: relative;
+    z-index: 1;
+}
+
+.live-dealer-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.live-dealer-header h2 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, #d4af37, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.live-dealer-subtitle {
+    font-size: 1.3rem;
+    opacity: 0.9;
+    max-width: 650px;
+    margin: 0 auto 30px;
+    line-height: 1.6;
+}
+
+.live-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 50px;
+    flex-wrap: wrap;
+}
+
+.live-stat-item {
+    text-align: center;
+    padding: 25px;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    min-width: 140px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.live-stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2);
+}
+
+.live-stat-number {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #d4af37;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.live-stat-label {
+    font-size: 0.95rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.live-games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.live-game-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.live-game-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(212, 175, 55, 0.3);
+    border-color: rgba(212, 175, 55, 0.5);
+}
+
+.live-game-image {
+    position: relative;
+    height: 220px;
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.live-game-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.live-game-card:hover .live-game-image img {
+    transform: scale(1.1);
+}
+
+.live-status-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: livePulse 2s ease-in-out infinite;
+}
+
+.dealer-overlay {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    right: 15px;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.live-game-card:hover .dealer-overlay {
+    opacity: 1;
+}
+
+.live-game-info {
+    padding: 25px;
+}
+
+.live-game-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #d4af37;
+}
+
+.live-game-provider {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.live-game-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.live-detail-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.live-detail-label {
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+}
+
+.live-detail-value {
+    color: white;
+    font-weight: 600;
+}
+
+.table-limits {
+    background: rgba(212, 175, 55, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.limits-label {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.limits-range {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #d4af37;
+}
+
+.live-game-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.live-feature-tag {
+    background: linear-gradient(45deg, #1a1a2e, #16213e);
+    color: #d4af37;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.streaming-quality {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: rgba(46, 204, 113, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid #2ecc71;
+}
+
+.quality-icon {
+    color: #2ecc71;
+    font-size: 1.2rem;
+}
+
+.quality-text {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.8);
+}
+
+.live-game-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.play-live-btn {
+    flex: 1;
+    background: linear-gradient(45deg, #d4af37, #ffd700);
+    color: #1a1a2e;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.play-live-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+}
+
+.game-info-btn {
+    background: transparent;
+    color: #d4af37;
+    border: 2px solid #d4af37;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.game-info-btn:hover {
+    background: #d4af37;
+    color: #1a1a2e;
+}
+
+.providers-showcase {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.providers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.provider-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 30px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.provider-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2);
+}
+
+.provider-logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #d4af37;
+    font-size: 1.5rem;
+    border: 2px solid rgba(212, 175, 55, 0.3);
+}
+
+.provider-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #d4af37;
+}
+
+.provider-specialties {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.provider-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.provider-stat {
+    text-align: center;
+}
+
+.provider-stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #d4af37;
+    display: block;
+}
+
+.provider-stat-label {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+}
+
+.technology-info {
+    margin-top: 60px;
+    background: rgba(212, 175, 55, 0.05);
+    border-radius: 20px;
+    padding: 40px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.tech-item {
+    text-align: center;
+    padding: 20px;
+}
+
+.tech-icon {
+    font-size: 3rem;
+    color: #d4af37;
+    margin-bottom: 15px;
+}
+
+.tech-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.tech-description {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.view-all-section {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.view-all-live-btn {
+    background: transparent;
+    color: #d4af37;
+    border: 2px solid #d4af37;
+    padding: 18px 40px;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.view-all-live-btn:hover {
+    background: #d4af37;
+    color: #1a1a2e;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes liveFloat {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-15px) rotate(1deg); }
+    66% { transform: translateY(8px) rotate(-1deg); }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .live-dealer-games-section {
+        padding: 60px 0;
+    }
+    
+    .live-dealer-header h2 {
+        font-size: 2.5rem;
+    }
+    
+    .live-stats {
+        gap: 20px;
+    }
+    
+    .live-stat-item {
+        min-width: 110px;
+        padding: 20px;
+    }
+    
+    .live-stat-number {
+        font-size: 2.2rem;
+    }
+    
+    .live-games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+    
+    .live-game-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .live-game-actions {
+        flex-direction: column;
+    }
+    
+    .providers-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+    
+    .tech-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .live-dealer-header h2 {
+        font-size: 2rem;
+    }
+    
+    .live-dealer-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .live-games-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .live-game-info {
+        padding: 20px;
+    }
+    
+    .technology-info {
+        padding: 30px 20px;
+    }
+}
