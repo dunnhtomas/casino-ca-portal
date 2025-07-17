@@ -1599,6 +1599,130 @@ class HomeController extends Controller {
                 display: none;
             }
         }
+        
+        /* How We Review Section Styles (PRD #19) */
+        .methodology-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            padding: 4rem 0;
+            border-top: 3px solid #e74c3c;
+        }
+        
+        .methodology-overview {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .methodology-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            color: white;
+        }
+        
+        .stat-number {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .criteria-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #3498db;
+        }
+        
+        .criteria-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .criteria-card.security { border-left-color: #e53e3e; }
+        .criteria-card.bonuses { border-left-color: #38a169; }
+        .criteria-card.games { border-left-color: #3182ce; }
+        .criteria-card.customer-service { border-left-color: #00b894; }
+        .criteria-card.banking { border-left-color: #ff6b6b; }
+        .criteria-card.localization { border-left-color: #d69e2e; }
+        .criteria-card.mobile { border-left-color: #805ad5; }
+        
+        .criteria-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .criteria-card h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+        
+        .criteria-weight {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        
+        .criteria-card p {
+            color: #4a5568;
+            line-height: 1.5;
+            margin: 0;
+        }
+        
+        .methodology-actions {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .methodology-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .criteria-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .methodology-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -3189,6 +3313,102 @@ class HomeController extends Controller {
                     <a href="/legal-status" class="view-all-legal-btn">
                         <i class="fas fa-gavel"></i>
                         View Complete Legal Guide
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- How We Review Section (PRD #19) -->
+        <section class="methodology-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">How We Review Online Casinos</h2>
+                    <p class="section-subtitle">
+                        Our expert team follows a rigorous 7-point methodology to evaluate every aspect of online casinos, 
+                        ensuring you get honest, unbiased reviews you can trust.
+                    </p>
+                </div>
+                
+                <div class="methodology-overview">
+                    <div class="methodology-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">7</span>
+                            <span class="stat-label">Review Criteria</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">3</span>
+                            <span class="stat-label">Expert Reviewers</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">14-21</span>
+                            <span class="stat-label">Days Per Review</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">200+</span>
+                            <span class="stat-label">Annual Reviews</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="criteria-grid">
+                    <div class="criteria-card security">
+                        <div class="criteria-icon">🔒</div>
+                        <h4>Security & Fairness</h4>
+                        <div class="criteria-weight">20%</div>
+                        <p>License verification, SSL encryption, RNG certification, responsible gambling tools</p>
+                    </div>
+                    
+                    <div class="criteria-card bonuses">
+                        <div class="criteria-icon">🎁</div>
+                        <h4>Bonuses & Promotions</h4>
+                        <div class="criteria-weight">15%</div>
+                        <p>Welcome bonus value, wagering requirements, ongoing promotions, loyalty programs</p>
+                    </div>
+                    
+                    <div class="criteria-card games">
+                        <div class="criteria-icon">🎮</div>
+                        <h4>Games & Software</h4>
+                        <div class="criteria-weight">15%</div>
+                        <p>Game variety, software providers, game quality, mobile compatibility</p>
+                    </div>
+                    
+                    <div class="criteria-card customer-service">
+                        <div class="criteria-icon">🎧</div>
+                        <h4>Customer Service</h4>
+                        <div class="criteria-weight">15%</div>
+                        <p>Support availability, response times, channel options, staff knowledge</p>
+                    </div>
+                    
+                    <div class="criteria-card banking">
+                        <div class="criteria-icon">💳</div>
+                        <h4>Banking & Payouts</h4>
+                        <div class="criteria-weight">15%</div>
+                        <p>Payment method variety, processing speeds, withdrawal limits, fees</p>
+                    </div>
+                    
+                    <div class="criteria-card localization">
+                        <div class="criteria-icon">🇨🇦</div>
+                        <h4>Localization</h4>
+                        <div class="criteria-weight">10%</div>
+                        <p>Canadian focus, local payment methods, currency support, regional compliance</p>
+                    </div>
+                    
+                    <div class="criteria-card mobile">
+                        <div class="criteria-icon">📱</div>
+                        <h4>Mobile Experience</h4>
+                        <div class="criteria-weight">10%</div>
+                        <p>Mobile site quality, app availability, mobile game selection, touch optimization</p>
+                    </div>
+                </div>
+                
+                <div class="methodology-actions">
+                    <a href="/review-methodology" class="view-all-btn primary">
+                        <i class="fas fa-search"></i>
+                        View Complete Methodology
+                    </a>
+                    <a href="/expert-team" class="view-all-btn secondary">
+                        <i class="fas fa-users"></i>
+                        Meet Our Expert Team
                     </a>
                 </div>
             </div>

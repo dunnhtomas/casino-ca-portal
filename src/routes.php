@@ -28,6 +28,17 @@ $router->get('/api/casino-grid', 'CasinoGridController@api');
 $router->get('/reviews', 'ReviewController@list');
 $router->get('/review/{slug}', 'ReviewController@detail');
 
+// Review Methodology routes (PRD #19)
+$router->get('/review-methodology', 'ReviewMethodologyController@index');
+$router->get('/methodology/{criteriaSlug}', 'ReviewMethodologyController@criteria');
+$router->get('/expert-team', 'ReviewMethodologyController@expertTeam');
+$router->get('/testing-process', 'ReviewMethodologyController@testingProcess');
+
+// Review Methodology API routes
+$router->get('/api/review-methodology', 'ReviewMethodologyController@apiMethodology');
+$router->get('/api/methodology-criteria', 'ReviewMethodologyController@apiCriteria');
+$router->get('/api/expert-team', 'ReviewMethodologyController@apiExpertTeam');
+
 // Content generation routes
 $router->get('/generate-content', 'ContentController@generate');
 $router->post('/api/generate-review', 'ContentController@generateReview');
