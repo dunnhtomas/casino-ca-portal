@@ -15,6 +15,7 @@ use App\Services\MobileAppService;
 use App\Services\NewsService;
 use App\Services\ProvinceService;
 use App\Services\SoftwareProviderService;
+use App\Services\LegalStatusService;
 use App\Controllers\BonusDatabaseController;
 
 class HomeController extends Controller {
@@ -87,6 +88,15 @@ class HomeController extends Controller {
             'total_providers' => count($softwareProviderService->getAllProviders()),
             'categories' => $softwareProviderService->getProviderCategories(),
             'statistics' => $softwareProviderService->getProviderStatistics()
+        ];
+        
+        // Get legal status data
+        $legalStatusService = new LegalStatusService();
+        $legalStatusData = [
+            'legal_summary' => $legalStatusService->getLegalSummaryForHomepage(),
+            'authorities' => array_slice($legalStatusService->getAllAuthorities(), 0, 4),
+            'featured_provinces' => array_slice($legalStatusService->getAllProvinces(), 0, 3),
+            'payment_regulations' => $legalStatusService->getPaymentRegulations()
         ];
         
         $featuredGames = $this->getFeaturedGames();
@@ -3076,6 +3086,110 @@ class HomeController extends Controller {
                             View All Software Providers
                         </a>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legal Status & Regulation Section (PRD #18) -->
+        <section class="legal-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">🏛️ Legal Status & Regulation in Canada</h2>
+                    <p class="section-subtitle">
+                        Complete transparency about online gambling laws, regulations, and licensing authorities. 
+                        Understand the legal framework that protects Canadian players and ensures safe gaming.
+                    </p>
+                </div>
+
+                <!-- Legal Summary Widget -->
+                <div class="legal-summary-widget">
+                    <h3>⚖️ Canadian Online Gambling - Quick Legal Overview</h3>
+                    <div class="legal-highlights">
+                        <div class="legal-highlight">
+                            <div class="icon">✅</div>
+                            <div class="label">Legal Status</div>
+                            <div class="value">' . htmlspecialchars($legalStatusData['legal_summary']['status']) . '</div>
+                        </div>
+                        <div class="legal-highlight">
+                            <div class="icon">🎰</div>
+                            <div class="label">Licensed Casinos</div>
+                            <div class="value">' . $legalStatusData['legal_summary']['total_casinos'] . '+</div>
+                        </div>
+                        <div class="legal-highlight">
+                            <div class="icon">🏢</div>
+                            <div class="label">Local Casinos</div>
+                            <div class="value">' . $legalStatusData['legal_summary']['local_casinos'] . '</div>
+                        </div>
+                        <div class="legal-highlight">
+                            <div class="icon">🎂</div>
+                            <div class="label">Min Age</div>
+                            <div class="value">' . htmlspecialchars($legalStatusData['legal_summary']['gambling_age']) . '</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comprehensive Legal Status Table -->
+                <div class="legal-status-table">
+                    <div class="legal-row">
+                        <div class="legal-label">⚖️ Legal Status</div>
+                        <div class="legal-value legal-status-legal">' . htmlspecialchars($legalStatusData['legal_summary']['status']) . '</div>
+                    </div>
+                    <div class="legal-row">
+                        <div class="legal-label">🎰 Number of Casinos</div>
+                        <div class="legal-value">' . $legalStatusData['legal_summary']['total_casinos'] . '+</div>
+                    </div>
+                    <div class="legal-row">
+                        <div class="legal-label">🔎 Authorities</div>
+                        <div class="legal-value">';
+                        
+                        foreach ($legalStatusData['legal_summary']['authorities'] as $authority) {
+                            echo '<span class="authority-tag">' . htmlspecialchars($authority) . '</span>';
+                        }
+                        
+                        echo '
+                        </div>
+                    </div>
+                    <div class="legal-row">
+                        <div class="legal-label">🏢 Local Casinos</div>
+                        <div class="legal-value">' . $legalStatusData['legal_summary']['local_casinos'] . '</div>
+                    </div>
+                    <div class="legal-row">
+                        <div class="legal-label">💰 Min Deposit</div>
+                        <div class="legal-value">' . htmlspecialchars($legalStatusData['legal_summary']['min_deposit']) . '</div>
+                    </div>
+                    <div class="legal-row">
+                        <div class="legal-label">💳 Payment Methods</div>
+                        <div class="legal-value">' . implode(', ', $legalStatusData['legal_summary']['payment_methods']) . '</div>
+                    </div>
+                    <div class="legal-row">
+                        <div class="legal-label">🎮 Popular Games</div>
+                        <div class="legal-value">' . implode(', ', $legalStatusData['legal_summary']['popular_games']) . '</div>
+                    </div>
+                    <div class="legal-row">
+                        <div class="legal-label">🏆 Best Casino</div>
+                        <div class="legal-value">
+                            <a href="/casinos/jackpot-city" class="best-casino-link">' . htmlspecialchars($legalStatusData['legal_summary']['best_casino']) . '</a>
+                        </div>
+                    </div>
+                    <div class="legal-row">
+                        <div class="legal-label">🎁 Biggest Bonus</div>
+                        <div class="legal-value">' . htmlspecialchars($legalStatusData['legal_summary']['biggest_bonus']) . '</div>
+                    </div>
+                    <div class="legal-row">
+                        <div class="legal-label">🎂 Gambling Age</div>
+                        <div class="legal-value">' . htmlspecialchars($legalStatusData['legal_summary']['gambling_age']) . '</div>
+                    </div>
+                    <div class="legal-row">
+                        <div class="legal-label">💰 Tax</div>
+                        <div class="legal-value">' . htmlspecialchars($legalStatusData['legal_summary']['tax_info']) . '</div>
+                    </div>
+                </div>
+
+                <div class="view-all-legal">
+                    <a href="/legal-status" class="view-all-legal-btn">
+                        <i class="fas fa-gavel"></i>
+                        View Complete Legal Guide
+                    </a>
                 </div>
             </div>
         </section>

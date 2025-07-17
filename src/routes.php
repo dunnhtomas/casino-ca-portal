@@ -170,3 +170,12 @@ $router->get('/api/providers', 'SoftwareProviderController@api');
 $router->get('/api/providers/{providerSlug}', 'SoftwareProviderController@apiProvider');
 $router->get('/api/providers/{providerSlug}/casinos', 'SoftwareProviderController@apiProviderCasinos');
 $router->get('/api/providers/category/{category}', 'SoftwareProviderController@apiProvidersByCategory');
+
+// Legal Status & Regulation routes (PRD #18)
+$router->get('/legal-status', 'LegalStatusController@index');
+$router->get('/legal/{provinceCode}', 'LegalStatusController@province');
+$router->get('/legal/authority/{authorityCode}', 'LegalStatusController@authority');
+$router->get('/api/legal-status', 'LegalStatusController@api');
+$router->get('/api/legal/province/{provinceCode}', 'LegalStatusController@apiProvince');
+$router->get('/api/legal/authority/{authorityCode}', 'LegalStatusController@apiAuthority');
+$router->get('/api/legal/payment-methods', 'LegalStatusController@apiPaymentMethods');
