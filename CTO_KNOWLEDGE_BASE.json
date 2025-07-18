@@ -5,7 +5,7 @@
     "target_url": "https://www.casino.ca/",
     "live_url": "https://bestcasinoportal.com/",
     "project_start": "2025-07-15",
-    "current_status": "Active Development - Homepage Sections Implementation (19/27 completed, PRD #24 deployed)",
+    "current_status": "Active Development - Homepage Sections Implementation (20/27 completed, PRD #25 deployed and validated)",
     "tech_stack": "PHP 8.3, MySQL 8.0+, Nginx, Composer, OpenAI GPT-4o-mini"
   },
   
@@ -416,7 +416,34 @@
         "symptoms": "Files not updating on server",
         "diagnosis": "SSH connection or file transfer issues", 
         "solutions": ["Verify SSH key", "Check file paths", "Validate server connectivity"]
+      },
+      "php_execution_issues": {
+        "symptoms": "PHP code showing as plain text instead of executing",
+        "diagnosis": "Directory permissions or include path issues",
+        "critical_fix": "Views directory must have 755 permissions for PHP to access files",
+        "solutions": [
+          "chmod 755 /var/www/casino-portal/src/Views/",
+          "find /var/www/casino-portal/src/Views/ -type d -exec chmod 755 {} \\;",
+          "Test with: sudo -u www-data cat /path/to/file.php"
+        ]
+      },
+      "homepage_php_rendering": {
+        "symptoms": "<?php echo ... ?> tags showing on homepage as literal text",
+        "diagnosis": "PHP code embedded in echo statements as strings",
+        "solution": "Replace <?php echo $method(); ?> with ' . $method() . ' in concatenated strings",
+        "example": "Change: '<?php echo $this->method(); ?>' to: ' . $this->method() . '"
       }
+    },
+    "critical_lessons_learned": {
+      "directory_permissions": "Views directory MUST have 755 permissions, not 644, for PHP include/require to work",
+      "controller_patterns": "Use __DIR__ . '/../Views/file.php' pattern consistently across all controllers",
+      "homepage_architecture": "HomeController uses echo concatenation, requires ' . $method() . ' not <?php tags",
+      "debugging_workflow": [
+        "1. Test PHP CLI: php /path/to/index.php",
+        "2. Test file access: sudo -u www-data cat /path/to/file.php", 
+        "3. Check directory permissions: ls -la /path/to/directory/",
+        "4. Validate via curl: curl -s -H 'Accept: text/html' 'https://domain.com/route'"
+      ]
     }
   },
 

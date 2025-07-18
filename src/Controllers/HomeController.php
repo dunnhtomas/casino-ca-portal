@@ -16,6 +16,7 @@ use App\Services\NewsService;
 use App\Services\ProvinceService;
 use App\Services\ProvincesService;
 use App\Services\FeaturesService;
+use App\Services\GamesService;
 use App\Services\SoftwareProviderService;
 use App\Services\LegalStatusService;
 use App\Services\CategoryComparisonService;
@@ -90,6 +91,14 @@ class HomeController extends Controller {
         $featuresData = [
             'features' => $featuresService->getFeaturesForHomepage(),
             'stats' => $featuresService->getFeatureStats()
+        ];
+        
+        // Get popular casino games data (PRD #26)
+        $gamesService = new \App\Services\GamesService();
+        $gamesData = [
+            'games' => $gamesService->getGamesForHomepage(),
+            'stats' => $gamesService->getGamesStatistics(),
+            'canadian_data' => $gamesService->getCanadianGamingData()
         ];
         
         // Get software providers data
@@ -2292,6 +2301,11 @@ class HomeController extends Controller {
             ' . $this->renderFeaturesSection($featuresData) . '
         </section>
 
+        <!-- Popular Casino Games Grid Section (PRD #26) -->
+        <section class="games-grid-section">
+            ' . $this->renderGamesSection($gamesData) . '
+        </section>
+
         <!-- Enhanced Detailed Top 3 Casino Reviews Section (PRD #23) -->
         <section class="enhanced-detailed-reviews-section">
             ' . $this->renderEnhancedDetailedReviewsSection($enhancedReviewsData) . '
@@ -4179,6 +4193,20 @@ class HomeController extends Controller {
         
         ob_start();
         include __DIR__ . '/../Views/features/section.php';
+        return ob_get_clean();
+    }
+
+    /**
+     * Render Popular Casino Games Grid Section (PRD #26)
+     */
+    private function renderGamesSection($gamesData): string
+    {
+        $games = $gamesData['games'];
+        $stats = $gamesData['stats'];
+        $canadianData = $gamesData['canadian_data'];
+        
+        ob_start();
+        include __DIR__ . '/../Views/games/section.php';
         return ob_get_clean();
     }
 }

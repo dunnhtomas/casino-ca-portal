@@ -249,5 +249,13 @@ $router->get('/api/features', 'FeaturesController@api');
 $router->get('/api/features/{id}', 'FeaturesController@apiShow');
 $router->get('/api/features/stats', 'FeaturesController@apiStats');
 
+// Games routes (PRD #26)
+$router->get('/games', 'GamesController@index');
+$router->get('/games/{slug}', 'GamesController@category');
+$router->get('/api/games', 'GamesController@api');
+$router->get('/api/games/category/{slug}', 'GamesController@apiCategory');
+$router->get('/api/games/stats', 'GamesController@apiStats');
+$router->get('/api/games/search', 'GamesController@apiSearch');
+
 $router->post('/api/self-assessment', 'ProblemGamblingController@apiSelfAssessment');
 $router->get('/api/provincial-resource/{province}', 'ProblemGamblingController@apiProvincialResource');
