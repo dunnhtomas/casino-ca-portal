@@ -288,3 +288,15 @@ $router->get('/api/bonus-types/strategies/{playerType}', 'BonusTypesController@s
 $router->post('/api/bonus-types/strategies', 'BonusTypesController@strategies');
 $router->get('/api/bonus-types/terms', 'BonusTypesController@terms');
 $router->get('/bonus-types-section', 'BonusTypesController@section');
+
+// FAQ Section routes (PRD #34)
+$router->get('/faq', 'FAQController@page');
+$router->get('/frequently-asked-questions', 'FAQController@page');
+$router->get('/help', 'FAQController@page');
+$router->get('/api/faq/search', 'FAQController@search');
+$router->get('/api/faq/category/{category}', 'FAQController@category');
+$router->get('/api/faq/{id}/related', 'FAQController@related');
+$router->get('/api/faq/categories', 'FAQController@categories');
+$router->get('/api/faq/stats', 'FAQController@stats');
+$router->get('/api/faq/{id}', 'FAQController@getFAQ');
+$router->get('/faq-section', 'FAQController@section');
