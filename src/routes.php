@@ -219,10 +219,22 @@ $router->get('/category-comparison', 'CategoryComparisonController@index');
 $router->get('/best-casinos-by-category', 'CategoryComparisonController@index');
 $router->get('/category/{category}', 'CategoryComparisonController@showCategory');
 
+// Enhanced Detailed Reviews routes (PRD #23)
+$router->get('/enhanced-detailed-reviews', 'EnhancedDetailedReviewsController@index');
+$router->get('/top-casino-reviews', 'EnhancedDetailedReviewsController@index');
+$router->get('/casino-detailed-review/{casinoSlug}', 'EnhancedDetailedReviewsController@showCasinoReview');
+
 // Category Comparison API routes (PRD #22)
 $router->get('/api/category-leaders', 'CategoryComparisonController@apiCategoryLeaders');
 $router->get('/api/category/{category}', 'CategoryComparisonController@apiCategory');
 $router->get('/api/category-comparison', 'CategoryComparisonController@apiCategoryComparison');
 $router->get('/api/category-statistics', 'CategoryComparisonController@apiStatistics');
+
+// Enhanced Detailed Reviews API routes (PRD #23)
+$router->get('/api/enhanced-detailed-reviews', 'EnhancedDetailedReviewsController@api');
+$router->get('/api/enhanced-reviews/top-3', 'EnhancedDetailedReviewsController@apiTop3');
+$router->get('/api/enhanced-reviews/casino/{id}', 'EnhancedDetailedReviewsController@apiCasinoReview');
+$router->get('/api/enhanced-reviews/categories', 'EnhancedDetailedReviewsController@apiCategories');
+
 $router->post('/api/self-assessment', 'ProblemGamblingController@apiSelfAssessment');
 $router->get('/api/provincial-resource/{province}', 'ProblemGamblingController@apiProvincialResource');

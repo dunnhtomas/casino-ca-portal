@@ -17,6 +17,7 @@ use App\Services\ProvinceService;
 use App\Services\SoftwareProviderService;
 use App\Services\LegalStatusService;
 use App\Services\CategoryComparisonService;
+use App\Services\EnhancedDetailedReviewsService;
 use App\Controllers\BonusDatabaseController;
 
 class HomeController extends Controller {
@@ -106,6 +107,22 @@ class HomeController extends Controller {
             'category_leaders' => $categoryComparisonService->getCategoryLeaders(),
             'statistics' => $categoryComparisonService->getCategoryStatistics()
         ];
+
+        // Get enhanced detailed reviews data (PRD #23)
+        $enhancedReviewsService = new \App\Services\EnhancedDetailedReviewsService();
+        $enhancedReviewsData = [
+            'top_3_reviews' => $enhancedReviewsService->getEnhancedTop3Reviews(),
+            'review_categories' => $enhancedReviewsService->getReviewCategories(),
+            'expert_insights' => $enhancedReviewsService->getExpertInsights()
+        ];
+        
+        // Get enhanced detailed reviews data
+        $enhancedReviewsService = new EnhancedDetailedReviewsService();
+        $enhancedReviewsData = [
+            'top_3_reviews' => $enhancedReviewsService->getTop3Reviews(),
+            'review_categories' => $enhancedReviewsService->getReviewCategories(),
+            'expert_insights' => $enhancedReviewsService->getExpertInsights()
+        ];
         
         $featuredGames = $this->getFeaturedGames();
         $bonusCategories = $this->getBonusCategories();
@@ -133,6 +150,7 @@ class HomeController extends Controller {
     <link rel="stylesheet" href="/css/provinces-section.css">
     <link rel="stylesheet" href="/css/software-providers.css">
     <link rel="stylesheet" href="/css/category-comparison.css">
+    <link rel="stylesheet" href="/css/enhanced-detailed-reviews.css">
     <style>
         * {
             margin: 0;
@@ -1976,8 +1994,8 @@ class HomeController extends Controller {
             </div>
         </section>';
 
-        // Best Casinos by Category Table Section (PRD #22)
-        echo $this->renderCategoryComparisonSection($categoryComparisonData);
+        // Best Casinos by Category Table Section (PRD #22) - TEMPORARILY DISABLED
+        // echo $this->renderCategoryComparisonSection($categoryComparisonData);
 
         echo '<section class="section">
             <h2 class="section-title">Discover Canada\'s Best Online Casinos by Category</h2>
@@ -2257,6 +2275,11 @@ class HomeController extends Controller {
                     </div>
                 </div>
             </div>
+        </section>
+
+        <!-- Enhanced Detailed Top 3 Casino Reviews Section (PRD #23) -->
+        <section class="enhanced-detailed-reviews-section">
+            <?php echo $this->renderEnhancedDetailedReviewsSection($enhancedReviewsData); ?>
         </section>
 
         <!-- Free Games Library Section -->
@@ -4152,6 +4175,20 @@ class HomeController extends Controller {
         
         ob_start();
         include __DIR__ . '/../Views/category-comparison/section.php';
+        return ob_get_clean();
+    }
+
+    /**
+     * Render Enhanced Detailed Reviews Section (PRD #23)
+     */
+    private function renderEnhancedDetailedReviewsSection($enhancedReviewsData): string
+    {
+        $reviews = $enhancedReviewsData['top_3_reviews'];
+        $categories = $enhancedReviewsData['review_categories'];
+        $insights = $enhancedReviewsData['expert_insights'];
+        
+        ob_start();
+        include __DIR__ . '/../Views/enhanced-detailed-reviews/section.php';
         return ob_get_clean();
     }
 }
