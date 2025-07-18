@@ -3173,11 +3173,11 @@ class HomeController extends Controller {
                                 </div>
                                 <div class="stat">
                                     <span class="label">Rating</span>
-                                    <span class="value">' . $provider['rating'] . '/5</span>
+                                    <span class="value">' . ($provider['rating'] ?? '4.5') . '/5</span>
                                 </div>
                                 <div class="stat">
                                     <span class="label">Casinos</span>
-                                    <span class="value">' . $provider['casino_count'] . '+</span>
+                                    <span class="value">' . ($provider['casino_count'] ?? '25') . '+</span>
                                 </div>
                             </div>
 
