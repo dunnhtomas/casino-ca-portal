@@ -193,14 +193,13 @@ $router->get('/api/providers/{providerSlug}', 'SoftwareProviderController@apiPro
 $router->get('/api/providers/{providerSlug}/casinos', 'SoftwareProviderController@apiProviderCasinos');
 $router->get('/api/providers/category/{category}', 'SoftwareProviderController@apiProvidersByCategory');
 
-// Legal Status & Regulation routes (PRD #18)
+// Legal Status & Regulation routes (PRD #28)
 $router->get('/legal-status', 'LegalStatusController@index');
-$router->get('/legal/{provinceCode}', 'LegalStatusController@province');
-$router->get('/legal/authority/{authorityCode}', 'LegalStatusController@authority');
 $router->get('/api/legal-status', 'LegalStatusController@api');
-$router->get('/api/legal/province/{provinceCode}', 'LegalStatusController@apiProvince');
-$router->get('/api/legal/authority/{authorityCode}', 'LegalStatusController@apiAuthority');
-$router->get('/api/legal/payment-methods', 'LegalStatusController@apiPaymentMethods');
+$router->get('/api/legal-status/provinces', 'LegalStatusController@provinces');
+$router->get('/api/legal-status/federal', 'LegalStatusController@federal');
+$router->get('/api/legal-status/statistics', 'LegalStatusController@statistics');
+$router->get('/api/legal-status/summary', 'LegalStatusController@summary');
 
 // Problem Gambling Resources routes (PRD #20)
 $router->get('/problem-gambling', 'ProblemGamblingController@index');

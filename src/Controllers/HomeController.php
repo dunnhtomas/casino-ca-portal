@@ -22,6 +22,7 @@ use App\Services\LegalStatusService;
 use App\Services\CategoryComparisonService;
 use App\Services\EnhancedDetailedReviewsService;
 use App\Controllers\BonusDatabaseController;
+use App\Controllers\LegalStatusController;
 use Exception;
 
 class HomeController extends Controller {
@@ -110,14 +111,9 @@ class HomeController extends Controller {
             'statistics' => $softwareProviderService->getProviderStatistics()
         ];
         
-        // Get legal status data
-        $legalStatusService = new LegalStatusService();
-        $legalStatusData = [
-            'legal_summary' => $legalStatusService->getLegalSummaryForHomepage(),
-            'authorities' => array_slice($legalStatusService->getAllAuthorities(), 0, 4),
-            'featured_provinces' => array_slice($legalStatusService->getAllProvinces(), 0, 3),
-            'payment_regulations' => $legalStatusService->getPaymentRegulations()
-        ];
+        // Get legal status data (PRD #28)
+        $legalStatusController = new LegalStatusController();
+        $legalStatusSection = $legalStatusController->section();
         
         // Get category comparison data
         $categoryComparisonService = new CategoryComparisonService();
@@ -170,6 +166,7 @@ class HomeController extends Controller {
     <link rel="stylesheet" href="/css/software-providers.css">
     <link rel="stylesheet" href="/css/category-comparison.css">
     <link rel="stylesheet" href="/css/enhanced-detailed-reviews.css">
+    <link rel="stylesheet" href="/css/legal-status.css">
     <style>
         * {
             margin: 0;
@@ -3240,7 +3237,7 @@ class HomeController extends Controller {
             </div>
         </section>
 
-        <!-- Legal Status & Regulation Section (PRD #18) -->
+        <!-- Legal Status & Regulation Section (PRD #28) -->
         <section class="legal-section">
             <div class="container">
                 <div class="section-header">
