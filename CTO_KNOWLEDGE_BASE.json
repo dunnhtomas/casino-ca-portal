@@ -1,0 +1,464 @@
+{
+  "project_overview": {
+    "name": "Casino.ca Portal - SEO-Optimized Casino Review Platform",
+    "description": "A comprehensive replica of casino.ca with advanced SEO optimization, AI-powered content generation, and professional review system",
+    "target_url": "https://www.casino.ca/",
+    "live_url": "https://bestcasinoportal.com/",
+    "project_start": "2025-07-15",
+    "current_status": "Active Development - Homepage Sections Implementation (19/27 completed, PRD #24 deployed)",
+    "tech_stack": "PHP 8.3, MySQL 8.0+, Nginx, Composer, OpenAI GPT-4o-mini"
+  },
+  
+  "critical_infrastructure": {
+    "server": {
+      "ip": "193.233.161.161",
+      "ssh_key": "C:\\Users\\tamir\\.ssh\\bestcasinoportal_auto",
+      "access_method": "SSH key-based (no password)",
+      "document_root": "/var/www/casino-portal/public",
+      "nginx_config": "/etc/nginx/sites-available/casino-portal",
+      "ssl": "Let's Encrypt with auto-renewal"
+    },
+    "tech_stack": {
+      "backend": "PHP 8.3 MVC Architecture",
+      "database": "MySQL 8.0+",
+      "web_server": "Nginx 1.24.0",
+      "dependency_manager": "Composer",
+      "environment": "Dotenv for configuration"
+    },
+    "deployment": {
+      "method": "Automated PowerShell scripts with rsync/scp",
+      "script_location": "PowerShell deployment automation",
+      "file_permissions": "www-data:www-data ownership required",
+      "services_restart": "systemctl reload php8.3-fpm && systemctl reload nginx"
+    }
+  },
+
+  "core_libraries": {
+    "php_dependencies": [
+      "vlucas/phpdotenv: Environment variable management",
+      "monolog/monolog: Comprehensive logging system", 
+      "guzzlehttp/guzzle: HTTP client for API calls",
+      "twig/twig: Template engine for views",
+      "league/route: Fast routing system",
+      "illuminate/database: Eloquent ORM",
+      "intervention/image: Image processing",
+      "league/flysystem: File system abstraction"
+    ],
+    "ai_integration": {
+      "provider": "OpenAI GPT-4o-mini",
+      "use_cases": [
+        "Content rewriting and humanization",
+        "SEO optimization", 
+        "Professional review generation",
+        "Meta description creation"
+      ],
+      "anti_detection": "Advanced perplexity/burstiness manipulation system"
+    }
+  },
+
+  "architecture_patterns": {
+    "mvc_structure": {
+      "controllers": "src/Controllers/ - Handle HTTP requests and responses",
+      "services": "src/Services/ - Business logic and data processing", 
+      "views": "src/Views/ - Template rendering and UI components",
+      "models": "Database models using Illuminate/Database ORM"
+    },
+    "routing": {
+      "file": "src/routes.php",
+      "pattern": "League/Route with controller@method syntax",
+      "api_prefix": "/api/ for JSON responses",
+      "web_routes": "Direct controller routing for HTML pages"
+    },
+    "database": {
+      "connection": "MySQL with Illuminate/Database",
+      "migrations": "Manual SQL schema management",
+      "seeding": "Service layer data population"
+    }
+  },
+
+  "seo_optimization": {
+    "strategy": "2025 Google best practices implementation",
+    "techniques": [
+      "Semantic HTML5 structure",
+      "Optimized meta tags and descriptions", 
+      "Schema.org markup for rich snippets",
+      "Mobile-first responsive design",
+      "Core Web Vitals optimization",
+      "Internal linking strategy",
+      "Content clustering and topic authority"
+    ],
+    "content_strategy": {
+      "human_authorship": "8 professional Canadian casino experts",
+      "anti_ai_detection": "Advanced humanization techniques", 
+      "expertise_areas": "Casino reviews, game analysis, bonus evaluation",
+      "content_depth": "Comprehensive multi-section coverage"
+    }
+  },
+
+  "professional_author_system": {
+    "total_authors": 8,
+    "author_profiles": [
+      {
+        "name": "Dr. Emily Rodriguez",
+        "title": "Senior Casino Analyst", 
+        "specialization": "Mathematical game analysis and RTP optimization",
+        "experience": "15+ years",
+        "credentials": "PhD in Statistics, Former Gaming Commission Consultant"
+      },
+      {
+        "name": "Marcus Thompson", 
+        "title": "Bonus Strategy Expert",
+        "specialization": "Welcome bonuses and promotional analysis",
+        "experience": "12+ years"
+      },
+      {
+        "name": "Sarah Chen",
+        "title": "Mobile Gaming Specialist", 
+        "specialization": "Mobile casino apps and responsive gaming",
+        "experience": "10+ years"
+      }
+    ],
+    "attribution_system": "Dynamic author assignment based on content type",
+    "credibility_markers": "Professional bios, credentials, expertise validation"
+  },
+
+  "homepage_sections_implementation": {
+    "total_sections": 27,
+    "completed_sections": 19,
+    "missing_sections": 8,
+    "implementation_methodology": "PRD-driven development with 2025 Agile practices",
+    "latest_completion": "PRD #24 - Canadian Provinces Section (deployed and validated)",
+    "section_structure": {
+      "hero_section": "✅ Main value proposition and site introduction",
+      "featured_carousel": "✅ Spotlight casino rotation system", 
+      "casino_grid": "✅ Interactive comparison grid (90+ casinos)",
+      "category_comparison": "✅ Best casinos by category breakdown",
+      "enhanced_reviews": "✅ Detailed top 3 casino analysis",
+      "bonus_database": "✅ Comprehensive bonus comparison",
+      "expert_team": "✅ Professional author showcase",
+      "free_games": "✅ Playable game library",
+      "live_dealer": "✅ Live casino game showcase", 
+      "payment_methods": "✅ Payment option analysis",
+      "mobile_apps": "✅ Casino app reviews",
+      "news_updates": "✅ Industry news and updates",
+      "provinces": "✅ Canadian regional information - COMPLETED (PRD #24) - All 13 provinces/territories with regulations, statistics, recommendations",
+      "software_providers": "✅ Game developer profiles"
+    },
+    "recent_bug_fixes": {
+      "css_403_errors": "Directory permissions fixed (chmod 755 /var/www/casino-portal/public/css/)",
+      "image_404s": "Placeholder images created for QR codes and providers with symlinks",
+      "file_ownership": "Corrected www-data:www-data ownership for nginx static file serving",
+      "view_rendering": "Controller inheritance issues partially resolved, homepage integration working"
+    }
+  },
+
+  "prd_development_process": {
+    "methodology": "2025 Agile/Atlassian/ProductPlan best practices",
+    "components": [
+      "User stories with acceptance criteria",
+      "Gherkin-style behavior scenarios", 
+      "Technical implementation details",
+      "Testing and validation requirements",
+      "GitHub integration with issues and branches"
+    ],
+    "proCTO_mode": {
+      "description": "Autonomous PRD execution workflow",
+      "steps": [
+        "Parse PRD requirements",
+        "Create feature branch", 
+        "Implement service/controller/views",
+        "Deploy and validate",
+        "Commit and push changes",
+        "Update GitHub issue status"
+      ],
+      "automation_level": "Fully autonomous with status reporting"
+    }
+  },
+
+  "current_technical_issues": {
+    "main_page_view_rendering": {
+      "description": "Individual section pages (/provinces) show view rendering errors while homepage integration works",
+      "affected_routes": "Main pages like /provinces, /enhanced-detailed-reviews", 
+      "root_cause": "Controller inheritance and view path resolution issues",
+      "status": "ACTIVE - API endpoints and homepage sections working, main page views need fix",
+      "priority": "Medium - core functionality accessible via homepage and APIs"
+    },
+    "provider_svg_assets": {
+      "description": "Some provider SVG images still missing or misnamed",
+      "affected_assets": "Provider logos with special characters in filenames",
+      "status": "ACTIVE - Placeholders serving correctly, branded search in progress", 
+      "priority": "Low - cosmetic issue, functionality not impacted"
+    }
+  },
+
+  "database_schema": {
+    "core_tables": [
+      "casinos: Main casino information and ratings",
+      "bonuses: Promotional offers and terms", 
+      "games: Casino games with RTP and features",
+      "reviews: Expert reviews and user feedback",
+      "authors: Professional author profiles",
+      "categories: Casino categorization system"
+    ],
+    "relationships": "Normalized structure with foreign key constraints",
+    "sample_data": "90+ casinos, 500+ bonuses, 1000+ games"
+  },
+
+  "security_implementation": {
+    "server_security": [
+      "SSH key-based authentication", 
+      "Nginx security headers (X-Frame-Options, X-XSS-Protection)",
+      "SSL/TLS encryption with Let's Encrypt",
+      "File permission restrictions"
+    ],
+    "application_security": [
+      "Environment variable protection",
+      "SQL injection prevention via ORM", 
+      "XSS protection in templates",
+      "CSRF token implementation"
+    ]
+  },
+
+  "performance_optimization": {
+    "caching_strategy": [
+      "Nginx static file caching (1 year expiry)",
+      "Gzip compression enabled",
+      "PHP OPcache for bytecode caching"
+    ],
+    "asset_optimization": [
+      "Minified CSS and JavaScript",
+      "Optimized image formats and sizes",
+      "CDN integration for external libraries"
+    ],
+    "database_optimization": [
+      "Indexed queries for performance",
+      "Efficient data structures",
+      "Connection pooling"
+    ]
+  },
+
+  "content_management": {
+    "ai_content_system": {
+      "provider": "OpenAI GPT-4o-mini",
+      "humanization_techniques": [
+        "Perplexity and burstiness manipulation",
+        "Canadian cultural markers injection",
+        "Emotional storytelling elements", 
+        "Temporal anchoring for authenticity",
+        "Cognitive pattern variation"
+      ],
+      "quality_assurance": "Multi-pass content review and optimization"
+    },
+    "manual_content": [
+      "Professional author bios and credentials",
+      "Expert review insights and analysis", 
+      "Industry-specific terminology",
+      "Canadian market focus"
+    ]
+  },
+
+  "deployment_automation": {
+    "deployment_script": "PowerShell automation with SSH/SCP/rsync",
+    "file_synchronization": "Selective file uploads based on changes",
+    "service_management": "Automatic PHP-FPM and Nginx reloads",
+    "rollback_capability": "File backup and restoration procedures",
+    "validation_steps": [
+      "Syntax checking before deployment",
+      "Permission verification", 
+      "Service health checks",
+      "Homepage functionality validation"
+    ]
+  },
+
+  "testing_strategy": {
+    "manual_testing": [
+      "Homepage section rendering validation",
+      "Mobile responsiveness verification",
+      "Cross-browser compatibility",
+      "SEO element verification"
+    ],
+    "automated_validation": [
+      "PHP syntax checking",
+      "CSS/HTML validation",
+      "Link integrity testing",
+      "Performance benchmarking"
+    ]
+  },
+
+  "business_requirements": {
+    "target_audience": "Canadian online casino players",
+    "competitive_analysis": "Direct casino.ca feature replication with improvements",
+    "revenue_model": "Affiliate marketing and casino partnerships", 
+    "compliance_requirements": [
+      "Canadian gambling regulations",
+      "Privacy policy compliance",
+      "Responsible gambling messaging",
+      "Age verification requirements"
+    ]
+  },
+
+  "development_best_practices": {
+    "code_organization": [
+      "PSR-4 autoloading standards",
+      "Separation of concerns (MVC)",
+      "Dependency injection patterns",
+      "Error handling and logging"
+    ],
+    "git_workflow": [
+      "Feature branch development",
+      "GitHub issue integration", 
+      "Descriptive commit messages",
+      "Branch protection and reviews"
+    ],
+    "documentation": [
+      "Inline code comments",
+      "PRD documentation for features",
+      "API endpoint documentation", 
+      "Deployment procedure documentation"
+    ]
+  },
+
+  "monitoring_and_maintenance": {
+    "log_management": [
+      "PHP error logs monitoring",
+      "Nginx access and error logs",
+      "Application-level logging with Monolog",
+      "Performance metrics tracking"
+    ],
+    "backup_strategy": [
+      "Database backup automation",
+      "File system backup procedures", 
+      "Configuration backup",
+      "Disaster recovery planning"
+    ],
+    "update_procedures": [
+      "PHP security updates",
+      "Dependency vulnerability scanning",
+      "SSL certificate renewal",
+      "Content freshness maintenance"
+    ]
+  },
+
+  "future_roadmap": {
+    "pending_implementations": [
+      "PRD #25: 5 Key Features Section (CRITICAL - Core value proposition)",
+      "PRD #26: Popular Casino Games Grid (HIGH - Game discovery)", 
+      "PRD #27: How We Review Methodology (HIGH - Trust building)",
+      "PRD #28: Legal Status & Regulation Table (HIGH - Compliance)",
+      "PRD #29: Problem Gambling Resources (MEDIUM - Responsible gambling)",
+      "PRD #30: Popular Slots Detailed Section (MEDIUM - SEO traffic)",
+      "PRD #31: Bonus Types Comprehensive Guide (MEDIUM - User education)",
+      "PRD #32: Mobile Casino Apps Comparison (MEDIUM - Mobile optimization)",
+      "PRD #33: FAQ Comprehensive Section (LOW - Support completion)"
+    ],
+    "phase_breakdown": {
+      "phase_5_core_value": "PRDs #25-26 (Critical priority, 3-4 days)",
+      "phase_6_trust_building": "PRDs #27-29 (High priority, 4-5 days)", 
+      "phase_7_content_depth": "PRDs #30-32 (Medium priority, 5-6 days)",
+      "phase_8_final_completion": "PRD #33 + Infrastructure fixes (3-4 days)"
+    },
+    "completion_timeline": {
+      "target_date": "August 10, 2025",
+      "total_estimated_days": "17-22 days",
+      "current_progress": "19/27 sections (70% complete)",
+      "remaining_work": "8 critical sections + 2 infrastructure improvements"
+    },
+    "optimization_opportunities": [
+      "Main page view rendering fixes (controller inheritance)",
+      "Advanced caching implementation (Redis + CDN)",
+      "Database query optimization for performance",
+      "Progressive Web App features addition"
+    ],
+    "scalability_planning": [
+      "Load balancing for high traffic periods",
+      "Database sharding strategies for growth", 
+      "Microservices architecture consideration",
+      "API rate limiting implementation for protection"
+    ]
+  },
+
+  "key_learnings": {
+    "technical_insights": [
+      "Importance of matching target platform tech stack exactly",
+      "Critical role of file permissions in PHP deployments - CSS directory execute permissions essential",
+      "Need for robust error handling in production environments",
+      "Value of automated deployment scripts for rapid iteration",
+      "Controller inheritance chain must be properly established for view rendering",
+      "File ownership (www-data:www-data) critical for nginx serving static assets"
+    ],
+    "seo_insights": [
+      "2025 SEO requires human-authored content for credibility",
+      "Anti-AI detection is essential for content marketing",
+      "Comprehensive section coverage improves topic authority",
+      "Mobile-first design is mandatory for rankings"
+    ],
+    "project_management": [
+      "PRD-driven development ensures clear requirements", 
+      "GitHub integration streamlines workflow tracking",
+      "ProCTO mode enables autonomous feature development",
+      "Regular validation prevents integration issues"
+    ]
+  },
+
+  "troubleshooting_guide": {
+    "common_issues": {
+      "404_errors": {
+        "symptoms": "Routes returning 404 but homepage works",
+        "diagnosis": "Check nginx rewrite rules and router configuration", 
+        "solutions": ["Verify .htaccess rules", "Check router parameter extraction", "Validate nginx config"]
+      },
+      "permission_errors": {
+        "symptoms": "PHP files not executing or access denied",
+        "diagnosis": "File ownership and permission issues",
+        "solutions": ["chown www-data:www-data", "chmod 755 directories, 644 files", "Check nginx user configuration"]
+      },
+      "deployment_failures": {
+        "symptoms": "Files not updating on server",
+        "diagnosis": "SSH connection or file transfer issues", 
+        "solutions": ["Verify SSH key", "Check file paths", "Validate server connectivity"]
+      }
+    }
+  },
+
+  "contact_and_access": {
+    "server_access": {
+      "method": "SSH with private key authentication",
+      "key_location": "C:\\Users\\tamir\\.ssh\\bestcasinoportal_auto", 
+      "connection_string": "ssh -i key_path root@193.233.161.161"
+    },
+    "repository_access": {
+      "platform": "GitHub",
+      "owner": "dunnhtomas",
+      "repo": "casino-ca-portal",
+      "current_branch": "feature/prd-23-enhanced-reviews"
+    },
+    "domain_management": {
+      "live_domain": "bestcasinoportal.com",
+      "ssl_provider": "Let's Encrypt",
+      "dns_management": "Domain registrar control panel"
+    }
+  },
+
+  "version_history": {
+    "v1.0": "Initial casino.ca analysis and PRD creation",
+    "v1.1": "Basic homepage structure implementation",
+    "v1.2": "Professional author system integration", 
+    "v1.3": "Advanced section implementations (PRDs 1-23)",
+    "current": "v1.5 - Master Project Plan 2025 created, comprehensive phase-based roadmap established, PRD #25 ready for execution"
+  },
+
+  "success_metrics": {
+    "technical_kpis": [
+      "Homepage load time < 2 seconds",
+      "Mobile responsiveness score > 95",
+      "SEO audit score > 90",
+      "Uptime > 99.9%"
+    ],
+    "business_kpis": [
+      "Organic search traffic growth",
+      "User engagement metrics",
+      "Casino partnership conversions", 
+      "Content authority establishment"
+    ]
+  }
+}

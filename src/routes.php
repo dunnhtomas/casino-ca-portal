@@ -236,5 +236,18 @@ $router->get('/api/enhanced-reviews/top-3', 'EnhancedDetailedReviewsController@a
 $router->get('/api/enhanced-reviews/casino/{id}', 'EnhancedDetailedReviewsController@apiCasinoReview');
 $router->get('/api/enhanced-reviews/categories', 'EnhancedDetailedReviewsController@apiCategories');
 
+// Canadian Provinces routes (PRD #24)
+$router->get('/provinces', 'ProvincesController@index');
+$router->get('/provinces/{code}', 'ProvincesController@show');
+$router->get('/api/provinces', 'ProvincesController@apiProvinces');
+$router->get('/api/provinces/{code}', 'ProvincesController@apiProvince');
+$router->get('/api/provinces/search', 'ProvincesController@apiSearchProvinces');
+
+// Features routes (PRD #25)
+$router->get('/features', 'FeaturesController@index');
+$router->get('/api/features', 'FeaturesController@api');
+$router->get('/api/features/{id}', 'FeaturesController@apiShow');
+$router->get('/api/features/stats', 'FeaturesController@apiStats');
+
 $router->post('/api/self-assessment', 'ProblemGamblingController@apiSelfAssessment');
 $router->get('/api/provincial-resource/{province}', 'ProblemGamblingController@apiProvincialResource');

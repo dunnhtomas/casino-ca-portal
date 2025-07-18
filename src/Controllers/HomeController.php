@@ -14,11 +14,14 @@ use App\Services\PaymentMethodsService;
 use App\Services\MobileAppService;
 use App\Services\NewsService;
 use App\Services\ProvinceService;
+use App\Services\ProvincesService;
+use App\Services\FeaturesService;
 use App\Services\SoftwareProviderService;
 use App\Services\LegalStatusService;
 use App\Services\CategoryComparisonService;
 use App\Services\EnhancedDetailedReviewsService;
 use App\Controllers\BonusDatabaseController;
+use Exception;
 
 class HomeController extends Controller {
     public function index(): void {
@@ -75,12 +78,18 @@ class HomeController extends Controller {
             'news_statistics' => $newsService->getNewsStatistics()
         ];
         
-        // Get Canadian provinces data
-        $provinceService = new ProvinceService();
+        // Get Canadian provinces data (PRD #24)
+        $provincesService = new ProvincesService(null);
         $provincesData = [
-            'featured_provinces' => array_slice($provinceService->getAllProvinces(), 0, 4),
-            'total_provinces' => count($provinceService->getAllProvinces()),
-            'regions' => $provinceService->getProvincesByRegion()
+            'provinces' => $provincesService->getTopProvincesByCasinoCount(6),
+            'statistics' => $provincesService->getProvinceStatistics()
+        ];
+        
+        // Get 5 key features data (PRD #25)
+        $featuresService = new FeaturesService();
+        $featuresData = [
+            'features' => $featuresService->getFeaturesForHomepage(),
+            'stats' => $featuresService->getFeatureStats()
         ];
         
         // Get software providers data
@@ -147,6 +156,7 @@ class HomeController extends Controller {
     <link rel="stylesheet" href="/css/payment-methods.css">
     <link rel="stylesheet" href="/css/mobile-app.css">
     <link rel="stylesheet" href="/css/news-updates.css">
+    <link rel="stylesheet" href="/css/provinces.css">
     <link rel="stylesheet" href="/css/provinces-section.css">
     <link rel="stylesheet" href="/css/software-providers.css">
     <link rel="stylesheet" href="/css/category-comparison.css">
@@ -2277,9 +2287,14 @@ class HomeController extends Controller {
             </div>
         </section>
 
+        <!-- 5 Key Features Section (PRD #25) -->
+        <section class="key-features-section">
+            ' . $this->renderFeaturesSection($featuresData) . '
+        </section>
+
         <!-- Enhanced Detailed Top 3 Casino Reviews Section (PRD #23) -->
         <section class="enhanced-detailed-reviews-section">
-            <?php echo $this->renderEnhancedDetailedReviewsSection($enhancedReviewsData); ?>
+            ' . $this->renderEnhancedDetailedReviewsSection($enhancedReviewsData) . '
         </section>
 
         <!-- Free Games Library Section -->
@@ -3062,85 +3077,47 @@ class HomeController extends Controller {
             </div>
         </section>
 
-        <!-- Canadian Provinces Section (PRD #16) -->
-        <section class="provinces-section">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Casino Guide by Canadian Province</h2>
-                    <p class="section-subtitle">
-                        Find the best online casinos for your province. Local regulations, age requirements, and top recommendations.
-                    </p>
-                </div>
-                
-                <div class="provinces-preview">
-                    <div class="provinces-grid">';
+        <!-- Canadian Provinces Section (PRD #24) -->';
         
-        $featuredProvinces = array_slice($provincesData['featured_provinces'], 0, 4);
-        foreach ($featuredProvinces as $code => $province) {
-            echo '
-                        <div class="province-card" data-province="' . $code . '">
-                            <div class="province-header">
-                                <img src="' . htmlspecialchars($province['flag_url']) . '" 
-                                     alt="' . htmlspecialchars($province['name']) . ' flag" 
-                                     class="province-flag"
-                                     onerror="this.src=\'/images/placeholder.svg\'">
-                                <h3>' . htmlspecialchars($province['name']) . '</h3>
-                            </div>
-                            
-                            <div class="province-stats">
-                                <div class="stat">
-                                    <span class="label">Age:</span>
-                                    <span class="value">' . $province['gambling_age'] . '+</span>
-                                </div>
-                                <div class="stat">
-                                    <span class="label">Casinos:</span>
-                                    <span class="value">' . $province['local_casinos'] . '</span>
-                                </div>
-                                <div class="stat">
-                                    <span class="label">Status:</span>
-                                    <span class="value status-' . strtolower($province['legal_status']) . '">
-                                        ' . htmlspecialchars($province['legal_status']) . '
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <div class="province-actions">
-                                <a href="/provinces/' . strtolower($code) . '" class="btn-view-details">
-                                    View Details
-                                </a>
-                            </div>
-                        </div>';
+        try {
+            // Direct service call for debugging
+            $provinces = $provincesService->getTopProvincesByCasinoCount(6);
+            $statistics = $provincesService->getProvinceStatistics();
+            
+            echo '<section class="provinces-section" id="canadian-provinces">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Canadian Provinces & Territories</h2>
+            <p class="section-subtitle">
+                Explore online casino options across all ' . $statistics['total_provinces'] . ' provinces and ' . $statistics['total_territories'] . ' territories.
+            </p>
+        </div>
+        <div class="provinces-grid">';
+            
+            foreach ($provinces as $province) {
+                echo '<div class="province-card">
+                    <h3>' . htmlspecialchars($province['name']) . '</h3>
+                    <p>Legal Age: ' . $province['gambling_age'] . '+</p>
+                    <p>Casinos: ' . $province['casino_count'] . '</p>
+                    <p>Top Casino: ' . htmlspecialchars($province['top_casino']) . '</p>
+                </div>';
+            }
+            
+            echo '</div>
+        <div class="section-footer">
+            <a href="/provinces" class="btn btn-outline btn-large">
+                View All ' . ($statistics['total_provinces'] + $statistics['total_territories']) . ' Provinces & Territories
+            </a>
+        </div>
+    </div>
+</section>';
+            
+        } catch (Exception $e) {
+            echo '<div class="error">Unable to load provinces section: ' . htmlspecialchars($e->getMessage()) . '</div>';
+            error_log('Provinces section error: ' . $e->getMessage());
         }
         
         echo '
-                    </div>
-                    
-                    <div class="provinces-overview">
-                        <div class="overview-stats">
-                            <div class="overview-stat">
-                                <span class="number">' . $provincesData['total_provinces'] . '</span>
-                                <span class="label">Provinces & Territories</span>
-                            </div>
-                            <div class="overview-stat">
-                                <span class="number">38M+</span>
-                                <span class="label">Canadian Population</span>
-                            </div>
-                            <div class="overview-stat">
-                                <span class="number">18+</span>
-                                <span class="label">Minimum Age</span>
-                            </div>
-                        </div>
-                        
-                        <div class="view-all-provinces">
-                            <a href="/provinces" class="view-all-provinces-btn">
-                                <i class="fas fa-map"></i>
-                                View All Provinces & Territories
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
         
         <!-- Software Providers Section (PRD #17) -->
         <section class="providers-section">
@@ -4189,6 +4166,19 @@ class HomeController extends Controller {
         
         ob_start();
         include __DIR__ . '/../Views/enhanced-detailed-reviews/section.php';
+        return ob_get_clean();
+    }
+
+    /**
+     * Render 5 Key Features Section (PRD #25)
+     */
+    private function renderFeaturesSection($featuresData): string
+    {
+        $features = $featuresData['features'];
+        $stats = $featuresData['stats'];
+        
+        ob_start();
+        include __DIR__ . '/../Views/features/section.php';
         return ob_get_clean();
     }
 }
