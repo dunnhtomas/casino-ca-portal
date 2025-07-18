@@ -31,7 +31,7 @@ abstract class Controller {
         ob_start();
         
         // Include the view file
-        $viewFile = VIEWS_PATH . '/' . $view . '.php';
+        $viewFile = (defined('VIEWS_PATH') ? VIEWS_PATH : dirname(__DIR__) . '/Views') . '/' . $view . '.php';
         if (file_exists($viewFile)) {
             include $viewFile;
         } else {

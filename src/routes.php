@@ -190,3 +190,17 @@ $router->get('/api/legal-status', 'LegalStatusController@api');
 $router->get('/api/legal/province/{provinceCode}', 'LegalStatusController@apiProvince');
 $router->get('/api/legal/authority/{authorityCode}', 'LegalStatusController@apiAuthority');
 $router->get('/api/legal/payment-methods', 'LegalStatusController@apiPaymentMethods');
+
+// Problem Gambling Resources routes (PRD #20)
+$router->get('/problem-gambling', 'ProblemGamblingController@index');
+$router->get('/problem-gambling/assessment', 'ProblemGamblingController@selfAssessment');
+$router->get('/problem-gambling/tools', 'ProblemGamblingController@responsibleGamblingTools');
+$router->get('/problem-gambling/treatment', 'ProblemGamblingController@treatmentOptions');
+$router->get('/problem-gambling/{province}', 'ProblemGamblingController@provincialResources');
+
+// Problem Gambling API routes
+$router->get('/api/problem-gambling-resources', 'ProblemGamblingController@apiResources');
+$router->get('/api/emergency-contacts', 'ProblemGamblingController@apiEmergencyContacts');
+$router->get('/api/self-assessment', 'ProblemGamblingController@apiSelfAssessment');
+$router->post('/api/self-assessment', 'ProblemGamblingController@apiSelfAssessment');
+$router->get('/api/provincial-resource/{province}', 'ProblemGamblingController@apiProvincialResource');
