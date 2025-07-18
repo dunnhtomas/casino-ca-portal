@@ -1,0 +1,427 @@
+/* Extended Top Casinos Section Styles */
+.extended-top-casinos {
+    padding: 60px 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+}
+
+.extended-top-casinos::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 48, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(7, 59, 76, 0.3) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.extended-top-casinos .container {
+    position: relative;
+    z-index: 1;
+}
+
+.extended-top-casinos .section-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.extended-top-casinos .section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.extended-top-casinos .section-subtitle {
+    font-size: 1.1rem;
+    color: #b0b0b0;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Casino Grid */
+.casino-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+/* Casino Card */
+.casino-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.casino-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 215, 0, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.1);
+}
+
+.casino-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ffd700, #ff7730, #ffd700);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { background-position: 200% 0; }
+    50% { background-position: -200% 0; }
+}
+
+/* Card Header */
+.casino-card-header {
+    padding: 20px 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.casino-rank {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #1a1a2e;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.casino-logo img {
+    max-width: 120px;
+    max-height: 60px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.casino-rating {
+    text-align: right;
+}
+
+.stars {
+    display: flex;
+    gap: 2px;
+    justify-content: flex-end;
+    margin-bottom: 5px;
+}
+
+.star {
+    font-size: 1.2rem;
+    color: #ffd700;
+}
+
+.star.empty {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.rating-number {
+    font-size: 0.9rem;
+    color: #b0b0b0;
+}
+
+/* Card Body */
+.casino-card-body {
+    padding: 20px;
+}
+
+.casino-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.casino-details {
+    margin-bottom: 20px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.detail-label {
+    color: #b0b0b0;
+}
+
+.detail-value {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Welcome Bonus */
+.welcome-bonus {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.bonus-header {
+    font-size: 0.9rem;
+    color: #ffd700;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.bonus-amount {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 5px;
+}
+
+.bonus-details {
+    font-size: 0.8rem;
+    color: #b0b0b0;
+}
+
+/* Casino Features */
+.casino-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.feature-badge {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 0.8rem;
+    color: #ffffff;
+}
+
+.feature-badge.mobile { border-color: rgba(0, 150, 255, 0.3); }
+.feature-badge.support { border-color: rgba(0, 255, 150, 0.3); }
+.feature-badge.canada { border-color: rgba(255, 0, 0, 0.3); }
+
+/* Security Badges */
+.security-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.security-badge {
+    background: rgba(0, 255, 150, 0.1);
+    border: 1px solid rgba(0, 255, 150, 0.2);
+    border-radius: 15px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    color: #00ff96;
+}
+
+/* Trust Score */
+.trust-score {
+    margin-bottom: 20px;
+}
+
+.trust-label {
+    font-size: 0.9rem;
+    color: #b0b0b0;
+    margin-right: 10px;
+}
+
+.trust-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.trust-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.trust-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff7730, #ffd700, #00ff96);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* Card Footer */
+.casino-card-footer {
+    padding: 0 20px 20px;
+}
+
+.casino-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ff7730, #ffd700);
+    color: #1a1a2e;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #ff8f4d, #ffe84d);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 119, 48, 0.3);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Section Footer */
+.section-footer {
+    text-align: center;
+}
+
+.casino-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #ffd700;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #b0b0b0;
+}
+
+.disclaimer {
+    background: rgba(255, 119, 48, 0.1);
+    border: 1px solid rgba(255, 119, 48, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.disclaimer p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #ffcc99;
+    line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .extended-top-casinos {
+        padding: 40px 0;
+    }
+    
+    .extended-top-casinos .section-title {
+        font-size: 2rem;
+    }
+    
+    .casino-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .casino-card-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .casino-rating {
+        text-align: center;
+    }
+    
+    .casino-actions {
+        flex-direction: column;
+    }
+    
+    .casino-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .stat-number {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .casino-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .casino-card {
+        margin: 0 10px;
+    }
+    
+    .extended-top-casinos .section-title {
+        font-size: 1.8rem;
+    }
+    
+    .casino-stats {
+        grid-template-columns: 1fr;
+    }
+}

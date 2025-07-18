@@ -12,6 +12,12 @@ $router->get('/home', 'HomeController@index');
 $router->get('/casinos', 'CasinoController@list');
 $router->get('/casino/{slug}', 'CasinoController@detail');
 
+// Extended Top Casino routes (PRD #30)
+$router->get('/api/casinos/extended-top', 'ExtendedCasinoController@getExtendedTopCasinos');
+$router->get('/api/casinos/extended/{id}', 'ExtendedCasinoController@getCasinoDetails');
+$router->get('/api/casinos/extended/filter', 'ExtendedCasinoController@getFilteredCasinos');
+$router->get('/api/casinos/extended/statistics', 'ExtendedCasinoController@getCasinoStatistics');
+
 // Casino Categories routes (PRD #04)
 $router->get('/categories', 'CasinoCategoriesController@index');
 $router->get('/categories/{categoryId}', 'CasinoCategoriesController@showCategory');

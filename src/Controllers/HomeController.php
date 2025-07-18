@@ -21,9 +21,11 @@ use App\Services\SoftwareProviderService;
 use App\Services\LegalStatusService;
 use App\Services\CategoryComparisonService;
 use App\Services\EnhancedDetailedReviewsService;
+use App\Services\ExtendedCasinoService;
 use App\Controllers\BonusDatabaseController;
 use App\Controllers\LegalStatusController;
 use App\Controllers\ProblemGamblingController;
+use App\Controllers\ExtendedCasinoController;
 use Exception;
 
 class HomeController extends Controller {
@@ -172,6 +174,7 @@ class HomeController extends Controller {
     <link rel="stylesheet" href="/css/category-comparison.css">
     <link rel="stylesheet" href="/css/enhanced-detailed-reviews.css">
     <link rel="stylesheet" href="/css/legal-status.css">
+    <link rel="stylesheet" href="/css/extended-top-casinos.css">
     <style>
         * {
             margin: 0;
@@ -1958,7 +1961,14 @@ class HomeController extends Controller {
             </div>
         </section>
 
-        <!-- Interactive Casino Grid Section (PRD #02) -->
+        <!-- Extended Top Casino List Section (PRD #30) -->
+        ';
+        
+        // Add Extended Casino section
+        $extendedCasinoController = new ExtendedCasinoController();
+        echo $extendedCasinoController->renderSection();
+        
+        echo '<!-- Interactive Casino Grid Section (PRD #02) -->
         <section class="section casino-grid-section">
             <h2 class="section-title">Compare All Casinos - Interactive Grid</h2>
             <p>Explore our complete database of 90+ Canadian-friendly online casinos. Use our interactive grid to compare bonuses, ratings, game selections, and find your perfect casino match.</p>
