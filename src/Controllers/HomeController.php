@@ -23,6 +23,7 @@ use App\Services\CategoryComparisonService;
 use App\Services\EnhancedDetailedReviewsService;
 use App\Controllers\BonusDatabaseController;
 use App\Controllers\LegalStatusController;
+use App\Controllers\ProblemGamblingController;
 use Exception;
 
 class HomeController extends Controller {
@@ -114,6 +115,10 @@ class HomeController extends Controller {
         // Get legal status data (PRD #28)
         $legalStatusController = new LegalStatusController();
         $legalStatusSection = $legalStatusController->section();
+        
+        // Get problem gambling resources data (PRD #29)
+        $problemGamblingController = new ProblemGamblingController();
+        $problemGamblingSection = $problemGamblingController->section();
         
         // Get category comparison data
         $categoryComparisonService = new CategoryComparisonService();
@@ -3438,6 +3443,8 @@ class HomeController extends Controller {
         </section>
 
         ' . $bonusDatabaseSection . '
+        
+        ' . $problemGamblingSection . '
         
     </main>
 

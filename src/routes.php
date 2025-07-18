@@ -209,9 +209,11 @@ $router->get('/problem-gambling/treatment', 'ProblemGamblingController@treatment
 $router->get('/problem-gambling/{province}', 'ProblemGamblingController@provincialResources');
 
 // Problem Gambling API routes
-$router->get('/api/problem-gambling-resources', 'ProblemGamblingController@apiResources');
-$router->get('/api/emergency-contacts', 'ProblemGamblingController@apiEmergencyContacts');
-$router->get('/api/self-assessment', 'ProblemGamblingController@apiSelfAssessment');
+$router->get('/api/problem-gambling', 'ProblemGamblingController@apiResources');
+$router->get('/api/problem-gambling/crisis', 'ProblemGamblingController@apiEmergencyContacts');
+$router->get('/api/problem-gambling/provincial', 'ProblemGamblingController@apiProvincialResources');
+$router->get('/api/problem-gambling/assessment', 'ProblemGamblingController@apiSelfAssessment');
+$router->get('/api/problem-gambling/organizations', 'ProblemGamblingController@apiSupportOrganizations');
 
 // Category Comparison routes (PRD #22)
 $router->get('/category-comparison', 'CategoryComparisonController@index');

@@ -13,6 +13,18 @@ class ProblemGamblingController extends Controller {
         $this->gamblingService = new ProblemGamblingService();
     }
     
+    public function section() {
+        $emergencyContacts = $this->gamblingService->getEmergencyContacts();
+        $warningSigns = $this->gamblingService->getWarningSigns();
+        $resources = $this->gamblingService->getGamblingResources();
+        
+        return $this->render('problem-gambling/section', [
+            'emergencyContacts' => $emergencyContacts,
+            'warningSigns' => $warningSigns,
+            'resources' => $resources
+        ]);
+    }
+    
     public function index() {
         $resources = $this->gamblingService->getGamblingResources();
         $emergencyContacts = $this->gamblingService->getEmergencyContacts();
@@ -112,6 +124,18 @@ class ProblemGamblingController extends Controller {
         }
     }
     
+    public function apiProvincialResources() {
+        header('Content-Type: application/json');
+        $resources = $this->gamblingService->getGamblingResources();
+        echo json_encode($resources['crisis_resources']['provincial_resources'], JSON_PRETTY_PRINT);
+    }
+    
+    public function apiSupportOrganizations() {
+        header('Content-Type: application/json');
+        $resources = $this->gamblingService->getGamblingResources();
+        echo json_encode($resources['support_organizations'], JSON_PRETTY_PRINT);
+    }
+
     public function apiProvincialResource($province) {
         header('Content-Type: application/json');
         $resource = $this->gamblingService->getProvincialResource($province);
