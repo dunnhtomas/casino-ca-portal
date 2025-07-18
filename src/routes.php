@@ -276,3 +276,15 @@ $router->get('/api/slots/filter', 'SlotsController@filter');
 $router->get('/api/slots/{id}/demo', 'SlotsController@demo');
 $router->get('/api/slots/{id}/analytics', 'SlotsController@analytics');
 $router->get('/slots-section', 'SlotsController@section');
+
+// Bonus Types Guide routes (PRD #33)
+$router->get('/bonus-types', 'BonusTypesController@index');
+$router->get('/bonus-guide', 'BonusTypesController@index');
+$router->get('/casino-bonuses', 'BonusTypesController@index');
+$router->get('/api/bonus-types', 'BonusTypesController@section');
+$router->post('/api/bonus-types/calculator', 'BonusTypesController@calculator');
+$router->post('/api/bonus-types/compare', 'BonusTypesController@compare');
+$router->get('/api/bonus-types/strategies/{playerType}', 'BonusTypesController@strategies');
+$router->post('/api/bonus-types/strategies', 'BonusTypesController@strategies');
+$router->get('/api/bonus-types/terms', 'BonusTypesController@terms');
+$router->get('/bonus-types-section', 'BonusTypesController@section');

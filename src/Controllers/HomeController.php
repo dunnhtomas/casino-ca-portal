@@ -28,6 +28,7 @@ use App\Controllers\ProblemGamblingController;
 use App\Controllers\ExtendedCasinoController;
 use App\Controllers\CasinoGridController;
 use App\Controllers\SlotsController;
+use App\Controllers\BonusTypesController;
 use Exception;
 
 class HomeController extends Controller {
@@ -1981,6 +1982,10 @@ class HomeController extends Controller {
         // Add Popular Slots Detailed section (PRD #32)
         $slotsController = new SlotsController();
         echo $slotsController->section();
+
+        // Add Bonus Types Guide section (PRD #33)
+        $bonusTypesController = new BonusTypesController();
+        echo $bonusTypesController->section();
 
         // Best Casinos by Category Table Section (PRD #22) - TEMPORARILY DISABLED
         // echo $this->renderCategoryComparisonSection($categoryComparisonData);
