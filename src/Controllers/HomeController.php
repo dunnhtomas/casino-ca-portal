@@ -16,6 +16,7 @@ use App\Services\NewsService;
 use App\Services\ProvinceService;
 use App\Services\SoftwareProviderService;
 use App\Services\LegalStatusService;
+use App\Services\CategoryComparisonService;
 use App\Controllers\BonusDatabaseController;
 
 class HomeController extends Controller {
@@ -99,6 +100,13 @@ class HomeController extends Controller {
             'payment_regulations' => $legalStatusService->getPaymentRegulations()
         ];
         
+        // Get category comparison data
+        $categoryComparisonService = new CategoryComparisonService();
+        $categoryComparisonData = [
+            'category_leaders' => $categoryComparisonService->getCategoryLeaders(),
+            'statistics' => $categoryComparisonService->getCategoryStatistics()
+        ];
+        
         $featuredGames = $this->getFeaturedGames();
         $bonusCategories = $this->getBonusCategories();
         
@@ -124,6 +132,7 @@ class HomeController extends Controller {
     <link rel="stylesheet" href="/css/news-updates.css">
     <link rel="stylesheet" href="/css/provinces-section.css">
     <link rel="stylesheet" href="/css/software-providers.css">
+    <link rel="stylesheet" href="/css/category-comparison.css">
     <style>
         * {
             margin: 0;
@@ -1965,9 +1974,12 @@ class HomeController extends Controller {
                     </div>
                 </div>
             </div>
-        </section>
+        </section>';
 
-        <section class="section">
+        // Best Casinos by Category Table Section (PRD #22)
+        echo $this->renderCategoryComparisonSection($categoryComparisonData);
+
+        echo '<section class="section">
             <h2 class="section-title">Discover Canada\'s Best Online Casinos by Category</h2>
             <p>Find your perfect casino experience with our comprehensive category system. Whether you\'re interested in live dealer action, mobile gaming, cryptocurrency payments, or massive bonuses, we\'ve organized Canada\'s top casinos to match your exact preferences.</p>
             <div class="casino-categories-nav">
@@ -4128,5 +4140,18 @@ class HomeController extends Controller {
         }
         
         return $html;
+    }
+
+    /**
+     * Render Best Casinos by Category Table Section
+     */
+    private function renderCategoryComparisonSection($categoryComparisonData)
+    {
+        $categories = $categoryComparisonData['category_leaders'];
+        $statistics = $categoryComparisonData['statistics'];
+        
+        ob_start();
+        include __DIR__ . '/../Views/category-comparison/section.php';
+        return ob_get_clean();
     }
 }

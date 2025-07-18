@@ -64,7 +64,7 @@ function Set-Permissions {
 # Function to install dependencies
 function Install-Dependencies {
     Write-Host "📦 Installing PHP dependencies..." -ForegroundColor $Yellow
-    Invoke-RemoteCommand "cd $ServerPath && composer install --optimize-autoloader --no-dev"
+    Invoke-RemoteCommand "cd $ServerPath; composer install --optimize-autoloader --no-dev"
 }
 
 # Function to restart services
@@ -77,7 +77,7 @@ function Restart-Services {
 # Function to run database migrations
 function Run-Migrations {
     Write-Host "🗄️ Running database migrations..." -ForegroundColor $Yellow
-    Invoke-RemoteCommand "cd $ServerPath && php database/migrate.php"
+    Invoke-RemoteCommand "cd $ServerPath; php database/migrate.php"
 }
 
 # Function to clear cache

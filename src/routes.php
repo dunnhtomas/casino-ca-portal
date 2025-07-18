@@ -213,5 +213,16 @@ $router->get('/problem-gambling/{province}', 'ProblemGamblingController@provinci
 $router->get('/api/problem-gambling-resources', 'ProblemGamblingController@apiResources');
 $router->get('/api/emergency-contacts', 'ProblemGamblingController@apiEmergencyContacts');
 $router->get('/api/self-assessment', 'ProblemGamblingController@apiSelfAssessment');
+
+// Category Comparison routes (PRD #22)
+$router->get('/category-comparison', 'CategoryComparisonController@index');
+$router->get('/best-casinos-by-category', 'CategoryComparisonController@index');
+$router->get('/category/{category}', 'CategoryComparisonController@showCategory');
+
+// Category Comparison API routes (PRD #22)
+$router->get('/api/category-leaders', 'CategoryComparisonController@apiCategoryLeaders');
+$router->get('/api/category/{category}', 'CategoryComparisonController@apiCategory');
+$router->get('/api/category-comparison', 'CategoryComparisonController@apiCategoryComparison');
+$router->get('/api/category-statistics', 'CategoryComparisonController@apiStatistics');
 $router->post('/api/self-assessment', 'ProblemGamblingController@apiSelfAssessment');
 $router->get('/api/provincial-resource/{province}', 'ProblemGamblingController@apiProvincialResource');
