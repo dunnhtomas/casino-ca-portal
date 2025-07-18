@@ -7,6 +7,16 @@
  * @var array $stats Game statistics from GamesService 
  * @var array $canadianData Canadian gaming preferences from GamesService
  */
+
+// Apply CTO-level 2025 null safety and data validation
+$safeGames = is_array($games ?? null) ? $games : [];
+$safeStats = is_array($stats ?? null) ? $stats : [];
+$safeCanadianData = is_array($canadianData ?? null) ? $canadianData : [];
+
+// Provide default values for stats
+$totalGames = $safeStats['total_games'] ?? 9;
+$averageRtp = $safeStats['average_rtp'] ?? 96.5;
+$canadianPlayers = $safeCanadianData['canadian_players'] ?? '50K+';
 ?>
 <section class="games-grid-section" id="popular-games">
     <div class="container">
@@ -21,15 +31,15 @@
             </p>
             <div class="section-stats">
                 <div class="stat-item">
-                    <span class="stat-number"><?= $stats['total_games'] ?></span>
+                    <span class="stat-number"><?= htmlspecialchars((string)$totalGames, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?></span>
                     <span class="stat-label">Game Types</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number"><?= $stats['average_rtp'] ?>%</span>
+                    <span class="stat-number"><?= htmlspecialchars((string)$averageRtp, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?>%</span>
                     <span class="stat-label">Average RTP</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number"><?= $canadianData['canadian_players'] ?></span>
+                    <span class="stat-number"><?= htmlspecialchars((string)$canadianPlayers, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?></span>
                     <span class="stat-label">Canadian Players</span>
                 </div>
             </div>
@@ -37,34 +47,46 @@
 
         <!-- Games Grid -->
         <div class="games-grid">
-            <?php foreach ($games as $index => $game): ?>
-            <div class="game-card" data-category="<?= htmlspecialchars($game['slug']) ?>" data-index="<?= $index ?>">
+            <?php if (!empty($safeGames)): ?>
+                <?php foreach ($safeGames as $index => $game): ?>
+                    <?php
+                    // Apply modern null safety to game data
+                    $safeGame = is_array($game) ? $game : [];
+                    $gameName = trim($safeGame['name'] ?? 'Unknown Game');
+                    $gameSlug = $safeGame['slug'] ?? 'game-' . $index;
+                    $gameIcon = $safeGame['icon'] ?? '🎰';
+                    $gameDescription = trim($safeGame['short_description'] ?? 'Popular casino game');
+                    $gameCount = (int)($safeGame['game_count'] ?? 50);
+                    $gameRtp = (float)($safeGame['average_rtp'] ?? 96.5);
+                    $popularityScore = (int)($safeGame['popularity_score'] ?? 80);
+                    $isCanadianFavorite = (bool)($safeGame['canadian_favorite'] ?? false);
+                    ?>
+            <div class="game-card" data-category="<?= htmlspecialchars($gameSlug, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?>" data-index="<?= $index ?>">
                 <div class="game-card-inner">
                     <!-- Game Icon -->
                     <div class="game-icon">
-                        <span class="icon"><?= $game['icon'] ?></span>
+                        <span class="icon"><?= htmlspecialchars($gameIcon, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?></span>
                     </div>
                     
                     <!-- Game Info -->
                     <div class="game-info">
-                        <h3 class="game-title"><?= htmlspecialchars($game['name']) ?></h3>
-                        <p class="game-description"><?= htmlspecialchars($game['short_description']) ?></p>
-                        
+                        <h3 class="game-title"><?= htmlspecialchars($gameName, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?></h3>
+                        <p class="game-description"><?= htmlspecialchars($gameDescription, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?></p>
                         <!-- Game Stats -->
                         <div class="game-stats">
                             <div class="stat">
                                 <span class="stat-label">Games:</span>
-                                <span class="stat-value"><?= $game['game_count'] ?>+</span>
+                                <span class="stat-value"><?= htmlspecialchars((string)$gameCount, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?>+</span>
                             </div>
                             <div class="stat">
                                 <span class="stat-label">RTP:</span>
-                                <span class="stat-value highlight"><?= $game['average_rtp'] ?>%</span>
+                                <span class="stat-value highlight"><?= htmlspecialchars((string)$gameRtp, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?>%</span>
                             </div>
                             <div class="stat">
                                 <span class="stat-label">Popularity:</span>
                                 <span class="stat-value">
                                     <?php
-                                    $stars = round($game['popularity_score'] / 20);
+                                    $stars = min(5, max(0, round($popularityScore / 20)));
                                     echo str_repeat('⭐', $stars) . str_repeat('☆', 5 - $stars);
                                     ?>
                                 </span>
@@ -72,7 +94,7 @@
                         </div>
                         
                         <!-- Canadian Focus -->
-                        <?php if (isset($game['canadian_favorite']) && $game['canadian_favorite']): ?>
+                        <?php if ($isCanadianFavorite): ?>
                         <div class="canadian-badge">
                             <span class="badge">🍁 Canadian Favorite</span>
                         </div>
@@ -80,10 +102,10 @@
                         
                         <!-- Action Buttons -->
                         <div class="game-actions">
-                            <a href="/games/<?= $game['slug'] ?>" class="btn btn-primary btn-sm">
+                            <a href="/games/<?= htmlspecialchars($gameSlug, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?>" class="btn btn-primary btn-sm">
                                 Learn More
                             </a>
-                            <button class="btn btn-outline btn-sm" onclick="openGameModal('<?= $game['slug'] ?>')">
+                            <button class="btn btn-outline btn-sm" onclick="openGameModal('<?= htmlspecialchars($gameSlug, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?>')">
                                 Quick View
                             </button>
                         </div>
@@ -92,21 +114,33 @@
                     <!-- Hover Overlay -->
                     <div class="game-overlay">
                         <div class="overlay-content">
-                            <h4><?= htmlspecialchars($game['name']) ?></h4>
-                            <p><?= htmlspecialchars($game['description']) ?></p>
+                            <h4><?= htmlspecialchars($gameName, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?></h4>
+                            <p><?= htmlspecialchars($safeGame['description'] ?? $gameDescription, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?></p>
                             <div class="featured-games">
                                 <h5>Popular Games:</h5>
                                 <ul>
-                                    <?php foreach ($game['featured_games'] as $featured): ?>
-                                    <li><?= htmlspecialchars($featured) ?></li>
-                                    <?php endforeach; ?>
+                                    <?php 
+                                    $featuredGames = $safeGame['featured_games'] ?? [];
+                                    if (is_array($featuredGames) && !empty($featuredGames)): 
+                                    ?>
+                                        <?php foreach ($featuredGames as $featured): ?>
+                                    <li><?= htmlspecialchars((string)$featured, ENT_QUOTES | ENT_HTML5, 'UTF-8') ?></li>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <li>No featured games available</li>
+                                    <?php endif; ?>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="no-games-message">
+                    <p>No games available at this time.</p>
+                </div>
+            <?php endif; ?>
         </div>
 
         <!-- Canadian Gaming Insights -->
@@ -295,38 +329,57 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Schema.org structured data for SEO
-const gamesSchema = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": "Popular Casino Games in Canada",
-    "description": "Comprehensive guide to the most popular casino games available to Canadian players",
-    "numberOfItems": <?= count($games) ?>,
-    "itemListElement": [
-        <?php foreach ($games as $index => $game): ?>
-        {
-            "@type": "ListItem",
-            "position": <?= $index + 1 ?>,
-            "item": {
-                "@type": "Game",
-                "name": "<?= addslashes(htmlspecialchars($game['name'])) ?>",
-                "description": "<?= addslashes(htmlspecialchars($game['description'])) ?>",
-                "gameLocation": "Online Casino",
-                "numberOfPlayers": "1+",
-                "characterAttribute": {
-                    "@type": "PropertyValue",
-                    "name": "RTP",
-                    "value": "<?= $game['average_rtp'] ?>%"
-                }
-            }
-        }<?php if ($index < count($games) - 1): ?>,<?php endif; ?>
-        <?php endforeach; ?>
-    ]
-};
+// Schema.org structured data for SEO (CTO-level 2025 approach)
+<?php
+// Prepare safe schema data
+$schemaData = [
+    "@context" => "https://schema.org",
+    "@type" => "ItemList",
+    "name" => "Popular Casino Games in Canada",
+    "description" => "Comprehensive guide to the most popular casino games available to Canadian players",
+    "numberOfItems" => count($safeGames),
+    "itemListElement" => []
+];
 
-// Inject schema into page head
-const script = document.createElement('script');
-script.type = 'application/ld+json';
-script.textContent = JSON.stringify(gamesSchema);
-document.head.appendChild(script);
+if (!empty($safeGames)) {
+    foreach ($safeGames as $index => $game) {
+        $safeGame = is_array($game) ? $game : [];
+        $schemaData["itemListElement"][] = [
+            "@type" => "ListItem",
+            "position" => $index + 1,
+            "item" => [
+                "@type" => "Game",
+                "name" => trim($safeGame['name'] ?? 'Unknown Game'),
+                "description" => trim($safeGame['description'] ?? $safeGame['short_description'] ?? 'Popular casino game'),
+                "gameLocation" => "Online Casino",
+                "numberOfPlayers" => "1+",
+                "characterAttribute" => [
+                    "@type" => "PropertyValue",
+                    "name" => "RTP",
+                    "value" => ((float)($safeGame['average_rtp'] ?? 96.5)) . "%"
+                ]
+            ]
+        ];
+    }
+}
+
+// Safe JSON encoding with error handling
+try {
+    $schemaJson = json_encode($schemaData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+} catch (JsonException $e) {
+    error_log("JSON Schema encoding error in games section: " . $e->getMessage());
+    $schemaJson = '{}';
+}
+?>
+
+// Inject schema using modern CTO-level approach
+const gamesSchema = <?= $schemaJson ?>;
+
+// Safe schema injection
+if (gamesSchema && typeof gamesSchema === 'object') {
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify(gamesSchema);
+    document.head.appendChild(script);
+}
 </script>

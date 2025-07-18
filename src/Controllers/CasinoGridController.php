@@ -15,6 +15,342 @@ class CasinoGridController extends Controller {
     }
     
     /**
+     * Render the casino grid section for homepage
+     */
+    public function section(): string
+    {
+        $casinos = $this->casinoGridService->getAllCasinos();
+        $statistics = $this->casinoGridService->getStatistics();
+        $categories = $this->casinoGridService->getCategories();
+        
+        // Get top-rated casinos for initial display
+        $topCasinos = array_filter($casinos, function($casino) {
+            return $casino['rating'] >= 4.5;
+        });
+        
+        // Sort by rating
+        usort($topCasinos, function($a, $b) {
+            return $b['rating'] <=> $a['rating'];
+        });
+        
+        // Take first 12 for initial grid display
+        $displayCasinos = array_slice($topCasinos, 0, 12);
+        
+        return $this->renderGridSection($displayCasinos, $statistics, $categories);
+    }
+    
+    /**
+     * Generate HTML for the casino grid section
+     */
+    private function renderGridSection(array $casinos, array $statistics, array $categories): string
+    {
+        $html = '
+        <!-- Interactive Casino Grid Section (PRD #31) -->
+        <section class="casino-grid-section" id="casino-grid">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-th-large"></i>
+                        Compare ' . $statistics['total_casinos'] . '+ Canadian Online Casinos
+                    </h2>
+                    <p class="section-subtitle">
+                        Interactive grid with advanced filtering, search, and comparison tools. Find your perfect casino match.
+                    </p>
+                </div>
+                
+                <!-- Grid Statistics -->
+                <div class="grid-statistics">
+                    <div class="stat-cards">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">' . $statistics['total_casinos'] . '</div>
+                                <div class="stat-label">Total Casinos</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">' . $statistics['average_rating'] . '</div>
+                                <div class="stat-label">Average Rating</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">' . $statistics['mobile_casinos'] . '</div>
+                                <div class="stat-label">Mobile Optimized</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-bitcoin"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">' . $statistics['crypto_casinos'] . '</div>
+                                <div class="stat-label">Crypto Friendly</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Search and Filter Controls -->
+                <div class="grid-controls">
+                    <div class="search-container">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="casino-search" placeholder="Search casinos, providers, or games..." class="search-input">
+                            <div id="search-suggestions" class="search-suggestions"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-controls">
+                        <button class="filter-toggle" id="filter-toggle">
+                            <i class="fas fa-filter"></i>
+                            Filters
+                            <span class="filter-count" id="filter-count" style="display: none;"></span>
+                        </button>
+                        
+                        <div class="sort-controls">
+                            <select id="sort-select" class="sort-select">
+                                <option value="rating">Sort by Rating</option>
+                                <option value="name">Sort by Name</option>
+                                <option value="established">Sort by Newest</option>
+                                <option value="games">Sort by Game Count</option>
+                            </select>
+                        </div>
+                        
+                        <button class="compare-toggle" id="compare-toggle" style="display: none;">
+                            <i class="fas fa-exchange-alt"></i>
+                            Compare (<span id="compare-count">0</span>)
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Advanced Filter Panel -->
+                <div class="filter-panel" id="filter-panel" style="display: none;">
+                    <div class="filter-panel-content">
+                        <div class="filter-section">
+                            <h4>Rating</h4>
+                            <div class="rating-filter">
+                                <input type="range" id="rating-slider" min="1" max="5" step="0.1" value="3.5" class="slider">
+                                <div class="slider-labels">
+                                    <span>1.0+</span>
+                                    <span id="rating-value">3.5+</span>
+                                    <span>5.0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-section">
+                            <h4>Categories</h4>
+                            <div class="category-filters">
+                                ' . $this->generateCategoryFilters($categories) . '
+                            </div>
+                        </div>
+                        
+                        <div class="filter-section">
+                            <h4>License</h4>
+                            <div class="license-filters">
+                                <label><input type="checkbox" value="MGA"> Malta Gaming Authority</label>
+                                <label><input type="checkbox" value="UKGC"> UK Gambling Commission</label>
+                                <label><input type="checkbox" value="Curacao"> Curaçao eGaming</label>
+                                <label><input type="checkbox" value="Gibraltar"> Gibraltar Regulatory</label>
+                                <label><input type="checkbox" value="Kahnawake"> Kahnawake Gaming</label>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-section">
+                            <h4>Established</h4>
+                            <div class="established-filters">
+                                <label><input type="radio" name="established" value="2021-2025"> 2021-2025 (New)</label>
+                                <label><input type="radio" name="established" value="2011-2020"> 2011-2020</label>
+                                <label><input type="radio" name="established" value="2001-2010"> 2001-2010</label>
+                                <label><input type="radio" name="established" value="1990-2000"> 1990-2000 (Established)</label>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-actions">
+                            <button class="btn btn-primary" id="apply-filters">Apply Filters</button>
+                            <button class="btn btn-secondary" id="clear-filters">Clear All</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Casino Grid Preview -->
+                <div class="casino-grid-preview" id="casino-grid-preview">
+                    ' . $this->generateCasinoCards($casinos) . '
+                </div>
+                
+                <!-- View All Button -->
+                <div class="grid-actions">
+                    <a href="/casinos" class="btn btn-primary btn-lg view-all-casinos">
+                        <i class="fas fa-th-large"></i>
+                        View All ' . $statistics['total_casinos'] . '+ Casinos
+                    </a>
+                    <div class="grid-info">
+                        Showing top-rated casinos. Use filters to find your perfect match.
+                    </div>
+                </div>
+                
+                <!-- Comparison Modal -->
+                <div class="comparison-modal" id="comparison-modal" style="display: none;">
+                    <div class="modal-backdrop" id="modal-backdrop"></div>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Casino Comparison</h3>
+                            <button class="modal-close" id="modal-close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="comparison-content">
+                            <!-- Comparison content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>';
+        
+        return $html;
+    }
+    
+    /**
+     * Generate category filter checkboxes
+     */
+    private function generateCategoryFilters(array $categories): string
+    {
+        $html = '';
+        foreach ($categories as $key => $label) {
+            if ($key !== 'all') {
+                $html .= '<label><input type="checkbox" value="' . $key . '"> ' . $label . '</label>';
+            }
+        }
+        return $html;
+    }
+    
+    /**
+     * Generate casino cards HTML for homepage preview
+     */
+    private function generateCasinoCards(array $casinos): string
+    {
+        $html = '<div class="casino-grid-cards">';
+        
+        foreach ($casinos as $casino) {
+            $html .= '
+            <div class="casino-grid-card" data-casino-id="' . $casino['id'] . '" data-rating="' . $casino['rating'] . '" data-categories="' . implode(',', $casino['categories']) . '">
+                <div class="card-header">
+                    <div class="casino-logo">
+                        <span class="logo-placeholder">' . $casino['logo'] . '</span>
+                    </div>
+                    <div class="casino-rating">
+                        <div class="rating-stars">
+                            ' . $this->generateStars($casino['rating']) . '
+                        </div>
+                        <span class="rating-number">' . $casino['rating'] . '</span>
+                    </div>
+                    <div class="comparison-checkbox">
+                        <input type="checkbox" class="compare-checkbox" value="' . $casino['id'] . '">
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <h3 class="casino-name">' . $casino['name'] . '</h3>
+                    <div class="casino-meta">
+                        <span class="established">Est. ' . $casino['established'] . '</span>
+                        <span class="license">' . $casino['license'] . '</span>
+                    </div>
+                    
+                    <div class="casino-highlights">
+                        <div class="highlight-item">
+                            <i class="fas fa-gift"></i>
+                            <span>' . $casino['bonus'] . '</span>
+                        </div>
+                        <div class="highlight-item">
+                            <i class="fas fa-gamepad"></i>
+                            <span>' . $casino['games'] . ' games</span>
+                        </div>
+                        <div class="highlight-item">
+                            <i class="fas fa-clock"></i>
+                            <span>' . $casino['payout'] . '</span>
+                        </div>
+                        <div class="highlight-item">
+                            <i class="fas fa-percentage"></i>
+                            <span>' . $casino['rtp'] . ' RTP</span>
+                        </div>
+                    </div>
+                    
+                    <div class="casino-categories">
+                        ' . $this->generateCategoryBadges(array_slice($casino['categories'], 0, 3)) . '
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <div class="card-actions">
+                        <a href="/casino/' . $casino['slug'] . '" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt"></i>
+                            Visit Casino
+                        </a>
+                        <button class="btn btn-secondary quick-stats-btn" data-casino-id="' . $casino['id'] . '">
+                            <i class="fas fa-info-circle"></i>
+                            Details
+                        </button>
+                    </div>
+                </div>
+            </div>';
+        }
+        
+        $html .= '</div>';
+        return $html;
+    }
+    
+    /**
+     * Generate star rating HTML
+     */
+    private function generateStars(float $rating): string
+    {
+        $fullStars = floor($rating);
+        $halfStar = ($rating - $fullStars) >= 0.5;
+        $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0);
+        
+        $html = '';
+        
+        // Full stars
+        for ($i = 0; $i < $fullStars; $i++) {
+            $html .= '<i class="fas fa-star"></i>';
+        }
+        
+        // Half star
+        if ($halfStar) {
+            $html .= '<i class="fas fa-star-half-alt"></i>';
+        }
+        
+        // Empty stars
+        for ($i = 0; $i < $emptyStars; $i++) {
+            $html .= '<i class="far fa-star"></i>';
+        }
+        
+        return $html;
+    }
+    
+    /**
+     * Generate category badges
+     */
+    private function generateCategoryBadges(array $categories): string
+    {
+        $html = '';
+        foreach ($categories as $category) {
+            $html .= '<span class="category-badge category-' . $category . '">' . ucwords(str_replace('-', ' ', $category)) . '</span>';
+        }
+        return $html;
+    }
+    
+    /**
      * Display the main casino grid page
      */
     public function index(): void {

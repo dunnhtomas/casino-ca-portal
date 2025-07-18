@@ -30,6 +30,7 @@ $router->get('/casino-grid', 'CasinoGridController@index');
 $router->get('/compare-all-casinos', 'CasinoGridController@index');
 $router->get('/casinos', 'CasinoGridController@index');
 $router->get('/api/casino-grid', 'CasinoGridController@ajax');
+$router->get('/casino-grid/section', 'CasinoGridController@section');
 
 // Casino Grid API routes (PRD #21)
 $router->post('/api/casinos/filter', 'CasinoGridController@filter');
@@ -266,3 +267,12 @@ $router->get('/api/games/search', 'GamesController@apiSearch');
 
 $router->post('/api/self-assessment', 'ProblemGamblingController@apiSelfAssessment');
 $router->get('/api/provincial-resource/{province}', 'ProblemGamblingController@apiProvincialResource');
+
+// Popular Slots Detailed routes (PRD #32)
+$router->get('/popular-slots', 'SlotsController@index');
+$router->get('/slots-detailed', 'SlotsController@index');
+$router->get('/api/slots/popular', 'SlotsController@section');
+$router->get('/api/slots/filter', 'SlotsController@filter');
+$router->get('/api/slots/{id}/demo', 'SlotsController@demo');
+$router->get('/api/slots/{id}/analytics', 'SlotsController@analytics');
+$router->get('/slots-section', 'SlotsController@section');

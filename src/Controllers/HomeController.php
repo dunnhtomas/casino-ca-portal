@@ -26,6 +26,8 @@ use App\Controllers\BonusDatabaseController;
 use App\Controllers\LegalStatusController;
 use App\Controllers\ProblemGamblingController;
 use App\Controllers\ExtendedCasinoController;
+use App\Controllers\CasinoGridController;
+use App\Controllers\SlotsController;
 use Exception;
 
 class HomeController extends Controller {
@@ -116,7 +118,11 @@ class HomeController extends Controller {
         
         // Get legal status data (PRD #28)
         $legalStatusController = new LegalStatusController();
-        $legalStatusSection = $legalStatusController->section();
+        $legalStatusSection = $legalStatusController->renderSection();
+        $legalStatusService = new LegalStatusService();
+        $legalStatusData = [
+            'legal_summary' => $legalStatusService->getLegalSummary()
+        ];
         
         // Get problem gambling resources data (PRD #29)
         $problemGamblingController = new ProblemGamblingController();
@@ -1968,62 +1974,13 @@ class HomeController extends Controller {
         $extendedCasinoController = new ExtendedCasinoController();
         echo $extendedCasinoController->renderSection();
         
-        echo '<!-- Interactive Casino Grid Section (PRD #02) -->
-        <section class="section casino-grid-section">
-            <h2 class="section-title">Compare All Casinos - Interactive Grid</h2>
-            <p>Explore our complete database of 90+ Canadian-friendly online casinos. Use our interactive grid to compare bonuses, ratings, game selections, and find your perfect casino match.</p>
-            
-            <div class="casino-grid-preview">
-                <div class="grid-preview-header">
-                    <div class="grid-stats">
-                        <div class="stat-item">
-                            <span class="stat-number">90+</span>
-                            <span class="stat-label">Casinos</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">50+</span>
-                            <span class="stat-label">Categories</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">Real-time</span>
-                            <span class="stat-label">Filtering</span>
-                        </div>
-                    </div>
-                    <a href="/compare-all-casinos" class="btn btn-primary btn-large">Explore All Casinos →</a>
-                </div>
-                
-                <div class="casino-grid-mini">
-                    <div class="grid-casino-item"><div class="casino-mini-logo">JC</div><div class="casino-mini-name">Jackpot City</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">SP</div><div class="casino-mini-name">Spin Palace</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">LO</div><div class="casino-mini-name">Lucky Ones</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">RV</div><div class="casino-mini-name">Royal Vegas</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">PK</div><div class="casino-mini-name">PokerStars</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">RF</div><div class="casino-mini-name">Ruby Fortune</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">CC</div><div class="casino-mini-name">Captain Cooks</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">PS</div><div class="casino-mini-name">Pistolo</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">+82</div><div class="casino-mini-name">More Casinos</div></div>
-                </div>
-                
-                <div class="grid-features">
-                    <div class="feature">
-                        <div class="feature-icon">🔍</div>
-                        <div class="feature-text">Search & Filter</div>
-                    </div>
-                    <div class="feature">
-                        <div class="feature-icon">⚡</div>
-                        <div class="feature-text">Real-time Results</div>
-                    </div>
-                    <div class="feature">
-                        <div class="feature-icon">📊</div>
-                        <div class="feature-text">Compare Side-by-Side</div>
-                    </div>
-                    <div class="feature">
-                        <div class="feature-icon">🎯</div>
-                        <div class="feature-text">Detailed Info</div>
-                    </div>
-                </div>
-            </div>
-        </section>';
+        // Add Interactive Casino Grid section (PRD #31)
+        $casinoGridController = new CasinoGridController();
+        echo $casinoGridController->section();
+        
+        // Add Popular Slots Detailed section (PRD #32)
+        $slotsController = new SlotsController();
+        echo $slotsController->section();
 
         // Best Casinos by Category Table Section (PRD #22) - TEMPORARILY DISABLED
         // echo $this->renderCategoryComparisonSection($categoryComparisonData);
