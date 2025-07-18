@@ -19,10 +19,21 @@ $router->get('/categories/multiple', 'CasinoCategoriesController@showMultipleCat
 $router->get('/api/categories/{categoryId}/filter', 'CasinoCategoriesController@filterCategory');
 $router->get('/api/categories/{categoryId}/filters', 'CasinoCategoriesController@getCategoryFilters');
 
-// Interactive Casino Grid routes (PRD #02)
+// Interactive Casino Grid routes (PRD #02 & #21)
 $router->get('/casino-grid', 'CasinoGridController@index');
 $router->get('/compare-all-casinos', 'CasinoGridController@index');
-$router->get('/api/casino-grid', 'CasinoGridController@api');
+$router->get('/casinos', 'CasinoGridController@index');
+$router->get('/api/casino-grid', 'CasinoGridController@ajax');
+
+// Casino Grid API routes (PRD #21)
+$router->post('/api/casinos/filter', 'CasinoGridController@filter');
+$router->get('/api/casinos', 'CasinoGridController@apiCasinos');
+$router->get('/api/casinos/statistics', 'CasinoGridController@apiStatistics');
+$router->get('/api/casinos/search', 'CasinoGridController@search');
+
+// Casino Comparison routes (PRD #21)
+$router->get('/compare', 'CasinoGridController@compare');
+$router->post('/compare', 'CasinoGridController@compare');
 
 // Review routes
 $router->get('/reviews', 'ReviewController@list');

@@ -1,10 +1,11 @@
 <?php
 namespace App\Controllers;
 
+use App\Core\Controller;
 use App\Services\CasinoGridService;
 use App\Services\AuthorService;
 
-class CasinoGridController {
+class CasinoGridController extends Controller {
     private CasinoGridService $casinoGridService;
     private AuthorService $authorService;
     
@@ -29,11 +30,23 @@ class CasinoGridController {
         $perPage = 20;
         
         // Filter and search
-        $filteredCasinos = $this->casinoGridService->filterByCategory($allCasinos, $category);
-        $searchedCasinos = $this->casinoGridService->searchCasinos($filteredCasinos, $search);
+        $filters = [];
+        if ($category !== 'all') {
+            $filters['category'] = $category;
+        }
+        
+        $filteredCasinos = $this->casinoGridService->filterCasinos($filters);
+        
+        // Apply search if provided
+        if (!empty($search)) {
+            $filteredCasinos = array_filter($filteredCasinos, function($casino) use ($search) {
+                return stripos($casino['name'], $search) !== false || 
+                       stripos($casino['bonus'], $search) !== false;
+            });
+        }
         
         // Sort
-        $sortedCasinos = $this->casinoGridService->sortCasinos($searchedCasinos, $sortBy);
+        $sortedCasinos = $this->casinoGridService->sortCasinos($filteredCasinos, $sortBy);
         
         // Paginate
         $paginatedResults = $this->casinoGridService->paginateCasinos($sortedCasinos, $page, $perPage);
@@ -58,11 +71,23 @@ class CasinoGridController {
         $perPage = 20;
         
         // Filter and search
-        $filteredCasinos = $this->casinoGridService->filterByCategory($allCasinos, $category);
-        $searchedCasinos = $this->casinoGridService->searchCasinos($filteredCasinos, $search);
+        $filters = [];
+        if ($category !== 'all') {
+            $filters['category'] = $category;
+        }
+        
+        $filteredCasinos = $this->casinoGridService->filterCasinos($filters);
+        
+        // Apply search if provided
+        if (!empty($search)) {
+            $filteredCasinos = array_filter($filteredCasinos, function($casino) use ($search) {
+                return stripos($casino['name'], $search) !== false || 
+                       stripos($casino['bonus'], $search) !== false;
+            });
+        }
         
         // Sort
-        $sortedCasinos = $this->casinoGridService->sortCasinos($searchedCasinos, $sortBy);
+        $sortedCasinos = $this->casinoGridService->sortCasinos($filteredCasinos, $sortBy);
         
         // Paginate
         $paginatedResults = $this->casinoGridService->paginateCasinos($sortedCasinos, $page, $perPage);
@@ -541,5 +566,158 @@ class CasinoGridController {
         </body>
         </html>
         <?php
+    }
+    
+    /**
+     * Filter casinos via API with advanced filters
+     */
+    public function filter(): void {
+        header('Content-Type: application/json');
+        
+        $filters = [];
+        parse_str(file_get_contents('php://input'), $filters);
+        
+        $casinos = $this->casinoGridService->getAllCasinos();
+        
+        // Apply filters using new service methods
+        if (!empty($filters)) {
+            $casinos = $this->casinoGridService->filterCasinos($filters);
+        }
+        
+        // Apply sorting
+        $sortBy = $filters['sort'] ?? 'rating';
+        $order = $filters['order'] ?? 'desc';
+        $casinos = $this->casinoGridService->sortCasinos($casinos, $sortBy, $order);
+        
+        // Search
+        if (isset($filters['search']) && !empty($filters['search'])) {
+            $casinos = array_filter($casinos, function($casino) use ($filters) {
+                return stripos($casino['name'], $filters['search']) !== false || 
+                       stripos($casino['bonus'], $filters['search']) !== false;
+            });
+        }
+        
+        // Pagination
+        $page = intval($filters['page'] ?? 1);
+        $perPage = intval($filters['per_page'] ?? 20);
+        $paginatedResult = $this->casinoGridService->paginateCasinos($casinos, $page, $perPage);
+        
+        echo json_encode([
+            'success' => true,
+            'casinos' => $paginatedResult['items'],
+            'pagination' => $paginatedResult,
+            'total' => count($casinos),
+            'filters_applied' => $filters
+        ]);
+        exit;
+    }
+    
+    /**
+     * Compare multiple casinos
+     */
+    public function compare(): void {
+        $casino_ids = [];
+        
+        if (isset($_GET['casinos'])) {
+            $casino_ids = explode(',', $_GET['casinos']);
+        } elseif (isset($_POST['casino_ids'])) {
+            $casino_ids = $_POST['casino_ids'];
+        }
+
+        $casinos = $this->casinoGridService->getCasinosByIds($casino_ids);
+        
+        // Include the comparison view
+        $comparison_count = count($casinos);
+        include __DIR__ . '/../Views/casino-grid/compare.php';
+    }    /**
+     * API endpoint for casino data
+     */
+    public function apiCasinos(): void {
+        header('Content-Type: application/json');
+        
+        $filters = $_GET;
+        $page = intval($_GET['page'] ?? 1);
+        $limit = intval($_GET['limit'] ?? 20);
+        
+        $casinos = $this->casinoGridService->getAllCasinos();
+        
+        // Apply filters
+        if (!empty($filters)) {
+            $casinos = $this->casinoGridService->filterCasinos($filters);
+        }
+        
+        // Apply sorting
+        $sortBy = $_GET['sort'] ?? 'rating';
+        $order = $_GET['order'] ?? 'desc';
+        $casinos = $this->casinoGridService->sortCasinos($casinos, $sortBy, $order);
+        
+        // Pagination
+        $paginatedResult = $this->casinoGridService->paginateCasinos($casinos, $page, $limit);
+        
+        echo json_encode([
+            'success' => true,
+            'casinos' => $paginatedResult['items'],
+            'pagination' => [
+                'current_page' => $page,
+                'total_pages' => $paginatedResult['totalPages'],
+                'total_casinos' => $paginatedResult['total'],
+                'per_page' => $limit,
+                'has_more' => $paginatedResult['hasMore']
+            ]
+        ]);
+        exit;
+    }
+    
+    /**
+     * API endpoint for statistics
+     */
+    public function apiStatistics(): void {
+        header('Content-Type: application/json');
+        
+        $statistics = $this->casinoGridService->getStatistics();
+        $categories = $this->casinoGridService->getCategories();
+        
+        echo json_encode([
+            'success' => true,
+            'statistics' => $statistics,
+            'categories' => $categories
+        ]);
+        exit;
+    }
+    
+    /**
+     * API endpoint for casino search
+     */
+    public function search(): void {
+        header('Content-Type: application/json');
+        
+        $query = $_GET['q'] ?? '';
+        $limit = intval($_GET['limit'] ?? 10);
+        
+        if (empty($query)) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Search query is required'
+            ]);
+            return;
+        }
+        
+        $casinos = $this->casinoGridService->getAllCasinos();
+        $results = array_filter($casinos, function($casino) use ($query) {
+            return stripos($casino['name'], $query) !== false || 
+                   stripos($casino['bonus'], $query) !== false ||
+                   stripos($casino['license'], $query) !== false;
+        });
+        
+        // Limit results
+        $results = array_slice($results, 0, $limit);
+        
+        echo json_encode([
+            'success' => true,
+            'results' => $results,
+            'query' => $query,
+            'total_found' => count($results)
+        ]);
+        exit;
     }
 }

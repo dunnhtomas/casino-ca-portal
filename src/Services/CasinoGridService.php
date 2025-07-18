@@ -379,7 +379,6 @@ class CasinoGridService {
                 'featured' => false,
                 'license' => 'MGA'
             ],
-            ],
             
             // Additional 75+ Casinos for comprehensive coverage
             [
@@ -1610,31 +1609,123 @@ class CasinoGridService {
         ];
     }
     
-    /**
-     * Filter casinos by category
-     */
-    public function filterByCategory(array $casinos, string $category): array {
-        if ($category === 'all') {
-            return $casinos;
+    public function filterCasinos($filters = [])
+    {
+        $casinos = $this->getAllCasinos();
+        
+        foreach ($filters as $filter_type => $filter_value) {
+            $casinos = array_filter($casinos, function($casino) use ($filter_type, $filter_value) {
+                switch ($filter_type) {
+                    case 'min_rating':
+                        return $casino['rating'] >= floatval($filter_value);
+                    case 'max_rating':
+                        return $casino['rating'] <= floatval($filter_value);
+                    case 'category':
+                        return in_array($filter_value, $casino['categories']);
+                    case 'min_games':
+                        $games_num = intval(str_replace(['+', ','], '', $casino['games']));
+                        return $games_num >= intval($filter_value);
+                    case 'license':
+                        return $casino['license'] === $filter_value;
+                    case 'established_range':
+                        return $this->matchesEstablishedRange($casino['established'], $filter_value);
+                    case 'featured':
+                        return $casino['featured'] === ($filter_value === 'true');
+                    default:
+                        return true;
+                }
+            });
         }
         
-        return array_filter($casinos, function($casino) use ($category) {
-            return in_array($category, $casino['categories']);
-        });
+        return $casinos;
     }
     
-    /**
-     * Search casinos by name
-     */
-    public function searchCasinos(array $casinos, string $query): array {
-        if (empty($query)) {
-            return $casinos;
+    public function getFilterOptions()
+    {
+        return [
+            'rating' => [
+                'min' => 1.0,
+                'max' => 5.0,
+                'step' => 0.1,
+                'default_min' => 3.5
+            ],
+            'established' => [
+                'ranges' => ['1990-2000', '2001-2010', '2011-2020', '2021-2025']
+            ],
+            'games_count' => [
+                'ranges' => ['100-500', '501-1000', '1001-2000', '2001-5000', '5000+']
+            ],
+            'licenses' => [
+                'options' => ['MGA', 'UKGC', 'Curacao', 'Gibraltar', 'Kahnawake', 'eCOGRA']
+            ],
+            'categories' => $this->getCategories()
+        ];
+    }
+    
+    private function matchesEstablishedRange($established, $range)
+    {
+        switch ($range) {
+            case '1990-2000':
+                return $established >= 1990 && $established <= 2000;
+            case '2001-2010':
+                return $established >= 2001 && $established <= 2010;
+            case '2011-2020':
+                return $established >= 2011 && $established <= 2020;
+            case '2021-2025':
+                return $established >= 2021 && $established <= 2025;
+            default:
+                return true;
+        }
+    }
+    
+    public function getCasinoById($id)
+    {
+        $casinos = $this->getAllCasinos();
+        foreach ($casinos as $casino) {
+            if ($casino['id'] == $id || $casino['slug'] === $id) {
+                return $casino;
+            }
+        }
+        return null;
+    }
+    
+    public function getCasinosByIds($ids)
+    {
+        $casinos = $this->getAllCasinos();
+        $result = [];
+        
+        foreach ($ids as $id) {
+            foreach ($casinos as $casino) {
+                if ($casino['id'] == $id || $casino['slug'] === $id) {
+                    $result[] = $casino;
+                    break;
+                }
+            }
         }
         
-        $query = strtolower($query);
-        return array_filter($casinos, function($casino) use ($query) {
-            return strpos(strtolower($casino['name']), $query) !== false;
-        });
+        return $result;
+    }
+    
+    public function getStatistics()
+    {
+        $casinos = $this->getAllCasinos();
+        
+        return [
+            'total_casinos' => count($casinos),
+            'average_rating' => round(array_sum(array_column($casinos, 'rating')) / count($casinos), 1),
+            'featured_casinos' => count(array_filter($casinos, function($casino) {
+                return $casino['featured'];
+            })),
+            'new_casinos' => count(array_filter($casinos, function($casino) {
+                return in_array('new', $casino['categories']);
+            })),
+            'crypto_casinos' => count(array_filter($casinos, function($casino) {
+                return in_array('crypto', $casino['categories']);
+            })),
+            'mobile_casinos' => count(array_filter($casinos, function($casino) {
+                return in_array('mobile', $casino['categories']);
+            }))
+        ];
     }
     
     /**
