@@ -1,0 +1,6 @@
+// Bonus Database routes (PRD #09)
+$router->get('/bonuses', 'BonusController@index');
+$router->get('/bonus/{bonusId}', 'BonusDatabaseController@showBonusTerms');
+$router->get('/api/bonuses', 'BonusController@ajax');
+$router->get('/api/bonuses/filter', 'BonusController@ajax');
+$router->get('/api/bonus/{bonusId}', 'BonusDatabaseController@getBonusDetails');
