@@ -264,3 +264,12 @@ $router->get('/research-results/{casinoId}', 'CasinoResearchResultsController@sh
 $router->get('/api/research-results', 'CasinoResearchResultsController@api');
 $router->get('/research-results/run', 'CasinoResearchResultsController@runResearch');
 $router->get('/research-results/export/{format}', 'CasinoResearchResultsController@export');
+
+// Extended Top Casino List routes (PRD #30)
+$router->get('/top-casinos', 'ExtendedTopCasinosController@index');
+$router->get('/top-15-casinos', 'ExtendedTopCasinosController@index');
+$router->get('/best-canadian-casinos', 'ExtendedTopCasinosController@index');
+$router->get('/api/extended-top-casinos', 'ExtendedTopCasinosController@api');
+$router->get('/api/extended-top-casinos/filtered', 'ExtendedTopCasinosController@apiFiltered');
+$router->get('/api/extended-top-casinos/comparison', 'ExtendedTopCasinosController@apiComparison');
+$router->get('/api/extended-top-casinos/stats', 'ExtendedTopCasinosController@apiStats');
