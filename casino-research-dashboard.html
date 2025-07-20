@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎰 Casino Research Dashboard | Best Casino Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 20px; 
+            padding: 40px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.15);
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #f1f2f6;
+        }
+        .header h1 { 
+            color: #2c3e50; 
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .header .subtitle { 
+            color: #7f8c8d; 
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+        .loading { 
+            text-align: center; 
+            padding: 60px 0;
+            color: #7f8c8d;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 25px; 
+            margin-bottom: 40px; 
+        }
+        .stat-card { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            text-align: center;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover { 
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        .stat-card h3 { 
+            font-size: 2.5rem; 
+            margin-bottom: 10px; 
+            font-weight: 700;
+        }
+        .stat-card p { 
+            opacity: 0.9; 
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        .casino-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px; 
+            margin-top: 30px;
+        }
+        .casino-card { 
+            border: 1px solid #e1e8ed; 
+            border-radius: 15px; 
+            padding: 25px; 
+            background: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .casino-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+        .casino-card:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+        .casino-name { 
+            font-size: 1.4rem; 
+            font-weight: 700; 
+            color: #2c3e50; 
+            margin-bottom: 15px;
+        }
+        .rating { 
+            padding: 8px 15px; 
+            border-radius: 25px; 
+            display: inline-block; 
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .rating.high { background: #27ae60; color: white; }
+        .rating.medium { background: #f39c12; color: white; }
+        .rating.low { background: #e74c3c; color: white; }
+        .method-badge { 
+            background: #3498db; 
+            color: white; 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .method-badge.openai { background: #9b59b6; }
+        .method-badge.fallback_enhanced { background: #1abc9c; }
+        .casino-details { margin: 20px 0; line-height: 1.6; }
+        .casino-details div { 
+            margin-bottom: 8px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .casino-details strong { color: #2c3e50; min-width: 100px; }
+        .casino-details a { color: #3498db; text-decoration: none; }
+        .casino-details a:hover { color: #2980b9; text-decoration: underline; }
+        .description { 
+            margin: 15px 0; 
+            color: #555; 
+            line-height: 1.6;
+            font-style: italic;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        .pros-cons { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+            margin: 20px 0; 
+        }
+        .pros, .cons { 
+            padding: 15px; 
+            border-radius: 10px; 
+            font-size: 0.9rem;
+        }
+        .pros { 
+            background: linear-gradient(135deg, #d5f4e6 0%, #d5f4e6 100%);
+            border-left: 4px solid #27ae60; 
+        }
+        .cons { 
+            background: linear-gradient(135deg, #fadbd8 0%, #fadbd8 100%);
+            border-left: 4px solid #e74c3c; 
+        }
+        .pros h4, .cons h4 { 
+            margin-bottom: 10px; 
+            color: #2c3e50;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .pros ul, .cons ul { 
+            list-style: none; 
+        }
+        .pros li::before { content: "✅ "; }
+        .cons li::before { content: "❌ "; }
+        .pros li, .cons li { margin-bottom: 5px; }
+        .btn { 
+            display: inline-block; 
+            padding: 12px 25px; 
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white; 
+            text-decoration: none; 
+            border-radius: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        .actions { 
+            text-align: center; 
+            margin: 40px 0;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        .actions .btn { margin: 0 10px; }
+        .system-status {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        .error { 
+            background: #fadbd8; 
+            color: #c0392b; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin: 20px 0;
+            border-left: 4px solid #e74c3c;
+        }
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .casino-grid { grid-template-columns: 1fr; }
+            .pros-cons { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎰 Casino Research Dashboard</h1>
+            <p class="subtitle">Comprehensive Analysis of Affiliate Casinos</p>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Loading casino research data...</p>
+        </div>
+
+        <div id="dashboard" style="display: none;">
+            <div class="stats-grid" id="stats"></div>
+            
+            <div class="actions">
+                <a href="/openai-research-official.php" class="btn">🔄 Run OpenAI Research</a>
+                <a href="/research-api-openai-only.php" class="btn">📊 View OpenAI Data</a>
+                <a href="/test-openai-billing.php" class="btn">� Test API Key</a>
+            </div>
+            
+            <div class="casino-grid" id="casinos"></div>
+            
+            <div class="system-status" id="status"></div>
+        </div>
+
+        <div class="error" id="error" style="display: none;"></div>
+    </div>
+
+    <script>
+        async function loadResearchData() {
+            try {
+                const response = await fetch('/research-api-openai-only.php');
+                if (!response.ok) throw new Error('Failed to load OpenAI research data');
+                
+                const data = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                
+                renderStats(data);
+                renderCasinos(data.casinos || []);
+                renderSystemStatus(data);
+                
+            } catch (error) {
+                console.error('Error loading OpenAI data:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').innerHTML = `
+                    <h3>❌ OpenAI Research Data Required</h3>
+                    <p>${error.message}</p>
+                    <p><strong>Fix OpenAI Billing:</strong></p>
+                    <ol>
+                        <li>Visit: <a href="https://platform.openai.com/account/billing" target="_blank">OpenAI Billing</a></li>
+                        <li>Add payment method (credit card)</li>
+                        <li>Add credits or setup auto-recharge</li>
+                        <li>Run: <code>php openai-research-official.php</code></li>
+                    </ol>
+                `;
+            }
+        }
+        
+        function renderStats(data) {
+            const stats = data.stats || {};
+            const statsHtml = `
+                <div class="stat-card">
+                    <h3>${stats.total_casinos || 0}</h3>
+                    <p>Total Casinos</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${stats.average_rating || '0.0'}</h3>
+                    <p>Average Rating</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${(stats.total_games || 0).toLocaleString()}</h3>
+                    <p>Total Games</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${stats.mobile_optimized || 0}</h3>
+                    <p>Mobile Optimized</p>
+                </div>
+            `;
+            document.getElementById('stats').innerHTML = statsHtml;
+        }
+        
+        function renderCasinos(casinos) {
+            const casinosHtml = casinos.slice(0, 12).map(casino => {
+                const rating = parseFloat(casino.rating || 0);
+                const ratingClass = rating >= 8.5 ? 'high' : (rating >= 7 ? 'medium' : 'low');
+                const methodClass = casino.research_method === 'openai' ? 'openai' : 'fallback_enhanced';
+                
+                return `
+                    <div class="casino-card">
+                        <div class="casino-name">${casino.name}</div>
+                        
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <span class="rating ${ratingClass}">${rating}/10</span>
+                            <span class="method-badge ${methodClass}">${casino.research_method}</span>
+                        </div>
+                        
+                        <div class="casino-details">
+                            <div><strong>Website:</strong> <a href="${casino.website_url || '#'}" target="_blank" rel="noopener">${casino.website_url || 'N/A'}</a></div>
+                            <div><strong>Games:</strong> ${(casino.games_count || 0).toLocaleString()}</div>
+                            <div><strong>Bonus:</strong> ${casino.welcome_bonus || 'N/A'}</div>
+                            <div><strong>Mobile:</strong> ${casino.mobile_optimized ? '✅ Yes' : '❌ No'}</div>
+                        </div>
+                        
+                        ${casino.description ? `<div class="description">${casino.description.substring(0, 120)}...</div>` : ''}
+                        
+                        ${casino.pros || casino.cons ? `
+                            <div class="pros-cons">
+                                ${casino.pros ? `
+                                    <div class="pros">
+                                        <h4>✅ Pros</h4>
+                                        <ul>${casino.pros.slice(0, 3).map(pro => `<li>${pro}</li>`).join('')}</ul>
+                                    </div>
+                                ` : ''}
+                                ${casino.cons ? `
+                                    <div class="cons">
+                                        <h4>❌ Cons</h4>
+                                        <ul>${casino.cons.slice(0, 2).map(con => `<li>${con}</li>`).join('')}</ul>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('casinos').innerHTML = casinosHtml;
+        }
+        
+        function renderSystemStatus(data) {
+            const statusHtml = `
+                <h3>🔧 System Status</h3>
+                <p><strong>OpenAI Available:</strong> ${data.openai_available ? '✅ Yes' : '❌ No (Using Enhanced Fallback)'}</p>
+                <p><strong>Last Updated:</strong> ${data.generated_at || 'Unknown'}</p>
+                <p><strong>Research Methods:</strong> ${Object.entries(data.research_methods || {}).map(([method, count]) => `${method}: ${count}`).join(', ')}</p>
+                <p><strong>Total Processed:</strong> ${data.total_processed || 0} casinos</p>
+            `;
+            document.getElementById('status').innerHTML = statusHtml;
+        }
+        
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadResearchData);
+        
+        // Auto-refresh every 5 minutes
+        setInterval(loadResearchData, 300000);
+    </script>
+</body>
+</html>

@@ -4,12 +4,72 @@ namespace App\Services;
 class OpenAIService {
     private $apiKey;
     private $baseUrl = "https://api.openai.com/v1";
+    private $rateLimitRpm;
+    private $rateLimitTpm;
+    private $maxRetries;
+    private $retryDelay;
+    private $timeout;
+    private $requestCount = 0;
+    private $tokenCount = 0;
+    private $lastRequestTime;
+    private $models;
     
     public function __construct() {
         $this->apiKey = $_ENV["OPENAI_API_KEY"] ?? "";
         if (empty($this->apiKey)) {
             throw new \Exception("OpenAI API key not configured");
         }
+        
+        // Pro-level rate limiting configuration
+        $this->rateLimitRpm = (int)($_ENV["OPENAI_REQUESTS_PER_MINUTE"] ?? 500);
+        $this->rateLimitTpm = (int)($_ENV["OPENAI_TOKE        return $result;
+    }
+    
+    /**
+     * Make a minimal OpenAI request with conservative settings
+     */
+    public function makeMinimalRequest(string $prompt): string {
+        $response = $this->makeRequest("/chat/completions", [
+            "model" => "gpt-3.5-turbo", // Use cheapest model
+            "messages" => [
+                [
+                    "role" => "system",
+                    "content" => "You are a casino research assistant. Provide concise, factual responses in JSON format."
+                ],
+                [
+                    "role" => "user",
+                    "content" => $prompt
+                ]
+            ],
+            "max_tokens" => 300,         // Very limited tokens
+            "temperature" => 0.1,        // Low temperature for consistency
+            "top_p" => 1.0,             // Standard sampling
+            "frequency_penalty" => 0.0,  // No penalties to save tokens
+            "presence_penalty" => 0.0,   // No penalties to save tokens
+        ]);
+        
+        if (!isset($response['choices'][0]['message']['content'])) {
+            throw new \Exception("Invalid OpenAI API response format: " . json_encode($response));
+        }
+        
+        return $response['choices'][0]['message']['content'];
+    }
+    
+    /**
+     * Start asynchronous research request (simulated for now - real implementation would use async)
+     */_MINUTE"] ?? 200000);
+        $this->maxRetries = (int)($_ENV["OPENAI_MAX_RETRIES"] ?? 5);
+        $this->retryDelay = (float)($_ENV["OPENAI_RETRY_DELAY"] ?? 2.0);
+        $this->timeout = (int)($_ENV["OPENAI_TIMEOUT"] ?? 60);
+        
+        // Model configuration for different use cases
+        $this->models = [
+            'primary' => $_ENV["OPENAI_MODEL_PRIMARY"] ?? 'gpt-4o-mini',
+            'research' => $_ENV["OPENAI_MODEL_RESEARCH"] ?? 'gpt-4o-mini',
+            'content' => $_ENV["OPENAI_MODEL_CONTENT"] ?? 'gpt-4o-mini'
+        ];
+        
+        $this->lastRequestTime = microtime(true);
     }
     
     public function generateCasinoReview(array $casinoData): string {
@@ -365,30 +425,130 @@ Write as {$author["name"]} sharing your expert analysis with fellow Canadian pla
         return "fall";
     }
     
-    private function makeRequest(string $endpoint, array $data): array {
-        $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_URL => $this->baseUrl . $endpoint,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => json_encode($data),
-            CURLOPT_HTTPHEADER => [
-                "Authorization: Bearer " . $this->apiKey,
-                "Content-Type: application/json"
-            ],
-            CURLOPT_TIMEOUT => 45,
-            CURLOPT_SSL_VERIFYPEER => true
-        ]);
+    /**
+     * Intelligent rate limiting with pro-level optimization
+     */
+    private function enforceRateLimit(): void {
+        $currentTime = microtime(true);
+        $timeSinceLastRequest = $currentTime - $this->lastRequestTime;
         
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        // Calculate minimum delay based on RPM limit (with buffer)
+        $minDelaySeconds = 60.0 / ($this->rateLimitRpm * 0.9); // 10% buffer
         
-        if ($httpCode !== 200) {
-            throw new \Exception("OpenAI API request failed with code: $httpCode");
+        if ($timeSinceLastRequest < $minDelaySeconds) {
+            $sleepTime = $minDelaySeconds - $timeSinceLastRequest;
+            usleep((int)($sleepTime * 1000000)); // Convert to microseconds
         }
         
-        return json_decode($response, true);
+        $this->lastRequestTime = microtime(true);
+        $this->requestCount++;
+    }
+    
+    /**
+     * Enhanced request method with pro-level error handling and retries
+     */
+    private function makeRequest(string $endpoint, array $data): array {
+        $this->enforceRateLimit();
+        
+        $retryCount = 0;
+        $lastError = null;
+        
+        while ($retryCount <= $this->maxRetries) {
+            try {
+                $ch = curl_init();
+                
+                // Build headers array
+                $headers = [
+                    "Authorization: Bearer " . $this->apiKey,
+                    "Content-Type: application/json",
+                    "User-Agent: BestCasinoPortal/1.0 (Professional)",
+                ];
+                
+                // Only add organization header if it exists
+                $orgId = $_ENV["OPENAI_ORG_ID"] ?? "";
+                if (!empty($orgId)) {
+                    $headers[] = "OpenAI-Organization: " . $orgId;
+                }
+                
+                curl_setopt_array($ch, [
+                    CURLOPT_URL => $this->baseUrl . $endpoint,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_POST => true,
+                    CURLOPT_POSTFIELDS => json_encode($data),
+                    CURLOPT_HTTPHEADER => $headers,
+                    CURLOPT_TIMEOUT => $this->timeout,
+                    CURLOPT_CONNECTTIMEOUT => 30,
+                    CURLOPT_SSL_VERIFYPEER => true,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_MAXREDIRS => 3,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_2_0, // Use HTTP/2 for better performance
+                ]);
+                
+                $response = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                $curlError = curl_error($ch);
+                curl_close($ch);
+                
+                if ($curlError) {
+                    throw new \Exception("CURL Error: " . $curlError);
+                }
+                
+                $responseData = json_decode($response, true);
+                
+                // Handle different HTTP status codes
+                switch ($httpCode) {
+                    case 200:
+                        // Success - track token usage
+                        if (isset($responseData['usage']['total_tokens'])) {
+                            $this->tokenCount += $responseData['usage']['total_tokens'];
+                        }
+                        return $responseData;
+                        
+                    case 429: // Rate limit exceeded
+                        $retryAfter = $this->extractRetryAfter($response) ?: (pow(2, $retryCount) * $this->retryDelay);
+                        error_log("OpenAI rate limit hit, waiting {$retryAfter}s before retry #{$retryCount}");
+                        sleep($retryAfter);
+                        break;
+                        
+                    case 500:
+                    case 502:
+                    case 503:
+                    case 504: // Server errors - retry with exponential backoff
+                        $waitTime = pow(2, $retryCount) * $this->retryDelay;
+                        error_log("OpenAI server error {$httpCode}, waiting {$waitTime}s before retry #{$retryCount}");
+                        sleep($waitTime);
+                        break;
+                        
+                    default:
+                        throw new \Exception("OpenAI API request failed with code: {$httpCode}. Response: " . $response);
+                }
+                
+                $lastError = "HTTP {$httpCode}: " . $response;
+                
+            } catch (\Exception $e) {
+                $lastError = $e->getMessage();
+                error_log("OpenAI API attempt #{$retryCount} failed: " . $lastError);
+                
+                if ($retryCount < $this->maxRetries) {
+                    $waitTime = pow(2, $retryCount) * $this->retryDelay;
+                    sleep($waitTime);
+                }
+            }
+            
+            $retryCount++;
+        }
+        
+        throw new \Exception("OpenAI API failed after {$this->maxRetries} retries. Last error: " . $lastError);
+    }
+    
+    /**
+     * Extract retry-after header from rate limit response
+     */
+    private function extractRetryAfter(string $response): ?int {
+        if (preg_match('/retry-after:\s*(\d+)/i', $response, $matches)) {
+            return (int)$matches[1];
+        }
+        return null;
     }
 
     // ADVANCED 2025 ANTI-AI DETECTION METHODS
@@ -581,5 +741,181 @@ Make it sound like a real person wrote this based on genuine experience. No AI f
         }
         
         return implode("\n\n", $paragraphs);
+    }
+    
+    /**
+     * Research casino with OpenAI using optimized pro-level settings
+     */
+    public function researchCasino(string $prompt): string {
+        $response = $this->makeRequest("/chat/completions", [
+            "model" => $this->models['research'], // Use premium model for research
+            "messages" => [
+                [
+                    "role" => "system",
+                    "content" => "You are a professional casino research analyst with 15+ years of industry experience. Provide comprehensive, accurate, and up-to-date information about online casinos. Always return data in valid JSON format with complete details across all requested categories."
+                ],
+                [
+                    "role" => "user",
+                    "content" => $prompt
+                ]
+            ],
+            "max_tokens" => 4000,        // Increased for comprehensive research
+            "temperature" => 0.1,        // Lower temperature for factual accuracy
+            "top_p" => 0.95,            // Maintain response quality
+            "frequency_penalty" => 0.0,  // No penalty for factual repetition
+            "presence_penalty" => 0.0,   // No penalty for thorough coverage
+            "stream" => false,           // Disable streaming for batch processing
+            "logprobs" => false,         // Disable log probabilities to save tokens
+            "echo" => false,             // Don't echo the prompt back
+            "stop" => null,              // No stop sequences
+            "seed" => null,              // Random seed for variation
+            "user" => "casino-research-system", // Track usage by system component
+        ]);
+        
+        if (!isset($response['choices'][0]['message']['content'])) {
+            throw new \Exception("Invalid OpenAI API response format: " . json_encode($response));
+        }
+        
+        return $response['choices'][0]['message']['content'];
+    }
+    
+    /**
+     * Batch process multiple casino research requests with pro-level optimization
+     */
+    public function batchResearchCasinos(array $prompts): array {
+        $batchSize = (int)($_ENV["OPENAI_BATCH_SIZE"] ?? 10);
+        $maxConcurrent = (int)($_ENV["OPENAI_CONCURRENT_REQUESTS"] ?? 5);
+        $results = [];
+        
+        // Split prompts into batches
+        $batches = array_chunk($prompts, $batchSize);
+        
+        foreach ($batches as $batchIndex => $batch) {
+            error_log("Processing batch " . ($batchIndex + 1) . " of " . count($batches));
+            
+            $batchResults = [];
+            $activeRequests = [];
+            
+            // Process batch with controlled concurrency
+            foreach ($batch as $index => $prompt) {
+                if (count($activeRequests) >= $maxConcurrent) {
+                    // Wait for one request to complete before starting next
+                    $completedResult = $this->waitForNextCompletion($activeRequests);
+                    $batchResults[] = $completedResult;
+                }
+                
+                // Start new concurrent request
+                $activeRequests[] = $this->startAsyncResearch($prompt, $index);
+            }
+            
+            // Wait for remaining requests in batch
+            while (!empty($activeRequests)) {
+                $completedResult = $this->waitForNextCompletion($activeRequests);
+                $batchResults[] = $completedResult;
+            }
+            
+            $results = array_merge($results, $batchResults);
+            
+            // Add delay between batches to respect rate limits
+            if ($batchIndex < count($batches) - 1) {
+                sleep(1);
+            }
+        }
+        
+        return $results;
+    }
+    
+    /**
+     * Start asynchronous research request (simulated for now - real implementation would use async)
+     */
+    private function startAsyncResearch(string $prompt, int $index): array {
+        return [
+            'index' => $index,
+            'prompt' => $prompt,
+            'start_time' => microtime(true),
+            'status' => 'pending'
+        ];
+    }
+    
+    /**
+     * Wait for next completion (simplified for synchronous processing)
+     */
+    private function waitForNextCompletion(array &$activeRequests): array {
+        $request = array_shift($activeRequests);
+        
+        try {
+            $result = $this->researchCasino($request['prompt']);
+            return [
+                'index' => $request['index'],
+                'result' => $result,
+                'status' => 'completed',
+                'duration' => microtime(true) - $request['start_time']
+            ];
+        } catch (\Exception $e) {
+            return [
+                'index' => $request['index'],
+                'error' => $e->getMessage(),
+                'status' => 'failed',
+                'duration' => microtime(true) - $request['start_time']
+            ];
+        }
+    }
+    
+    /**
+     * Get current API usage statistics
+     */
+    public function getUsageStats(): array {
+        return [
+            'requests_made' => $this->requestCount,
+            'tokens_used' => $this->tokenCount,
+            'rate_limit_rpm' => $this->rateLimitRpm,
+            'rate_limit_tpm' => $this->rateLimitTpm,
+            'estimated_cost_usd' => $this->calculateEstimatedCost(),
+            'last_request_time' => date('Y-m-d H:i:s', (int)$this->lastRequestTime)
+        ];
+    }
+    
+    /**
+     * Calculate estimated API cost based on token usage
+     */
+    private function calculateEstimatedCost(): float {
+        // Pricing as of July 2025 (GPT-4o-mini: $0.40/1M input + $1.60/1M output)
+        $inputTokens = $this->tokenCount * 0.7; // Estimate 70% input
+        $outputTokens = $this->tokenCount * 0.3; // Estimate 30% output
+        
+        $inputCost = ($inputTokens / 1000000) * 0.40;
+        $outputCost = ($outputTokens / 1000000) * 1.60;
+        
+        return round($inputCost + $outputCost, 4);
+    }
+    
+    /**
+     * Make a minimal OpenAI request with conservative settings
+     */
+    public function makeMinimalRequest(string $prompt): string {
+        $response = $this->makeRequest("/chat/completions", [
+            "model" => "gpt-3.5-turbo",
+            "messages" => [
+                [
+                    "role" => "system",
+                    "content" => "You are a casino research assistant. Provide concise, factual responses in JSON format."
+                ],
+                [
+                    "role" => "user", 
+                    "content" => $prompt
+                ]
+            ],
+            "max_tokens" => 300,
+            "temperature" => 0.1,
+            "top_p" => 1.0,
+            "frequency_penalty" => 0.0,
+            "presence_penalty" => 0.0,
+        ]);
+        
+        if (!isset($response['choices'][0]['message']['content'])) {
+            throw new \Exception("Invalid OpenAI API response format: " . json_encode($response));
+        }
+        
+        return $response['choices'][0]['message']['content'];
     }
 }

@@ -15,17 +15,11 @@ use App\Services\MobileAppService;
 use App\Services\NewsService;
 use App\Services\ProvinceService;
 use App\Services\ProvincesService;
-use App\Services\FeaturesService;
-use App\Services\GamesService;
 use App\Services\SoftwareProviderService;
 use App\Services\LegalStatusService;
 use App\Services\CategoryComparisonService;
 use App\Services\EnhancedDetailedReviewsService;
-use App\Services\ExtendedCasinoService;
 use App\Controllers\BonusDatabaseController;
-use App\Controllers\LegalStatusController;
-use App\Controllers\ProblemGamblingController;
-use App\Controllers\ExtendedCasinoController;
 use Exception;
 
 class HomeController extends Controller {
@@ -90,21 +84,6 @@ class HomeController extends Controller {
             'statistics' => $provincesService->getProvinceStatistics()
         ];
         
-        // Get 5 key features data (PRD #25)
-        $featuresService = new FeaturesService();
-        $featuresData = [
-            'features' => $featuresService->getFeaturesForHomepage(),
-            'stats' => $featuresService->getFeatureStats()
-        ];
-        
-        // Get popular casino games data (PRD #26)
-        $gamesService = new \App\Services\GamesService();
-        $gamesData = [
-            'games' => $gamesService->getGamesForHomepage(),
-            'stats' => $gamesService->getGamesStatistics(),
-            'canadian_data' => $gamesService->getCanadianGamingData()
-        ];
-        
         // Get software providers data
         $softwareProviderService = new \App\Services\SoftwareProviderService();
         $softwareProvidersData = [
@@ -114,13 +93,14 @@ class HomeController extends Controller {
             'statistics' => $softwareProviderService->getProviderStatistics()
         ];
         
-        // Get legal status data (PRD #28)
-        $legalStatusController = new LegalStatusController();
-        $legalStatusSection = $legalStatusController->section();
-        
-        // Get problem gambling resources data (PRD #29)
-        $problemGamblingController = new ProblemGamblingController();
-        $problemGamblingSection = $problemGamblingController->section();
+        // Get legal status data
+        $legalStatusService = new LegalStatusService();
+        $legalStatusData = [
+            'legal_summary' => $legalStatusService->getLegalSummaryForHomepage(),
+            'authorities' => array_slice($legalStatusService->getAllAuthorities(), 0, 4),
+            'featured_provinces' => array_slice($legalStatusService->getAllProvinces(), 0, 3),
+            'payment_regulations' => $legalStatusService->getPaymentRegulations()
+        ];
         
         // Get category comparison data
         $categoryComparisonService = new CategoryComparisonService();
@@ -173,8 +153,6 @@ class HomeController extends Controller {
     <link rel="stylesheet" href="/css/software-providers.css">
     <link rel="stylesheet" href="/css/category-comparison.css">
     <link rel="stylesheet" href="/css/enhanced-detailed-reviews.css">
-    <link rel="stylesheet" href="/css/legal-status.css">
-    <link rel="stylesheet" href="/css/extended-top-casinos.css">
     <style>
         * {
             margin: 0;
@@ -1961,14 +1939,7 @@ class HomeController extends Controller {
             </div>
         </section>
 
-        <!-- Extended Top Casino List Section (PRD #30) -->
-        ';
-        
-        // Add Extended Casino section
-        $extendedCasinoController = new ExtendedCasinoController();
-        echo $extendedCasinoController->renderSection();
-        
-        echo '<!-- Interactive Casino Grid Section (PRD #02) -->
+        <!-- Interactive Casino Grid Section (PRD #02) -->
         <section class="section casino-grid-section">
             <h2 class="section-title">Compare All Casinos - Interactive Grid</h2>
             <p>Explore our complete database of 90+ Canadian-friendly online casinos. Use our interactive grid to compare bonuses, ratings, game selections, and find your perfect casino match.</p>
@@ -2308,19 +2279,9 @@ class HomeController extends Controller {
             </div>
         </section>
 
-        <!-- 5 Key Features Section (PRD #25) -->
-        <section class="key-features-section">
-            ' . $this->renderFeaturesSection($featuresData) . '
-        </section>
-
-        <!-- Popular Casino Games Grid Section (PRD #26) -->
-        <section class="games-grid-section">
-            ' . $this->renderGamesSection($gamesData) . '
-        </section>
-
         <!-- Enhanced Detailed Top 3 Casino Reviews Section (PRD #23) -->
         <section class="enhanced-detailed-reviews-section">
-            ' . $this->renderEnhancedDetailedReviewsSection($enhancedReviewsData) . '
+            <?php echo $this->renderEnhancedDetailedReviewsSection($enhancedReviewsData); ?>
         </section>
 
         <!-- Free Games Library Section -->
@@ -3252,7 +3213,7 @@ class HomeController extends Controller {
             </div>
         </section>
 
-        <!-- Legal Status & Regulation Section (PRD #28) -->
+        <!-- Legal Status & Regulation Section (PRD #18) -->
         <section class="legal-section">
             <div class="container">
                 <div class="section-header">
@@ -3321,11 +3282,11 @@ class HomeController extends Controller {
                     </div>
                     <div class="legal-row">
                         <div class="legal-label">💳 Payment Methods</div>
-                        <div class="legal-value">' . implode(', ', $legalStatusData['legal_summary']['payment_methods']) . '</div>
+                        <div class="legal-value">' . (is_array($legalStatusData['legal_summary']['payment_methods'] ?? null) ? implode(', ', $legalStatusData['legal_summary']['payment_methods']) : 'Visa, Mastercard, Interac') . '</div>
                     </div>
                     <div class="legal-row">
                         <div class="legal-label">🎮 Popular Games</div>
-                        <div class="legal-value">' . implode(', ', $legalStatusData['legal_summary']['popular_games']) . '</div>
+                        <div class="legal-value">' . (is_array($legalStatusData['legal_summary']['popular_games'] ?? null) ? implode(', ', $legalStatusData['legal_summary']['popular_games']) : 'Slots, Blackjack, Roulette') . '</div>
                     </div>
                     <div class="legal-row">
                         <div class="legal-label">🏆 Best Casino</div>
@@ -3453,8 +3414,6 @@ class HomeController extends Controller {
         </section>
 
         ' . $bonusDatabaseSection . '
-        
-        ' . $problemGamblingSection . '
         
     </main>
 
@@ -4194,33 +4153,6 @@ class HomeController extends Controller {
         
         ob_start();
         include __DIR__ . '/../Views/enhanced-detailed-reviews/section.php';
-        return ob_get_clean();
-    }
-
-    /**
-     * Render 5 Key Features Section (PRD #25)
-     */
-    private function renderFeaturesSection($featuresData): string
-    {
-        $features = $featuresData['features'];
-        $stats = $featuresData['stats'];
-        
-        ob_start();
-        include __DIR__ . '/../Views/features/section.php';
-        return ob_get_clean();
-    }
-
-    /**
-     * Render Popular Casino Games Grid Section (PRD #26)
-     */
-    private function renderGamesSection($gamesData): string
-    {
-        $games = $gamesData['games'];
-        $stats = $gamesData['stats'];
-        $canadianData = $gamesData['canadian_data'];
-        
-        ob_start();
-        include __DIR__ . '/../Views/games/section.php';
         return ob_get_clean();
     }
 }

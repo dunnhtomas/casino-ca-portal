@@ -8,15 +8,16 @@
 $router->get('/', 'HomeController@index');
 $router->get('/home', 'HomeController@index');
 
+// Casino Research routes
+$router->get('/casino-research', 'CasinoResearchController@showDashboard');
+$router->get('/casino-research/dashboard', 'CasinoResearchController@showDashboard');
+$router->post('/casino-research/execute', 'CasinoResearchController@executeFullResearch');
+$router->get('/casino-research/single', 'CasinoResearchController@researchSingleCasino');
+$router->post('/casino-research/single', 'CasinoResearchController@researchSingleCasino');
+
 // Casino routes
 $router->get('/casinos', 'CasinoController@list');
 $router->get('/casino/{slug}', 'CasinoController@detail');
-
-// Extended Top Casino routes (PRD #30)
-$router->get('/api/casinos/extended-top', 'ExtendedCasinoController@getExtendedTopCasinos');
-$router->get('/api/casinos/extended/{id}', 'ExtendedCasinoController@getCasinoDetails');
-$router->get('/api/casinos/extended/filter', 'ExtendedCasinoController@getFilteredCasinos');
-$router->get('/api/casinos/extended/statistics', 'ExtendedCasinoController@getCasinoStatistics');
 
 // Casino Categories routes (PRD #04)
 $router->get('/categories', 'CasinoCategoriesController@index');
@@ -199,13 +200,14 @@ $router->get('/api/providers/{providerSlug}', 'SoftwareProviderController@apiPro
 $router->get('/api/providers/{providerSlug}/casinos', 'SoftwareProviderController@apiProviderCasinos');
 $router->get('/api/providers/category/{category}', 'SoftwareProviderController@apiProvidersByCategory');
 
-// Legal Status & Regulation routes (PRD #28)
+// Legal Status & Regulation routes (PRD #18)
 $router->get('/legal-status', 'LegalStatusController@index');
+$router->get('/legal/{provinceCode}', 'LegalStatusController@province');
+$router->get('/legal/authority/{authorityCode}', 'LegalStatusController@authority');
 $router->get('/api/legal-status', 'LegalStatusController@api');
-$router->get('/api/legal-status/provinces', 'LegalStatusController@provinces');
-$router->get('/api/legal-status/federal', 'LegalStatusController@federal');
-$router->get('/api/legal-status/statistics', 'LegalStatusController@statistics');
-$router->get('/api/legal-status/summary', 'LegalStatusController@summary');
+$router->get('/api/legal/province/{provinceCode}', 'LegalStatusController@apiProvince');
+$router->get('/api/legal/authority/{authorityCode}', 'LegalStatusController@apiAuthority');
+$router->get('/api/legal/payment-methods', 'LegalStatusController@apiPaymentMethods');
 
 // Problem Gambling Resources routes (PRD #20)
 $router->get('/problem-gambling', 'ProblemGamblingController@index');
@@ -215,11 +217,9 @@ $router->get('/problem-gambling/treatment', 'ProblemGamblingController@treatment
 $router->get('/problem-gambling/{province}', 'ProblemGamblingController@provincialResources');
 
 // Problem Gambling API routes
-$router->get('/api/problem-gambling', 'ProblemGamblingController@apiResources');
-$router->get('/api/problem-gambling/crisis', 'ProblemGamblingController@apiEmergencyContacts');
-$router->get('/api/problem-gambling/provincial', 'ProblemGamblingController@apiProvincialResources');
-$router->get('/api/problem-gambling/assessment', 'ProblemGamblingController@apiSelfAssessment');
-$router->get('/api/problem-gambling/organizations', 'ProblemGamblingController@apiSupportOrganizations');
+$router->get('/api/problem-gambling-resources', 'ProblemGamblingController@apiResources');
+$router->get('/api/emergency-contacts', 'ProblemGamblingController@apiEmergencyContacts');
+$router->get('/api/self-assessment', 'ProblemGamblingController@apiSelfAssessment');
 
 // Category Comparison routes (PRD #22)
 $router->get('/category-comparison', 'CategoryComparisonController@index');
@@ -250,19 +250,17 @@ $router->get('/api/provinces', 'ProvincesController@apiProvinces');
 $router->get('/api/provinces/{code}', 'ProvincesController@apiProvince');
 $router->get('/api/provinces/search', 'ProvincesController@apiSearchProvinces');
 
-// Features routes (PRD #25)
-$router->get('/features', 'FeaturesController@index');
-$router->get('/api/features', 'FeaturesController@api');
-$router->get('/api/features/{id}', 'FeaturesController@apiShow');
-$router->get('/api/features/stats', 'FeaturesController@apiStats');
-
-// Games routes (PRD #26)
-$router->get('/games', 'GamesController@index');
-$router->get('/games/{slug}', 'GamesController@category');
-$router->get('/api/games', 'GamesController@api');
-$router->get('/api/games/category/{slug}', 'GamesController@apiCategory');
-$router->get('/api/games/stats', 'GamesController@apiStats');
-$router->get('/api/games/search', 'GamesController@apiSearch');
-
 $router->post('/api/self-assessment', 'ProblemGamblingController@apiSelfAssessment');
 $router->get('/api/provincial-resource/{province}', 'ProblemGamblingController@apiProvincialResource');
+
+// Casino Research System Routes
+$router->get('/casino-research', 'CasinoResearchController@dashboard');
+$router->get('/casino-research/execute', 'CasinoResearchController@executeFullResearch');
+$router->get('/casino-research/single/{casinoId}', 'CasinoResearchController@researchSingleCasino');
+
+// Casino Research Results System Routes (New Enhanced Version)
+$router->get('/research-results', 'CasinoResearchResultsController@index');
+$router->get('/research-results/{casinoId}', 'CasinoResearchResultsController@show');
+$router->get('/api/research-results', 'CasinoResearchResultsController@api');
+$router->get('/research-results/run', 'CasinoResearchResultsController@runResearch');
+$router->get('/research-results/export/{format}', 'CasinoResearchResultsController@export');

@@ -113,14 +113,6 @@ class Router {
         $this->get('/generate-content', [$this, 'handleGenerateContent']);
         $this->post('/api/generate-review', [$this, 'handleApiGenerateReview']);
         $this->get('/demo-content', [$this, 'handleContentDemo']);
-        
-        // Bonus Database routes
-        $this->get('/bonuses', [$this, 'handleBonuses']);
-        $this->get('/bonuses/ajax', [$this, 'handleBonusesAjax']);
-        $this->get('/bonuses/compare', [$this, 'handleBonusesCompare']);
-        $this->get('/bonuses/calculator', [$this, 'handleBonusCalculator']);
-        $this->post('/api/bonuses/calculate', [$this, 'handleBonusCalculateApi']);
-        $this->get('/api/bonuses/search', [$this, 'handleBonusSearchApi']);
     }
     
     public function handleHome(): void {
@@ -231,48 +223,6 @@ class Router {
                 'established' => 2020
             ])
         ], JSON_PRETTY_PRINT);
-        exit;
-    }
-    
-    public function handleBonuses(): void {
-        require_once __DIR__ . '/../Controllers/BonusController.php';
-        $controller = new \App\Controllers\BonusController();
-        $controller->index();
-        exit;
-    }
-    
-    public function handleBonusesAjax(): void {
-        require_once __DIR__ . '/../Controllers/BonusController.php';
-        $controller = new \App\Controllers\BonusController();
-        $controller->ajax();
-        exit;
-    }
-    
-    public function handleBonusesCompare(): void {
-        require_once __DIR__ . '/../Controllers/BonusController.php';
-        $controller = new \App\Controllers\BonusController();
-        $controller->compare();
-        exit;
-    }
-    
-    public function handleBonusCalculator(): void {
-        require_once __DIR__ . '/../Controllers/BonusController.php';
-        $controller = new \App\Controllers\BonusController();
-        $controller->calculator();
-        exit;
-    }
-    
-    public function handleBonusCalculateApi(): void {
-        require_once __DIR__ . '/../Controllers/BonusController.php';
-        $controller = new \App\Controllers\BonusController();
-        $controller->calculateApi();
-        exit;
-    }
-    
-    public function handleBonusSearchApi(): void {
-        require_once __DIR__ . '/../Controllers/BonusController.php';
-        $controller = new \App\Controllers\BonusController();
-        $controller->searchApi();
         exit;
     }
     
