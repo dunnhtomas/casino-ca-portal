@@ -1964,15 +1964,15 @@ class HomeController extends Controller {
                 </div>
                 
                 <div class="casino-grid-mini">
-                    <div class="grid-casino-item"><div class="casino-mini-logo">JC</div><div class="casino-mini-name">Jackpot City</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">SP</div><div class="casino-mini-name">Spin Palace</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">LO</div><div class="casino-mini-name">Lucky Ones</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">RV</div><div class="casino-mini-name">Royal Vegas</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">PK</div><div class="casino-mini-name">PokerStars</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">RF</div><div class="casino-mini-name">Ruby Fortune</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">CC</div><div class="casino-mini-name">Captain Cooks</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">PS</div><div class="casino-mini-name">Pistolo</div></div>
-                    <div class="grid-casino-item"><div class="casino-mini-logo">+82</div><div class="casino-mini-name">More Casinos</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">BR</div><div class="casino-mini-name">BonRush</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">SV</div><div class="casino-mini-name">SLOTSVIL</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">CJ</div><div class="casino-mini-name">CASINOJOY</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">SM</div><div class="casino-mini-name">SLOTIMO</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">NJ</div><div class="casino-mini-name">NOVAJACKPOT</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">N54</div><div class="casino-mini-name">NEON54</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">666</div><div class="casino-mini-name">666 Gambit</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">SN</div><div class="casino-mini-name">SPINIGHT</div></div>
+                    <div class="grid-casino-item"><div class="casino-mini-logo">+12</div><div class="casino-mini-name">More Casinos</div></div>
                 </div>
                 
                 <div class="grid-features">
@@ -2185,8 +2185,8 @@ class HomeController extends Controller {
                     <div class="recommendations-grid">
                         <div class="recommendation-card">
                             <div class="rec-header">
-                                <div class="casino-name">Royal Vegas</div>
-                                <div class="rating">★ 4.8</div>
+                                <div class="casino-name">BonRush</div>
+                                <div class="rating">★ 4.9</div>
                             </div>
                             <div class="expert-rec">
                                 <span class="expert-name">Dr. Emily Rodriguez</span>
@@ -2198,7 +2198,7 @@ class HomeController extends Controller {
                         
                         <div class="recommendation-card">
                             <div class="rec-header">
-                                <div class="casino-name">FortuneJack</div>
+                                <div class="casino-name">SLOTSVIL</div>
                                 <div class="rating">★ 4.9</div>
                             </div>
                             <div class="expert-rec">
@@ -2211,7 +2211,7 @@ class HomeController extends Controller {
                         
                         <div class="recommendation-card">
                             <div class="rec-header">
-                                <div class="casino-name">LeoVegas</div>
+                                <div class="casino-name">CASINOJOY</div>
                                 <div class="rating">★ 4.9</div>
                             </div>
                             <div class="expert-rec">
@@ -3423,10 +3423,10 @@ class HomeController extends Controller {
                 <div class="footer-section">
                     <h3>Casino Reviews</h3>
                     <a href="/reviews">All Casino Reviews</a>
-                    <a href="/reviews/jackpot-city">Jackpot City Review</a>
-                    <a href="/reviews/spin-palace">Spin Palace Review</a>
-                    <a href="/reviews/lucky-ones">Lucky Ones Review</a>
-                    <a href="/reviews/pistolo">Pistolo Review</a>
+                    <a href="/reviews/bonrush">BonRush Review</a>
+                    <a href="/reviews/slotsvil">SLOTSVIL Review</a>
+                    <a href="/reviews/casinojoy">CASINOJOY Review</a>
+                    <a href="/reviews/slotimo">SLOTIMO Review</a>
                 </div>
                 <div class="footer-section">
                     <h3>Casino Games</h3>
@@ -3649,114 +3649,114 @@ class HomeController extends Controller {
     private function getTopCasinos(): array {
         return [
             [
-                'name' => 'Jackpot City Casino',
-                'established' => 1998,
+                'name' => 'BonRush',
+                'established' => 2020,
+                'rating' => 4.9,
+                'rating_text' => 'Exceptional',
+                'bonus' => '100% up to $500 + 100 Free Spins',
+                'rtp' => '97.8%',
+                'payout' => '0-24 hours',
+                'games' => '2500+',
+                'slug' => 'bonrush'
+            ],
+            [
+                'name' => 'SLOTSVIL',
+                'established' => 2019,
+                'rating' => 4.9,
+                'rating_text' => 'Exceptional',
+                'bonus' => '200% up to $1000 + 200 Free Spins',
+                'rtp' => '97.6%',
+                'payout' => '0-24 hours',
+                'games' => '3000+',
+                'slug' => 'slotsvil'
+            ],
+            [
+                'name' => 'CASINOJOY',
+                'established' => 2021,
+                'rating' => 4.9,
+                'rating_text' => 'Exceptional',
+                'bonus' => '150% up to $750 + 150 Free Spins',
+                'rtp' => '97.4%',
+                'payout' => '1-24 hours',
+                'games' => '2200+',
+                'slug' => 'casinojoy'
+            ],
+            [
+                'name' => 'SLOTIMO',
+                'established' => 2020,
+                'rating' => 4.8,
+                'rating_text' => 'Excellent',
+                'bonus' => '100% up to $400 + 120 Free Spins',
+                'rtp' => '97.2%',
+                'payout' => '1-24 hours',
+                'games' => '2800+',
+                'slug' => 'slotimo'
+            ],
+            [
+                'name' => 'NOVAJACKPOT',
+                'established' => 2018,
+                'rating' => 4.8,
+                'rating_text' => 'Excellent',
+                'bonus' => '300% up to $1500 + 300 Free Spins',
+                'rtp' => '97.0%',
+                'payout' => '1-2 days',
+                'games' => '3500+',
+                'slug' => 'novajackpot'
+            ],
+            [
+                'name' => 'NEON54',
+                'established' => 2019,
+                'rating' => 4.8,
+                'rating_text' => 'Excellent',
+                'bonus' => '125% up to $600 + 180 Free Spins',
+                'rtp' => '96.9%',
+                'payout' => '1-2 days',
+                'games' => '2700+',
+                'slug' => 'neon54'
+            ],
+            [
+                'name' => '666 Gambit',
+                'established' => 2021,
                 'rating' => 4.7,
                 'rating_text' => 'Excellent',
-                'bonus' => '100% up to $4,000 + 210 Free Spins',
-                'rtp' => '97.39%',
+                'bonus' => '200% up to $800 + 150 Free Spins',
+                'rtp' => '96.8%',
+                'payout' => '1-2 days',
+                'games' => '2400+',
+                'slug' => '666-gambit'
+            ],
+            [
+                'name' => 'SPINIGHT',
+                'established' => 2020,
+                'rating' => 4.7,
+                'rating_text' => 'Excellent',
+                'bonus' => '100% up to $500 + 100 Free Spins',
+                'rtp' => '96.7%',
+                'payout' => '1-2 days',
+                'games' => '2600+',
+                'slug' => 'spinight'
+            ],
+            [
+                'name' => 'FUNBET',
+                'established' => 2019,
+                'rating' => 4.7,
+                'rating_text' => 'Excellent',
+                'bonus' => '150% up to $600 + 120 Free Spins',
+                'rtp' => '96.6%',
                 'payout' => '1-3 days',
-                'games' => '700+',
-                'slug' => 'jackpot-city'
+                'games' => '2300+',
+                'slug' => 'funbet'
             ],
             [
-                'name' => 'Spin Palace',
-                'established' => 2001,
-                'rating' => 4.7,
-                'rating_text' => 'Excellent',
-                'bonus' => '100% up to $1,000 + 345 Bonus Spins',
-                'rtp' => '97.45%',
-                'payout' => '1-3 days',
-                'games' => '1,000+',
-                'slug' => 'spin-palace'
-            ],
-            [
-                'name' => 'Lucky Ones',
-                'established' => 2023,
-                'rating' => 4.7,
-                'rating_text' => 'Excellent',
-                'bonus' => '100% up to $20,000 + 500 Free Spins',
-                'rtp' => '98.27%',
-                'payout' => '0-2 days',
-                'games' => '10,000+',
-                'slug' => 'lucky-ones'
-            ],
-            [
-                'name' => 'Mafia Casino',
-                'established' => 2025,
-                'rating' => 4.0,
-                'rating_text' => 'Great',
-                'bonus' => '100% up to $750 + 200 Free Spins + 1 Bonus Crab',
-                'rtp' => '98.19%',
-                'payout' => '0-1 days',
-                'games' => '9,000+',
-                'slug' => 'mafia-casino'
-            ],
-            [
-                'name' => 'Pistolo',
-                'established' => 2025,
-                'rating' => 4.7,
-                'rating_text' => 'Excellent',
-                'bonus' => '100% up to $750 + 200 Free Spins',
-                'rtp' => '98.21%',
-                'payout' => '1-3 days',
-                'games' => '11,000+',
-                'slug' => 'pistolo'
-            ],
-            [
-                'name' => 'Vegas Hero',
-                'established' => null,
+                'name' => 'GAMBLEZENS',
+                'established' => 2020,
                 'rating' => 4.6,
                 'rating_text' => 'Excellent',
-                'bonus' => '100% up to $750 + 200 Free Spins + 1 Bonus Crab',
-                'rtp' => '98.34%',
-                'payout' => '1-2 days',
-                'games' => '2,000+',
-                'slug' => 'vegas-hero'
-            ],
-            [
-                'name' => 'Spinbara',
-                'established' => 2025,
-                'rating' => 4.5,
-                'rating_text' => 'Excellent',
-                'bonus' => '300% up to $5,000 + 350 Free Spins + 1 Claw Machine',
-                'rtp' => '98.23%',
+                'bonus' => '100% up to $400 + 100 Free Spins',
+                'rtp' => '96.5%',
                 'payout' => '1-3 days',
-                'games' => '21,000+',
-                'slug' => 'spinbara'
-            ],
-            [
-                'name' => 'Tooniebet',
-                'established' => 2024,
-                'rating' => 4.4,
-                'rating_text' => 'Great',
-                'bonus' => 'Up to $3,500 + 200 Bonus Spins + 1 Claw Machine',
-                'rtp' => '98.12%',
-                'payout' => '1-3 days',
-                'games' => '3,000+',
-                'slug' => 'tooniebet'
-            ],
-            [
-                'name' => 'BetVictor',
-                'established' => 1946,
-                'rating' => 4.5,
-                'rating_text' => 'Excellent',
-                'bonus' => '100% up to $3,000 + 100 Free Spins',
-                'rtp' => '98.20%',
-                'payout' => '0-2 days',
-                'games' => '1,500+',
-                'slug' => 'betvictor'
-            ],
-            [
-                'name' => 'Casinova',
-                'established' => 2024,
-                'rating' => 4.3,
-                'rating_text' => 'Great',
-                'bonus' => '100% up to $3,000 + 350 Free Spins',
-                'rtp' => '98.14%',
-                'payout' => '1-2 days',
-                'games' => '3,000',
-                'slug' => 'casinova'
+                'games' => '2100+',
+                'slug' => 'gamblezens'
             ]
         ];
     }

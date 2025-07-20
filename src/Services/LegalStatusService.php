@@ -204,7 +204,7 @@ class LegalStatusService
             'min_deposit' => '$1-$10',
             'payment_methods' => ['Interac', 'Visa', 'Mastercard', 'Crypto'],
             'popular_games' => ['Majestic Bison', 'Gates of Olympus'],
-            'best_casino' => 'Jackpot City',
+            'best_casino' => 'BonRush',
             'biggest_bonus' => '100% up to $20,000',
             'gambling_age' => '19+ (18+ in QB/AB/MB)',
             'tax_info' => 'No (unless regular income)'

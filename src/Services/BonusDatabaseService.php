@@ -21,7 +21,7 @@ class BonusDatabaseService
             // Welcome Bonuses (15 offers)
             [
                 'id' => 'jackpot-city-welcome-1600',
-                'casino' => 'Jackpot City',
+                'casino' => 'BonRush',
                 'casino_slug' => 'jackpot-city',
                 'type' => 'welcome_package',
                 'category' => 'Welcome Bonuses',
@@ -65,7 +65,7 @@ class BonusDatabaseService
             ],
             [
                 'id' => 'royal-vegas-welcome-1200',
-                'casino' => 'Royal Vegas',
+                'casino' => 'SLOTSVIL',
                 'casino_slug' => 'royal-vegas',
                 'type' => 'welcome_package',
                 'category' => 'Welcome Bonuses',

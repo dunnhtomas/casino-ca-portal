@@ -10,9 +10,9 @@ class CategoryComparisonService
             'title' => 'Best Real Money Casino',
             'icon' => '💸',
             'casino' => [
-                'name' => 'Jackpot City',
-                'slug' => 'jackpot-city',
-                'logo' => 'JC',
+                'name' => 'BonRush',
+                'slug' => 'bonrush',
+                'logo' => 'BR',
                 'rating' => 4.7,
                 'rtp' => 97.39,
                 'games' => 1350,
@@ -22,7 +22,7 @@ class CategoryComparisonService
                 'license' => 'MGA',
                 'established' => 1998
             ],
-            'expert_note' => 'Jackpot City consistently delivers the highest RTP percentages in the Canadian market, making it our top choice for serious real money players.',
+            'expert_note' => 'BonRush consistently delivers the highest RTP percentages in the Canadian market, making it our top choice for serious real money players.',
             'key_features' => [
                 'Industry-leading 97.39% average RTP',
                 'Over 1,350 certified games',
@@ -35,9 +35,9 @@ class CategoryComparisonService
             'title' => 'Best for Online Slots',
             'icon' => '🎰',
             'casino' => [
-                'name' => 'Spin Palace',
-                'slug' => 'spin-palace',
-                'logo' => 'SP',
+                'name' => 'SLOTSVIL',
+                'slug' => 'slotsvil',
+                'logo' => 'SV',
                 'rating' => 4.7,
                 'rtp' => 97.45,
                 'games' => 1000,
@@ -47,7 +47,7 @@ class CategoryComparisonService
                 'license' => 'MGA',
                 'established' => 2001
             ],
-            'expert_note' => 'Spin Palace offers the most comprehensive slot library with exclusive titles and progressive jackpots exceeding $10 million.',
+            'expert_note' => 'SLOTSVIL offers the most comprehensive slot library with exclusive titles and progressive jackpots exceeding $10 million.',
             'key_features' => [
                 'Over 1,000 premium slot games',
                 'Exclusive Microgaming titles',

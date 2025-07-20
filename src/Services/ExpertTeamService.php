@@ -323,21 +323,21 @@ class ExpertTeamService
             1 => [ // Dr. Emily Rodriguez
                 [
                     'casino_id' => 2,
-                    'casino_name' => 'Royal Vegas',
+                    'casino_name' => 'BonRush',
                     'rating' => 4.8,
                     'reason' => 'Exceptional RTP rates and transparent slot mathematics',
                     'highlight' => 'Best for serious slot players who understand the math'
                 ],
                 [
                     'casino_id' => 1,
-                    'casino_name' => 'Spin Casino',
+                    'casino_name' => 'SLOTSVIL',
                     'rating' => 4.6,
                     'reason' => 'Excellent game variety with verified RTP reporting',
                     'highlight' => 'Strong bonus terms with fair wagering requirements'
                 ],
                 [
                     'casino_id' => 4,
-                    'casino_name' => 'Jackpot City',
+                    'casino_name' => 'CASINOJOY',
                     'rating' => 4.5,
                     'reason' => 'Proven track record and reliable payout statistics',
                     'highlight' => 'Consistent performance across all game categories'
