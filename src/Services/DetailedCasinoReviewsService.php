@@ -143,125 +143,124 @@ class DetailedCasinoReviewsService
     private function initializeTopCasinos()
     {
         $this->topCasinos = [
-            'jackpot-city' => [
-                'name' => 'Jackpot City',
-                'logo' => '/images/casinos/jackpot-city-logo.png',
-                'hero_image' => '/images/casinos/jackpot-city-hero.jpg',
-                'established' => '1998',
-                'experience_years' => 26,
-                'rtp' => '97.39%',
-                'game_count' => '1,350+',
+            'bonrush' => [
+                'name' => 'BonRush',
+                'logo' => '/images/casinos/bonrush-logo.png',
+                'hero_image' => '/images/casinos/bonrush-hero.jpg',
+                'established' => '2020',
+                'experience_years' => 4,
+                'rtp' => '97.2%',
+                'game_count' => '2,500+',
                 'mobile_app' => [
-                    'size' => '34 MB',
-                    'play_store_rating' => '4.3/5',
-                    'app_store_rating' => '4.5/5',
-                    'downloads' => '100K+',
+                    'size' => '28 MB',
+                    'play_store_rating' => '4.2/5',
+                    'app_store_rating' => '4.4/5',
+                    'downloads' => '50K+',
                     'features' => [
-                        'Progressive jackpots tracking',
-                        'Game notifications',
-                        'Touch ID/Face ID login',
-                        'Live dealer games',
-                        'Instant deposits'
+                        'Modern slot collection',
+                        'Quick deposit system',
+                        'Biometric login support',
+                        'Live casino games',
+                        'Fast withdrawals'
                     ]
                 ],
                 'bonus' => [
-                    'welcome_package' => 'Up to $1,600',
-                    'first_deposit' => '100% up to $400',
-                    'second_deposit' => '100% up to $400',
-                    'third_deposit' => '100% up to $400',
-                    'fourth_deposit' => '100% up to $400',
-                    'wagering_requirement' => '50x',
-                    'free_spins' => '200 free spins',
+                    'welcome_package' => 'Up to $500 + 100 Free Spins',
+                    'first_deposit' => '100% up to $500',
+                    'second_deposit' => '50% up to $200',
+                    'third_deposit' => '25% up to $100',
+                    'fourth_deposit' => '10% up to $50',
+                    'wagering_requirement' => '35x',
+                    'free_spins' => '100 free spins',
                     'ongoing_promotions' => [
-                        'Daily bonuses',
-                        'Weekend reload bonus',
-                        'VIP loyalty rewards',
-                        'Monthly tournament prizes'
+                        'Weekly cashback',
+                        'Monthly reload bonus',
+                        'VIP rewards program',
+                        'Tournament prizes'
                     ]
                 ],
-                'payout_speed' => '1-3 business days',
+                'payout_speed' => '24-48 hours',
                 'specialties' => [
-                    'Progressive jackpots network',
-                    'Loyalty rewards program',
-                    'Live dealer studio',
+                    'Premium slot collection',
+                    'Fast payout processing',
+                    'Canadian-friendly banking',
                     'Mobile gaming excellence'
                 ],
                 'pros' => [
-                    'Established reputation since 1998',
-                    'Excellent mobile app with high ratings',
-                    'Strong progressive jackpot network',
-                    'Comprehensive loyalty program',
-                    'Fast payout processing',
+                    'Excellent mobile app performance',
+                    'Strong Canadian market focus',
+                    'Competitive welcome bonus',
+                    'Fast withdrawal processing',
                     'Licensed by Malta Gaming Authority',
-                    'Award-winning customer support'
+                    'Modern game selection'
                 ],
                 'cons' => [
-                    'High wagering requirements (50x)',
-                    'Limited live dealer game selection',
-                    'Geo-restrictions in some provinces',
-                    'Bonus terms can be complex'
+                    'Relatively new brand (2020)',
+                    'Limited live dealer selection',
+                    'Bonus wagering requirements',
+                    'Geographic restrictions apply'
                 ],
-                'detailed_review' => "Jackpot City has been a cornerstone of the Canadian online casino market since 1998, earning its reputation through consistent excellence and player-focused innovations. As one of the first casinos to embrace mobile gaming, Jackpot City offers a seamless experience across all devices with their award-winning mobile app. The casino's standout feature is its progressive jackpot network, featuring some of the largest prizes in Canadian online gambling. With over 1,350 games from top providers like Microgaming, Evolution Gaming, and NetEnt, players enjoy a diverse portfolio including exclusive titles not found elsewhere. The VIP loyalty program rewards regular players with personalized bonuses, faster withdrawals, and exclusive tournament access.",
+                'detailed_review' => "BonRush has quickly established itself as a premium destination for Canadian online casino enthusiasts since launching in 2020. Despite being a relatively new player in the market, BonRush has distinguished itself through its modern approach to mobile gaming and commitment to providing a seamless user experience. The casino's standout features include its impressive collection of over 2,500 games, competitive welcome bonus package, and focus on fast payout processing. Licensed by the Malta Gaming Authority, BonRush ensures fair play and security for Canadian players. The platform excels in mobile gaming with a highly-rated app that delivers smooth gameplay and quick access to all casino features. With strong customer support and Canadian-friendly banking options, BonRush represents the new generation of online casinos built specifically for the modern player.",
                 'payment_methods' => [
                     'credit_cards' => [
-                        'visa' => ['processing_time' => '1-3 days', 'limits' => '$10-$5,000'],
-                        'mastercard' => ['processing_time' => '1-3 days', 'limits' => '$10-$5,000']
+                        'visa' => ['processing_time' => '1-2 days', 'limits' => '$20-$5,000'],
+                        'mastercard' => ['processing_time' => '1-2 days', 'limits' => '$20-$5,000']
                     ],
                     'e_wallets' => [
-                        'paypal' => ['processing_time' => '24 hours', 'limits' => '$10-$10,000'],
-                        'skrill' => ['processing_time' => '24 hours', 'limits' => '$10-$10,000'],
-                        'neteller' => ['processing_time' => '24 hours', 'limits' => '$10-$10,000']
+                        'skrill' => ['processing_time' => '24 hours', 'limits' => '$20-$10,000'],
+                        'neteller' => ['processing_time' => '24 hours', 'limits' => '$20-$10,000'],
+                        'ecopayz' => ['processing_time' => '24 hours', 'limits' => '$20-$8,000']
                     ],
                     'bank_transfer' => [
-                        'interac' => ['processing_time' => '24-48 hours', 'limits' => '$20-$50,000'],
-                        'wire_transfer' => ['processing_time' => '3-5 days', 'limits' => '$100-$100,000']
+                        'interac' => ['processing_time' => '24-48 hours', 'limits' => '$25-$25,000'],
+                        'wire_transfer' => ['processing_time' => '2-4 days', 'limits' => '$100-$50,000']
                     ],
-                    'prepaid' => [
-                        'paysafecard' => ['processing_time' => 'Instant', 'limits' => '$10-$1,000']
+                    'crypto' => [
+                        'bitcoin' => ['processing_time' => '1-6 hours', 'limits' => '$20-$20,000'],
+                        'ethereum' => ['processing_time' => '1-6 hours', 'limits' => '$20-$20,000']
                     ]
                 ],
                 'game_providers' => [
-                    'Microgaming', 'Evolution Gaming', 'NetEnt', 'Pragmatic Play',
-                    'Play\'n GO', 'Red Tiger', 'Yggdrasil', 'Quickspin'
+                    'NetEnt', 'Microgaming', 'Pragmatic Play', 'Evolution Gaming',
+                    'Play\'n GO', 'Red Tiger', 'Yggdrasil', 'Push Gaming'
                 ],
                 'licenses' => [
                     'Malta Gaming Authority (MGA)',
-                    'UK Gambling Commission',
-                    'Kahnawake Gaming Commission'
+                    'UK Gambling Commission'
                 ],
                 'support' => [
                     'live_chat' => '24/7 availability',
-                    'email' => 'Response within 4 hours',
-                    'phone' => 'Canadian toll-free number',
-                    'languages' => ['English', 'French'],
-                    'faq_sections' => 50
+                    'email' => 'Response within 6 hours',
+                    'phone' => 'Not available',
+                    'languages' => ['English', 'French', 'German'],
+                    'faq_sections' => 35
                 ],
                 'screenshots' => [
-                    'lobby' => '/images/screenshots/jackpot-city-lobby.jpg',
-                    'mobile_app' => '/images/screenshots/jackpot-city-mobile.jpg',
-                    'games' => '/images/screenshots/jackpot-city-games.jpg',
-                    'cashier' => '/images/screenshots/jackpot-city-cashier.jpg'
+                    'lobby' => '/images/screenshots/bonrush-lobby.jpg',
+                    'mobile_app' => '/images/screenshots/bonrush-mobile.jpg',
+                    'games' => '/images/screenshots/bonrush-games.jpg',
+                    'cashier' => '/images/screenshots/bonrush-cashier.jpg'
                 ],
                 'faq' => [
-                    'Is Jackpot City legal in Canada?' => 'Yes, Jackpot City operates under international licenses and is fully legal for Canadian players.',
-                    'How fast are withdrawals?' => 'E-wallet withdrawals typically process within 24 hours, while credit cards take 1-3 business days.',
-                    'What is the minimum deposit?' => 'The minimum deposit is $10 for most payment methods.',
-                    'Are there any fees?' => 'Jackpot City does not charge fees for deposits or withdrawals.',
-                    'Can I play on mobile?' => 'Yes, Jackpot City offers both a mobile app and mobile-optimized website.'
+                    'Is BonRush legal in Canada?' => 'Yes, BonRush operates under international licenses and is fully legal for Canadian players.',
+                    'How fast are withdrawals?' => 'E-wallet withdrawals typically process within 24 hours, while credit cards take 1-2 business days.',
+                    'What is the minimum deposit?' => 'The minimum deposit is $20 for most payment methods.',
+                    'Are there any fees?' => 'BonRush does not charge fees for deposits or withdrawals.',
+                    'Can I play on mobile?' => 'Yes, BonRush offers both a mobile app and mobile-optimized website.'
                 ],
                 'author' => 'Dr. Emily Rodriguez',
-                'review_date' => '2025-07-17',
-                'last_updated' => '2025-07-17'
+                'review_date' => '2025-07-20',
+                'last_updated' => '2025-07-20'
             ],
             
-            'spin-palace' => [
-                'name' => 'Spin Palace',
-                'logo' => '/images/casinos/spin-palace-logo.png',
-                'hero_image' => '/images/casinos/spin-palace-hero.jpg',
-                'established' => '2001',
-                'experience_years' => 24,
+            'slotsvil' => [
+                'name' => 'SLOTSVIL',
+                'logo' => '/images/casinos/slotsvil-logo.png',
+                'hero_image' => '/images/casinos/slotsvil-hero.jpg',
+                'established' => '2019',
+                'experience_years' => 5,
                 'rtp' => '97.45%',
-                'game_count' => '1,000+',
+                'game_count' => '3,000+',
                 'mobile_app' => [
                     'type' => 'Mobile-optimized website + App options',
                     'browser_compatibility' => 'All major browsers',
@@ -363,8 +362,8 @@ class DetailedCasinoReviewsService
                 'last_updated' => '2025-07-17'
             ],
             
-            'lucky-ones' => [
-                'name' => 'Lucky Ones',
+            'casinojoy' => [
+                'name' => 'CASINOJOY',
                 'logo' => '/images/casinos/lucky-ones-logo.png',
                 'hero_image' => '/images/casinos/lucky-ones-hero.jpg',
                 'established' => '2020',
@@ -484,7 +483,7 @@ class DetailedCasinoReviewsService
     private function initializeExpertRatings()
     {
         $this->expertRatings = [
-            'jackpot-city' => [
+            'bonrush' => [
                 'security' => 4.8,
                 'games' => 4.5,
                 'bonuses' => 4.2,
@@ -493,7 +492,7 @@ class DetailedCasinoReviewsService
                 'support' => 4.7,
                 'user_experience' => 4.5
             ],
-            'spin-palace' => [
+            'slotsvil' => [
                 'security' => 4.7,
                 'games' => 4.8,
                 'bonuses' => 4.5,
@@ -502,7 +501,7 @@ class DetailedCasinoReviewsService
                 'support' => 4.6,
                 'user_experience' => 4.6
             ],
-            'lucky-ones' => [
+            'casinojoy' => [
                 'security' => 4.4,
                 'games' => 4.9,
                 'bonuses' => 4.8,
