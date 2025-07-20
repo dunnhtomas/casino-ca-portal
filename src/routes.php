@@ -273,3 +273,13 @@ $router->get('/api/extended-top-casinos', 'ExtendedTopCasinosController@api');
 $router->get('/api/extended-top-casinos/filtered', 'ExtendedTopCasinosController@apiFiltered');
 $router->get('/api/extended-top-casinos/comparison', 'ExtendedTopCasinosController@apiComparison');
 $router->get('/api/extended-top-casinos/stats', 'ExtendedTopCasinosController@apiStats');
+
+// Casino Logo & Data Enhancement routes (PRD #31)
+$router->get('/casino-logo-research', 'CasinoLogoResearchController@dashboard');
+$router->get('/casino-logo-research/dashboard', 'CasinoLogoResearchController@dashboard');
+$router->post('/casino-logo-research/start-audit', 'CasinoLogoResearchController@startAudit');
+$router->post('/casino-logo-research/enhance/{casinoName}', 'CasinoLogoResearchController@enhanceCasino');
+$router->get('/casino-logo-research/queue', 'CasinoLogoResearchController@getEnhancementQueue');
+$router->post('/casino-logo-research/complete/{casinoName}', 'CasinoLogoResearchController@markEnhancementComplete');
+$router->get('/casino-logo-research/progress', 'CasinoLogoResearchController@getProgressStats');
+$router->post('/casino-logo-research/batch-process', 'CasinoLogoResearchController@batchProcessCasinos');
