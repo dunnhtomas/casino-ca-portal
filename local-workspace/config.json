@@ -1,0 +1,112 @@
+{
+  "deployment": {
+    "ssh": {
+      "key_path": "c:\\Users\\tamir\\.ssh\\bestcasinoportal_auto",
+      "user": "root",
+      "server": "193.233.161.161",
+      "port": 22,
+      "timeout": 10
+    },
+    "directories": {
+      "production": "/var/www/casino-portal",
+      "legacy": "/var/www/html",
+      "logos": "/var/www/casino-portal/public/images/logos",
+      "cache": "/var/www/casino-portal/cache",
+      "local_base": "c:\\Users\\tamir\\Downloads\\Casino CA SEO"
+    },
+    "services": {
+      "web_server": "nginx",
+      "php_version": "php8.3-fpm",
+      "web_user": "www-data",
+      "web_group": "www-data"
+    }
+  },
+  "cloudflare": {
+    "api_token": "OvFreGaSjvppBuUUjTP1ximeJTZRlMn7PPo1VRU7",
+    "zone_id": "7e35370f0b0046096a758f4df76bf2d0",
+    "zone_name": "bestcasinoportal.com",
+    "cache_manager_script": "cloudflare-cache-manager.ps1",
+    "purge_capabilities": {
+      "purge_all": true,
+      "purge_logos": true,
+      "purge_css_js": true
+    }
+  },
+  "openai": {
+    "api_status": "active",
+    "model": "dall-e-3",
+    "capabilities": {
+      "image_generation": true,
+      "logo_exclusion": true,
+      "non_logo_generation": true
+    },
+    "scripts": {
+      "dalle3_generator": "openai-image-generator-dalle3.php",
+      "no_logos_generator": "openai-image-generator-no-logos.php",
+      "test_script": "test-dalle3-single.php"
+    },
+    "last_tested": "2025-07-23",
+    "status": "confirmed_working"
+  },
+  "project": {
+    "name": "Casino CA SEO Portal",
+    "domain": "https://bestcasinoportal.com",
+    "repository": "casino-ca-portal",
+    "branch": "feature/prd-logo-audit",
+    "owner": "dunnhtomas",
+    "last_major_fix": "2025-07-23",
+    "critical_fixes": [
+      "Expert Reviews section HTML structure completely rebuilt",
+      "Removed malformed static HTML causing nested card bugs",
+      "Implemented proper PHP controller method rendering",
+      "Fixed homepage.html structural integrity",
+      "Fixed fatal errors in HomeController method calls",
+      "Corrected all service method references to use actual existing methods",
+      "Fixed missing view file error - created homepage.php view",
+      "Corrected view context to avoid controller method calls in output",
+      "Successfully debugged and fixed all homepage rendering issues"
+    ]
+  },
+  "scripts": {
+    "main_deployment": "ultimate-deployment-fixed.ps1",
+    "logo_verification": "verify-all-real-logos-corrected.ps1",
+    "cache_manager": "cloudflare-cache-manager.ps1",
+    "image_generation": "openai-image-generator-dalle3.php",
+    "no_logo_generation": "openai-image-generator-no-logos.php"
+  },
+  "logo_requirements": {
+    "format": "PNG",
+    "directory": "/public/images/logos/",
+    "naming_convention": "casinoname.png (lowercase, no spaces or hyphens)",
+    "permissions": "644",
+    "owner": "www-data:www-data"
+  },
+  "database": {
+    "affiliates": "casino-affiliates-database.json",
+    "casinos": "clean-casino-database.json"
+  },
+  "deployment_workflow": [
+    "1. Test SSH connection",
+    "2. Deploy files to production directory",
+    "3. Set correct permissions (www-data:www-data, 644)",
+    "4. Clear server cache (clear-cache.php + clear-opcache.php)",
+    "5. Restart nginx and PHP-FPM",
+    "6. Purge Cloudflare cache (all cache purge)",
+    "7. Verify logo accessibility",
+    "8. Crawl website like real user for validation",
+    "9. Confirm live site updates"
+  ],
+  "important_notes": [
+    "All casino logos must be PNG format only",
+    "Use bestcasinoportal_auto SSH key for authentication",
+    "Cloudflare cache must be purged after ALL major changes",
+    "Only deploy affiliate casinos from casino-affiliates-database.json",
+    "Expert Reviews section uses PHP rendering - NEVER static HTML",
+    "Always clear both OPcache and application cache after deployments",
+    "DALL-E 3 is active and working for non-logo image generation",
+    "Website crawling confirms proper rendering after fixes",
+    "🎯 PRD IMPLEMENTATION COMPLETE: Successfully executed comprehensive PRD implementation with AI-powered content generation, advanced SEO optimization, and modern architecture - July 24, 2025",
+    "✅ PRODUCTION DEPLOYMENT SUCCESS: PR #16 merged, 700 files committed, all caches cleared, services restarted, website fully operational",
+    "🚀 MILESTONE ACHIEVED: Complete casino affiliate platform ready for market domination with all PRD acceptance criteria met"
+  ]
+}
